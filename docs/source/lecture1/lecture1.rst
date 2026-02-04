@@ -43,6 +43,7 @@ Grading Structure
         .. list-table::
            :widths: 60 20
            :header-rows: 1
+           :class: compact-table
 
            * - Component
              - Weight
@@ -98,6 +99,7 @@ Course Schedule
 .. list-table::
    :widths: 5 55 25
    :header-rows: 1
+   :class: compact-table
 
    * - Wk
      - Topic
@@ -347,6 +349,7 @@ Why not just store data in files (CSV, JSON, XML)?
 .. list-table::
    :widths: 20 35 35
    :header-rows: 1
+   :class: compact-table
 
    * - Aspect
      - File System
@@ -393,6 +396,7 @@ Overview
 .. list-table::
    :widths: 15 20 55
    :header-rows: 1
+   :class: compact-table
 
    * - Tier
      - Level
@@ -564,6 +568,7 @@ Storage Cost Comparison
 .. list-table::
    :widths: 18 12 12 14 14 14
    :header-rows: 1
+   :class: compact-table
 
    * - Metric
      - SSD
@@ -892,6 +897,7 @@ Architecture Comparison
 .. list-table::
    :widths: 18 14 14 14 16 16
    :header-rows: 1
+   :class: compact-table
 
    * - Aspect
      - DAS
@@ -1020,6 +1026,7 @@ communicate through shared memory.
 .. list-table::
    :widths: 25 65
    :header-rows: 1
+   :class: compact-table
 
    * - Component
      - Description
@@ -1208,6 +1215,7 @@ Connecting DataGrip to PostgreSQL
 .. list-table::
    :widths: 30 50
    :header-rows: 1
+   :class: compact-table
 
    * - Field
      - Value
