@@ -2,7 +2,7 @@
 Glossary
 ====================================================
 
-:ref:`A <t1-glossary-a>` · :ref:`B <t1-glossary-b>` · :ref:`C <t1-glossary-c>` · :ref:`D <t1-glossary-d>` · :ref:`F <t1-glossary-f>` · :ref:`I <t1-glossary-i>` · :ref:`L <t1-glossary-l>` · :ref:`M <t1-glossary-m>` · :ref:`N <t1-glossary-n>` · :ref:`O <t1-glossary-o>` · :ref:`P <t1-glossary-p>` · :ref:`Q <t1-glossary-q>` · :ref:`R <t1-glossary-r>` · :ref:`S <t1-glossary-s>` · :ref:`T <t1-glossary-t>` · :ref:`W <t1-glossary-w>`
+:ref:`A <t1-glossary-a>` · :ref:`B <t1-glossary-b>` · :ref:`C <t1-glossary-c>` · :ref:`D <t1-glossary-d>` · :ref:`E <t1-glossary-e>` · :ref:`F <t1-glossary-f>` · :ref:`G <t1-glossary-g>` · :ref:`H <t1-glossary-h>` · :ref:`I <t1-glossary-i>` · :ref:`J <t1-glossary-j>` · :ref:`L <t1-glossary-l>` · :ref:`M <t1-glossary-m>` · :ref:`N <t1-glossary-n>` · :ref:`O <t1-glossary-o>` · :ref:`P <t1-glossary-p>` · :ref:`Q <t1-glossary-q>` · :ref:`R <t1-glossary-r>` · :ref:`S <t1-glossary-s>` · :ref:`T <t1-glossary-t>` · :ref:`W <t1-glossary-w>`
 
 ----
 
@@ -37,6 +37,11 @@ B
       to handle a single client connection.  Each backend executes
       queries and returns results independently.
 
+   Background Writer
+      A PostgreSQL background process that periodically writes dirty
+      pages from :term:`Shared Buffers` to disk, reducing the amount
+      of work needed during :term:`Checkpointer` runs.
+
    Block-Level Access
       A storage access method in which the operating system or
       application reads and writes fixed-size blocks (typically
@@ -50,6 +55,12 @@ C
 =
 
 .. glossary::
+
+   CCPA
+      **California Consumer Privacy Act** — a state-level data privacy
+      law giving California residents rights over their personal
+      information, including the right to know, delete, and opt out
+      of the sale of their data.
 
    Checkpointer
       A PostgreSQL background process that periodically writes all
@@ -70,6 +81,12 @@ C
       Mechanisms that allow multiple transactions to execute
       simultaneously without conflicting.  PostgreSQL uses
       :term:`MVCC` for this purpose.
+
+   CTE
+      **Common Table Expression** — a temporary named result set
+      defined within a SQL statement using the ``WITH`` clause.
+      CTEs improve query readability and allow recursive queries
+      in PostgreSQL.
 
 
 .. _t1-glossary-d:
@@ -109,12 +126,31 @@ D
       this course for SQL development.
 
 
+.. _t1-glossary-e:
+
+E
+=
+
+.. glossary::
+
+   Encryption
+      The process of encoding data so that only authorized parties
+      can read it.  Databases use encryption at rest (stored data)
+      and in transit (network communication) to protect sensitive
+      information.
+
+
 .. _t1-glossary-f:
 
 F
 =
 
 .. glossary::
+
+   FERPA
+      **Family Educational Rights and Privacy Act** — a US federal
+      law protecting the privacy of student education records.
+      Applies to all schools that receive federal funding.
 
    Fibre Channel
       A high-speed networking technology (up to 128 Gbps) used
@@ -131,6 +167,39 @@ F
       data stored in external sources (other databases, CSV files,
       REST APIs) as if they were local tables.
 
+   Full-Text Search
+      A PostgreSQL built-in capability for searching natural language
+      text.  Supports stemming, ranking, phrase search, and various
+      text-matching operators without requiring external tools.
+
+
+.. _t1-glossary-g:
+
+G
+=
+
+.. glossary::
+
+   GDPR
+      **General Data Protection Regulation** — a comprehensive EU
+      data privacy law that governs the collection, processing, and
+      storage of personal data.  Non-compliance can result in fines
+      up to €20 million or 4% of global annual revenue.
+
+
+.. _t1-glossary-h:
+
+H
+=
+
+.. glossary::
+
+   HIPAA
+      **Health Insurance Portability and Accountability Act** — a US
+      federal law that establishes standards for protecting sensitive
+      patient health information.  Requires safeguards for electronic
+      protected health information (ePHI).
+
 
 .. _t1-glossary-i:
 
@@ -143,6 +212,20 @@ I
       **Internet Small Computer Systems Interface** — a protocol that
       carries SCSI commands over TCP/IP networks, allowing
       :term:`SAN`-like block storage over standard Ethernet.
+
+
+.. _t1-glossary-j:
+
+J
+=
+
+.. glossary::
+
+   JSON/JSONB
+      PostgreSQL native data types for storing JSON (JavaScript
+      Object Notation) data.  ``JSON`` stores an exact text copy;
+      ``JSONB`` stores a binary representation that is faster to
+      query and supports indexing.
 
 
 .. _t1-glossary-l:
@@ -223,10 +306,32 @@ P
 
 .. glossary::
 
+   Partitioning
+      A PostgreSQL feature that divides a large table into smaller,
+      more manageable pieces called partitions.  Improves query
+      performance and simplifies data management for very large
+      tables.  Supports range, list, and hash partitioning.
+
+   PCI-DSS
+      **Payment Card Industry Data Security Standard** — a set of
+      security standards for organizations that handle credit card
+      information.  Requires encryption, access controls, and regular
+      security assessments.
+
+   pg_dump
+      A PostgreSQL command-line utility for backing up a database
+      to a script file or custom archive format.  Can export entire
+      databases or selected tables.
+
    pg_hba.conf
       The PostgreSQL **Host-Based Authentication** configuration file
       that controls which clients can connect, to which databases,
       and with which authentication method.
+
+   pg_restore
+      A PostgreSQL command-line utility for restoring a database from
+      an archive created by :term:`pg_dump`.  Supports selective
+      restoration and parallel processing.
 
    Postmaster
       The main PostgreSQL daemon process that listens for incoming
@@ -298,6 +403,12 @@ S
       accessed data pages in RAM.  Typically configured to about 25%
       of system memory.
 
+   Sharding
+      A horizontal scaling technique that distributes data across
+      multiple database servers (shards) based on a shard key.  Each
+      shard contains a subset of the total data, allowing parallel
+      processing and increased capacity.
+
    SQLAlchemy
       A popular Python SQL toolkit and Object-Relational Mapper (ORM)
       that provides a high-level interface for interacting with
@@ -351,3 +462,10 @@ W
       durability.  All changes are first written to a sequential log
       file before being applied to the actual data files, enabling
       crash recovery and point-in-time restore.
+
+   Window Functions
+      SQL functions that perform calculations across a set of rows
+      related to the current row, without collapsing them into a
+      single output row.  Examples include ``ROW_NUMBER()``,
+      ``RANK()``, ``LAG()``, and ``SUM() OVER()``.  Essential for
+      advanced analytics in PostgreSQL.
