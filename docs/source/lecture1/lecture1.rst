@@ -1256,24 +1256,35 @@ Python Installation
 .. code-block:: bash
 
    python --version
-   pip --version
+   python -m pip --version
 
 **Required Packages:**
 
 .. code-block:: bash
 
-   pip install psycopg2-binary
-   pip install sqlalchemy
-   pip install pymongo
-   pip install redis
-   pip install pandas
+   python -m pip install psycopg2-binary
+   python -m pip install sqlalchemy
+   python -m pip install pymongo
+   python -m pip install redis
+   python -m pip install pandas
 
 **Virtual Environment (recommended):**
 
-.. code-block:: bash
+.. tab-set::
 
-   python -m venv enpm818t
-   source enpm818t/bin/activate
+    .. tab-item:: Windows
+
+        .. code-block:: bash
+
+           python -m venv enpm818t
+           enpm818t\Scripts\activate
+
+    .. tab-item:: Linux/macOS
+
+        .. code-block:: bash
+
+           python -m venv enpm818t
+           source enpm818t/bin/activate
 
 
 VS Code Installation
