@@ -36,6 +36,7 @@ Contents
 
    lecture1
    quiz
+   exercises
    glossary
    references
 
