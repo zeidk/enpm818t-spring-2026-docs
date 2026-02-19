@@ -51,5 +51,5 @@ After successfully completing this course, you will be able to:
    :maxdepth: 3
    :titlesonly:
 
-   lecture1/index
-   lecture2/index
+   lectures/index
+   final_project/index
