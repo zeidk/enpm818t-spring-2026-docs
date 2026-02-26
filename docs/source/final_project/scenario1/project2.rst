@@ -7,7 +7,7 @@ Overview
 
 Implement your GP1 design in PostgreSQL, populate with realistic data, write complex SQL queries supporting traffic operations, and build a Python application with REST API.
 
-**Timeline**: 6 weeks
+**Timeline**: 5 weeks
 
 **Weight**: 15 points (37.5% of final project)
 

@@ -29,6 +29,9 @@ Schedule
    * - L2
      - Conceptual Data Modeling (ER Diagrams)
      - Chen notation, entities, attributes, keys, relationships, cardinality, participation constraints, EER (specialization, generalization, aggregation, categories)
+   * - L3
+     - Logical Data Modeling
+     - Relational model, Crow's Foot notation, 7-step ER-to-Relational mapping algorithm, foreign keys, referential integrity, lookup tables, ISA mapping strategies, categories
 
 
 Contents
@@ -40,3 +43,4 @@ Contents
 
    lecture1/index
    lecture2/index
+   lecture3/index

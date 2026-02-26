@@ -34,7 +34,7 @@ Contents
    :maxdepth: 2
    :titlesonly:
 
-   lecture1
+   lecture
    quiz
    exercises
    glossary

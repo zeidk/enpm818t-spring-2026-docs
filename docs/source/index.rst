@@ -51,5 +51,6 @@ After successfully completing this course, you will be able to:
    :maxdepth: 3
    :titlesonly:
 
+   syllabus/index
    lectures/index
    final_project/index

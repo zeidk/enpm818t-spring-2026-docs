@@ -7,7 +7,7 @@ Overview
 
 Design the PostgreSQL database schema that will serve as the HIPAA-compliant transactional backbone of your healthcare management system. You'll model clinical workflows, identify entities with protected health information (PHI), define healthcare-specific constraints, and ensure regulatory compliance.
 
-**Timeline**: 3 weeks
+**Timeline**: 2 weeks
 
 **Weight**: 10 points (25% of final project)
 

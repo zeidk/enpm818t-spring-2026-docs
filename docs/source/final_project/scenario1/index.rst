@@ -77,7 +77,6 @@ Technology Stack
    .. tab-item:: PostgreSQL
 
       .. card:: Relational Database for Infrastructure
-         :class-card: sd-bg-light
       
          **Purpose**: Structured data with strong consistency and complex relationships
          
@@ -171,7 +170,7 @@ Progressive Development
      - Chen & Crow's Foot ERDs, Normalization
    * - **GP2**
      - PostgreSQL + Python
-     - 3 weeks
+     - 5 weeks
      - Schema, Queries, REST API, Tests
    * - **GP3**
      - MongoDB Integration
@@ -179,7 +178,7 @@ Progressive Development
      - Document schemas, Aggregations, Integration
    * - **GP4**
      - Complete System
-     - 3 weeks
+     - 2 weeks
      - Redis caching, Docker deployment, Final report
 
 
@@ -198,7 +197,7 @@ Progressive Development
    
    **Deliverables**: ERDs (both notations), entity catalog, normalization proofs
 
-.. dropdown:: 💻 GP2: PostgreSQL + Python Implementation (3 weeks)
+.. dropdown:: 💻 GP2: PostgreSQL + Python Implementation (5 weeks)
    :class-container: sd-border-primary
 
    Implement and integrate the relational database:
@@ -226,7 +225,7 @@ Progressive Development
    
    **Deliverables**: MongoDB schemas, queries, Python integration, performance analysis
 
-.. dropdown:: 🚀 GP4: Redis + Complete System (3 weeks)
+.. dropdown:: 🚀 GP4: Redis + Complete System (2 weeks)
    :class-container: sd-border-primary
 
    Add caching layer and complete the system:
@@ -455,7 +454,6 @@ Support Resources
       - Collaborative problem-solving
 
 .. card:: 📚 Technical Documentation
-   :class-card: sd-bg-light
    
    - **PostGIS**: https://postgis.net/documentation/
    - **MongoDB Geospatial**: https://docs.mongodb.com/manual/geospatial-queries/

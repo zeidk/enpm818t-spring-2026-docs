@@ -7,7 +7,7 @@ Overview
 
 Add MongoDB to handle semi-structured clinical documents and healthcare data with flexible schemas. Integrate with your PostgreSQL system to create a polyglot persistence architecture for unified patient records.
 
-**Timeline**: 3 weeks
+**Timeline**: 2 weeks
 
 **Weight**: 10 points (25% of final project)
 

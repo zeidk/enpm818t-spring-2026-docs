@@ -7,7 +7,7 @@ Overview
 
 Add Redis for real-time caching and state management, complete your three-database polyglot system, deploy with Docker Compose, and write comprehensive technical documentation.
 
-**Timeline**: 4 weeks
+**Timeline**: 2 weeks
 
 **Weight**: 15 points (12.5% of final project, includes final report)
 

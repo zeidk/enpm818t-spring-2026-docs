@@ -77,7 +77,6 @@ Technology Stack
    .. tab-item:: PostgreSQL
 
       .. card:: Relational Database for Patient and Operational Data
-         :class-card: sd-bg-light
       
          **Purpose**: Structured data with strong consistency, ACID transactions, and HIPAA audit trails
          
@@ -104,7 +103,6 @@ Technology Stack
    .. tab-item:: MongoDB
 
       .. card:: Document Database for Clinical Documentation
-         :class-card: sd-bg-light
       
          **Purpose**: Semi-structured clinical documents and healthcare data that varies significantly by type and context
          
@@ -130,7 +128,6 @@ Technology Stack
    .. tab-item:: Neo4j
 
       .. card:: Graph Database for Medical Knowledge
-         :class-card: sd-bg-light
       
          **Purpose**: Model and query complex medical relationships for clinical decision support and drug safety checking
          
@@ -209,23 +206,23 @@ Progressive Development
      - Key Deliverables
    * - **GP1**
      - Relational Design
-     - 3 weeks
+     - 2 weeks
      - Chen and Crow's Foot ERDs, PHI Designation, Normalization
    * - **GP2**
      - PostgreSQL + Python
-     - 6 weeks
+     - 5 weeks
      - HIPAA Schema, Clinical Queries, Secure REST API
    * - **GP3**
      - MongoDB Integration
-     - 3 weeks
+     - 2 weeks
      - Clinical Document Schemas, Aggregations, Integration
    * - **GP4**
      - Complete System
-     - 4 weeks
+     - 2 weeks
      - Neo4j Knowledge Graph, Docker Deployment, Final Report
 
 
-.. dropdown:: 📋 GP1: Relational Database Design (3 weeks)
+.. dropdown:: 📋 GP1: Relational Database Design (2 weeks)
    :class-container: sd-border-primary
    :open:
 
@@ -241,7 +238,7 @@ Progressive Development
    
    **Deliverables**: ERDs (both notations), entity catalog, PHI matrix, normalization proofs
 
-.. dropdown:: 📋 GP2: PostgreSQL + Python Implementation (6 weeks)
+.. dropdown:: 📋 GP2: PostgreSQL + Python Implementation (5 weeks)
    :class-container: sd-border-primary
 
    Implement HIPAA-compliant relational database:
@@ -255,7 +252,7 @@ Progressive Development
    
    **Deliverables**: SQL scripts, secure Python application, HIPAA compliance documentation
 
-.. dropdown:: 📋 GP3: MongoDB Integration (3 weeks)
+.. dropdown:: 📋 GP3: MongoDB Integration (2 weeks)
    :class-container: sd-border-primary
 
    Add document database for clinical documentation:
@@ -269,7 +266,7 @@ Progressive Development
    
    **Deliverables**: MongoDB schemas, clinical queries, integrated Python application
 
-.. dropdown:: 📋 GP4: Neo4j + Complete System (4 weeks)
+.. dropdown:: 📋 GP4: Neo4j + Complete System (2 weeks)
    :class-container: sd-border-primary
 
    Add medical knowledge graph and complete the system:
@@ -501,7 +498,6 @@ Support Resources
       - Collaborative problem-solving
 
 .. card:: 📚 Technical Documentation
-   :class-card: sd-bg-light
    
    - **HL7 FHIR**: https://www.hl7.org/fhir/
    - **ICD-10 Codes**: https://www.icd10data.com/

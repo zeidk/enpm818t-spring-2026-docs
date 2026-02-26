@@ -7,7 +7,7 @@ Overview
 
 Add MongoDB to handle high-volume traffic event data with flexible schemas. Integrate with your PostgreSQL system to create a polyglot persistence architecture.
 
-**Timeline**: 3 weeks
+**Timeline**: 2 weeks
 
 **Weight**: 10 points (25% of final project)
 

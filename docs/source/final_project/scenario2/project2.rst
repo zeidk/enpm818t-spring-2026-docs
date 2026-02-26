@@ -7,7 +7,7 @@ Overview
 
 Implement your GP1 design in PostgreSQL with HIPAA-compliant security controls, comprehensive audit logging, role-based access control, and a secure Python application with REST API.
 
-**Timeline**: 6 weeks
+**Timeline**: 5 weeks
 
 **Weight**: 15 points (37.5% of final project)
 
