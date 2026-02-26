@@ -1,5 +1,5 @@
 ====================================================
-Final Project: Polyglot Persistence Systems
+Final Project
 ====================================================
 
 Overview
