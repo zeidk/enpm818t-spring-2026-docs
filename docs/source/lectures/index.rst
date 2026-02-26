@@ -44,3 +44,4 @@ Contents
    lecture1/index
    lecture2/index
    lecture3/index
+   lecture4/index
