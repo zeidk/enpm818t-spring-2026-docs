@@ -5,31 +5,16 @@ Group Project 2: PostgreSQL + Python Integration
 Overview
 --------
 
-Implement your GP1 design in PostgreSQL with HIPAA-compliant security controls, comprehensive audit logging, role-based access control, and a secure Python application with REST API.
+Implement your GP1 design in PostgreSQL, generate realistic synthetic data, write SQL queries supporting clinical and administrative operations, and build a Python command-line application with a menu-driven interface.
 
-**Timeline**: 5 weeks
+.. card::
+   :class-card: sd-bg-warning sd-bg-text-dark
 
-**Weight**: 15 points (37.5% of final project)
-
-**Team Size**: 4 students
+   **Timeline**: 3 weeks |
+   **Weight**: 15 points (30% of final project) |
+   **Team Size**: 4 students
 
 **Builds on**: Your GP1 relational design
-
-
-.. important::
-   
-   **What You'll Deliver**
-   
-   This project requires a **complete HIPAA-compliant PostgreSQL implementation** with Python integration:
-   
-   - 3 SQL files (schema with security controls, synthetic data, queries)
-   - 5 documentation files (index strategy, query catalog, architecture, API docs, HIPAA compliance)
-   - 1 Python application (config, models, repositories with audit, services, secure API)
-   - 1 test suite with coverage report
-   - 1 README file
-   - 1 team contributions file
-   
-   **Submission**: Single ZIP file named ``GP2_Healthcare_Team{X}.zip``
 
 
 Learning Objectives
@@ -37,249 +22,188 @@ Learning Objectives
 
 By completing this group project, you will be able to:
 
-- Translate healthcare designs into HIPAA-compliant PostgreSQL schemas
-- Implement role-based access control with database roles
-- Create comprehensive audit triggers for all PHI access
-- Generate realistic synthetic healthcare data (NEVER real patient data!)
+- Translate healthcare designs into physical PostgreSQL schemas
+- Write DDL with tables, constraints, indexes, and triggers
+- Generate and validate synthetic healthcare data
 - Write clinical, financial, and operational SQL queries
 - Integrate PostgreSQL with Python using psycopg2
-- Build a secure REST API with access reason tracking
-- Write security-focused tests (>70% coverage)
+- Design repository and service layer architecture
+- Build a menu-driven CLI application
 
 
-Part 1: HIPAA-Compliant Schema Implementation
-----------------------------------------------
+Part 1: Physical Database Implementation
+-----------------------------------------
 
-**Objective**: Transform your GP1 design into a working PostgreSQL database with security controls.
+**Objective**: Transform your GP1 design into a working PostgreSQL database with realistic data.
 
-.. dropdown:: 📋 Task 1.1: Schema with Security Controls (3 points)
+.. dropdown:: Task 1.1: Schema Implementation (3 points)
+   :icon: gear
    :class-container: sd-border-primary
    :open:
 
    Create ``schema.sql`` with:
-   
-   - **Database setup**: Extensions, schemas
-   - **Database roles**: physician, nurse, billing_staff, auditor
-   - **Custom types**: ENUMs for constrained healthcare values
+
+   - **Database setup**: Extensions
+   - **Custom types**: ENUMs for constrained healthcare values (appointment status, claim status, priority levels, etc.)
    - **All tables**: Complete with all columns from GP1
    - **Primary keys**: All defined correctly
-   - **Foreign keys**: With ON DELETE/UPDATE rules from GP1
-   - **Check constraints**: All 20+ business rules
-   - **NOT NULL constraints**: All mandatory clinical fields
-   - **UNIQUE constraints**: All candidate keys (MRN, NPI, DEA)
+   - **Foreign keys**: With ON DELETE/UPDATE rules
+   - **Check constraints**: Business rules from your GP1 entity catalog
+   - **NOT NULL constraints**: All mandatory fields
+   - **UNIQUE constraints**: All candidate keys (MRN, NPI, etc.)
    - **Indexes**: Strategic indexes for clinical query patterns
-   - **Audit triggers**: Automatic logging for all PHI table access
-   - **Timestamp triggers**: Automatic updated_at for all tables
-   
-   **Role-Based Access Control**:
-   
+   - **Triggers**: Automatic ``updated_at`` timestamps
+
+   **Healthcare Identifier Constraints**:
+
    .. code-block:: sql
-   
-      -- Create roles
-      CREATE ROLE physician;
-      CREATE ROLE nurse;
-      CREATE ROLE billing_staff;
-      CREATE ROLE auditor;
-      
-      -- Physician: Full PHI access
-      GRANT SELECT, INSERT, UPDATE ON patient TO physician;
-      GRANT SELECT, INSERT, UPDATE ON prescription TO physician;
-      GRANT SELECT, INSERT, UPDATE ON lab_order TO physician;
-      
-      -- Billing: Limited PHI (name, MRN, insurance only)
-      GRANT SELECT (patient_id, mrn, first_name, last_name)
-        ON patient TO billing_staff;
-      GRANT SELECT, INSERT, UPDATE ON insurance_claim TO billing_staff;
-      
-      -- Auditor: Read-only de-identified access
-      GRANT SELECT ON audit_log TO auditor;
-   
-   **Audit Trigger Example**:
-   
-   .. code-block:: plpgsql
-   
-      CREATE OR REPLACE FUNCTION log_phi_access()
-      RETURNS TRIGGER AS $$
-      BEGIN
-        INSERT INTO audit_log (
-          user_id, user_role, action, table_name,
-          record_id, phi_accessed, access_reason,
-          ip_address, timestamp
-        ) VALUES (
-          current_setting('app.current_user_id')::INTEGER,
-          current_setting('app.current_user_role'),
-          TG_OP, TG_TABLE_NAME,
-          COALESCE(NEW.patient_id, OLD.patient_id),
-          TRUE,
-          current_setting('app.access_reason'),
-          inet_client_addr(),
-          NOW()
-        );
-        RETURN NEW;
-      END;
-      $$ LANGUAGE plpgsql;
-      
-      CREATE TRIGGER audit_patient_access
-      AFTER INSERT OR UPDATE OR DELETE ON patient
-      FOR EACH ROW EXECUTE FUNCTION log_phi_access();
-   
+
+      -- MRN format: 10-digit zero-padded
+      ALTER TABLE patient
+      ADD CONSTRAINT chk_mrn_format
+      CHECK (mrn ~ '^\d{10}$');
+
+      -- NPI format: 10-digit
+      ALTER TABLE provider
+      ADD CONSTRAINT chk_npi_format
+      CHECK (npi ~ '^\d{10}$');
+
+      -- DEA required for controlled substance prescriptions
+      ALTER TABLE prescription
+      ADD CONSTRAINT chk_dea_for_controlled
+      CHECK (
+          controlled_substance_schedule IS NULL
+          OR prescriber_dea_number IS NOT NULL
+      );
+
    **File to create**: ``postgresql/schema.sql``
 
-.. dropdown:: 📋 Task 1.2: Index Strategy
-   :class-container: sd-border-primary
-
-   For each index, document:
-   
-   - **Purpose**: What clinical queries does this speed up?
-   - **Type**: B-tree (default), GIN (full-text), partial
-   - **Cost**: Impact on write performance
-   - **Justification**: Why benefits outweigh costs
-   
-   **Example Entry**:
-   
-   .. code-block:: text
-   
-      Index: idx_prescription_patient_active
-      Table: prescription
-      Columns: (patient_id) WHERE status = 'active'
-      Type: Partial B-tree
-      
-      Purpose: Speeds up "current medication list" query
-      Query Pattern: SELECT * FROM prescription
-                     WHERE patient_id = ? AND status = 'active'
-      
-      Justification:
-      - This query runs at every appointment and before procedures
-      - Active prescriptions are a small fraction of all prescriptions
-      - Partial index is much smaller than full index
-      - Critical for drug interaction checking performance
-   
-   **File to create**: ``docs/index_strategy.md``
-
-.. dropdown:: 📋 Task 1.3: Synthetic Data Generation (2 points)
+.. dropdown:: Task 1.2: Synthetic Data Generation (2 points)
+   :icon: gear
    :class-container: sd-border-primary
 
    Create ``data.sql`` with **synthetic data only** (NEVER real patient data!).
-   
+
    **Minimum data volumes**:
-   
-   - 200+ patients across the network
-   - 50+ providers (physicians, nurses, specialists)
-   - 500+ appointments (various statuses and types)
-   - 300+ prescriptions (including controlled substances)
-   - 200+ lab orders with 500+ lab results
-   - 50+ hospital admissions with discharge info
-   - 100+ insurance claims (various lifecycle stages)
-   - 50+ medications in formulary
-   - 5 hospitals and 20 clinic locations
-   - 1000+ audit log entries
-   
-   **Realistic Clinical Patterns**:
-   
-   - Age distribution (pediatric through geriatric)
-   - Common diagnosis codes (ICD-10) for conditions
-   - Realistic medication combinations (some with interactions)
-   - Appointment no-show rates (~15-20%)
-   - Insurance claim denial rates (~5-10%)
-   - Mix of controlled and non-controlled prescriptions
-   - Critical lab values flagged appropriately
-   
-   **Use Python Faker library** for name/address generation.
-   
+
+   - 100+ patients across the network
+   - 30+ providers (physicians, nurses, specialists)
+   - 200+ appointments (various statuses and types)
+   - 150+ prescriptions (including controlled substances)
+   - 100+ lab orders with 200+ lab results
+   - 30+ hospital admissions with discharge info
+   - 50+ insurance claims (various lifecycle stages)
+   - 30+ medications in formulary
+   - 5 hospitals and 10+ clinic locations
+
+   .. note::
+
+      **Data Generation with LLMs**
+
+      You may use an LLM (such as ChatGPT or Claude) to generate your INSERT statements. Provide your ``schema.sql`` to the LLM and ask it to generate realistic synthetic data that respects all constraints. See the :doc:`data_generation_guide` for a ready-to-use prompt.
+
+   **Data Quality Checks** (run after loading):
+
+   .. code-block:: text
+
+      After loading data, verify:
+
+      1. All FK references resolve (no orphan records)
+      2. All CHECK constraints pass
+      3. MRN, NPI, DEA formats are consistent
+      4. Temporal data spans at least 6 months
+      5. Controlled substance prescriptions have DEA numbers
+      6. Lab results include reference ranges and abnormal flags
+
    **File to create**: ``postgresql/data.sql``
 
 
 Part 2: Clinical SQL Queries
 -----------------------------
 
-**Objective**: Write 10+ queries demonstrating clinical, financial, and operational mastery.
+**Objective**: Write 8+ queries demonstrating clinical, financial, and operational mastery.
 
-.. dropdown:: 📋 Clinical Queries (4 minimum)
+.. dropdown:: Clinical Queries (3 minimum)
+   :icon: gear
    :class-container: sd-border-primary
    :open:
 
-   **Patient Care Coordination**: Complete patient summary for appointment
-   
-   *"For patient MRN X arriving for an appointment, show demographics, active medications, recent lab results, and upcoming appointments."*
-   
-   **Medication Safety**: Polypharmacy alerts
-   
+   **Patient Care Coordination**:
+
+   *"For a patient arriving for an appointment, show demographics, active medications, and recent lab results."*
+
+   **Medication Safety**:
+
    *"Find all patients with 5+ active prescriptions (polypharmacy risk) along with their prescribing providers."*
-   
-   **Quality Metrics**: 30-day readmission rates
-   
+
+   **Quality Metrics**:
+
    *"Calculate 30-day readmission rates by diagnosis, identifying patients readmitted within 30 days of discharge."*
-   
-   **Lab Efficiency**: Turnaround time analysis
-   
-   *"Calculate average lab result turnaround time by test type, flagging tests exceeding target times."*
 
-.. dropdown:: 📋 Financial Queries (3 minimum)
+.. dropdown:: Financial Queries (2 minimum)
+   :icon: gear
    :class-container: sd-border-primary
 
-   **Claim Denials**: Analysis by reason and payer
-   
+   **Claim Denials**:
+
    *"Show claim denial rates by insurance company and denial reason, with total denied amounts."*
-   
-   **Outstanding Balances**: Accounts receivable aging
-   
-   *"Generate an aging report showing outstanding patient balances in 30/60/90/120+ day buckets."*
-   
-   **Revenue Analytics**: Payment trends and collection rates
-   
-   *"Calculate monthly revenue, payment rates, and average days to payment by insurance company."*
 
-.. dropdown:: 📋 Operational Queries (3 minimum)
+   **Outstanding Balances**:
+
+   *"Generate an aging report showing outstanding patient balances in 30/60/90/120+ day buckets."*
+
+.. dropdown:: Operational Queries (3 minimum)
+   :icon: gear
    :class-container: sd-border-primary
 
-   **Provider Productivity**: Appointments and no-show rates
-   
-   *"Show appointment counts, no-show rates, and average patients per day by provider."*
-   
-   **Appointment Scheduling**: Open slot identification
-   
-   *"Find available appointment slots for a given provider in the next 2 weeks."*
-   
-   **Controlled Substances**: DEA audit monitoring
-   
-   *"Report all Schedule II controlled substance prescriptions by provider, required for DEA audits."*
+   **Provider Productivity**:
 
-.. dropdown:: 📋 Query Documentation Template
+   *"Show appointment counts, no-show rates, and average patients per day by provider."*
+
+   **Controlled Substances**:
+
+   *"Report all Schedule II controlled substance prescriptions by provider, required for DEA reporting."*
+
+   **Capacity Planning**:
+
+   *"Show average length of stay and bed occupancy rates by hospital and admission type over the past 90 days."*
+
+.. dropdown:: Query Documentation Format
+   :icon: gear
    :class-container: sd-border-primary
 
    Use this format for **every query** in ``queries.sql``:
-   
+
    .. code-block:: sql
-   
+
       -- Query #X: [Title]
       -- Clinical/Financial/Operational Context: [Why this matters]
       -- Tables Used: [List all tables]
-      -- Complexity Features: [JOINs, CTEs, window functions used]
-      -- HIPAA Note: [What PHI is accessed and why]
-      -- Performance Notes: [Index usage, execution time]
-      
+      -- Complexity Features: [JOINs, aggregates, subqueries used]
+
       [YOUR SQL QUERY]
-      
+
       -- Expected Output: [Description of result columns]
       -- Sample Results: [First 3 rows with synthetic data]
-   
-   Include EXPLAIN ANALYZE output for **at least 5 queries**.
-   
-   **File to create**: ``postgresql/queries.sql`` and ``docs/query_catalog.md``
+
+   **File to create**: ``postgresql/queries.sql``
 
 
-Part 3: Secure Python Application
------------------------------------
+Part 3: Python CLI Application
+-------------------------------
 
-**Objective**: Build a layered Python application with HIPAA-compliant security.
+**Objective**: Build a layered Python application with a menu-driven command-line interface that connects to your PostgreSQL database.
 
-.. dropdown:: 📋 Task 3.1: Application Architecture (5 points)
+.. dropdown:: Task 3.1: Application Architecture (3 points)
+   :icon: gear
    :class-container: sd-border-primary
    :open:
 
+   Organize your code in layers:
+
    .. code-block:: text
-   
-      traffic-management/
+
+      healthcare-management/
       ├── requirements.txt
       ├── .env.example
       ├── config/
@@ -288,178 +212,229 @@ Part 3: Secure Python Application
       │   ├── patient.py           # Dataclasses
       │   └── [other models].py
       ├── repositories/
-      │   ├── base_repository.py   # With audit logging
-      │   ├── patient_repo.py      # CRUD with PHI protection
+      │   ├── base_repository.py
+      │   ├── patient_repo.py      # CRUD operations
       │   └── [other repos].py
       ├── services/
-      │   ├── audit_service.py     # HIPAA audit logging
       │   ├── patient_service.py   # Business logic
       │   └── [other services].py
-      ├── api/
-      │   └── endpoints.py         # FastAPI routes with auth
-      └── tests/
+      └── cli/
+          └── main.py              # Menu-driven interface
 
-.. dropdown:: 📋 Audit Service Implementation
+   **Layer Responsibilities**:
+
+   - **config/**: Database connection pooling with psycopg2. Configuration loaded from environment variables.
+   - **models/**: Python dataclasses representing each entity. Each dataclass mirrors a database table and includes a ``from_row()`` class method to convert query results into objects.
+   - **repositories/**: CRUD operations and custom queries for each entity. Each repository handles its own SQL and returns model objects. Repositories do not contain business logic.
+   - **services/**: Business logic combining multiple repositories. For example, a ``patient_service.get_patient_dashboard(id)`` method might call the patient repository, prescription repository, and lab repository to assemble a complete view.
+   - **cli/**: Menu-driven interface that calls service methods and formats output for the terminal. The CLI contains no SQL and no direct database access.
+
+.. dropdown:: Task 3.2: Connection Management
+   :icon: gear
    :class-container: sd-border-primary
 
-   **Every PHI access must be logged**:
-   
+   Implement connection pooling with psycopg2. Your connection management should handle four concerns:
+
+   **Pool size**: Use ``psycopg2.pool.SimpleConnectionPool`` with ``minconn=2`` and ``maxconn=10``. The pool pre-creates 2 connections at startup and can grow up to 10 under load. This avoids the overhead of creating a new connection for every query.
+
+   **Context manager for automatic cleanup**: Wrap pool access in a context manager so that connections are always returned to the pool, even if an exception occurs. This prevents connection leaks where a borrowed connection is never returned.
+
+   **Error handling for connection failures**: Catch ``psycopg2.OperationalError`` when creating the pool or borrowing connections. Print a clear error message (e.g., "Cannot connect to database. Check your .env settings.") instead of crashing with a raw stack trace.
+
+   **Configuration from environment variables**: Read database host, port, name, user, and password from environment variables (using ``os.getenv()`` with sensible defaults). Provide a ``.env.example`` file so teammates can set up their own environment without sharing credentials in version control.
+
+   **Example implementation**:
+
    .. code-block:: python
-   
-      class AuditService:
-          def log_access(self, user_id, user_role, action,
-                        resource, resource_id, phi_accessed,
-                        access_reason, success):
-              """Log PHI access to audit_log table.
-              CRITICAL: This must never fail silently."""
+
+      from psycopg2 import pool, OperationalError
+      from contextlib import contextmanager
+      import os
+
+      class DatabaseConfig:
+          _pool = None
+
+          @classmethod
+          def initialize(cls):
+              """Create the connection pool. Call once at application startup."""
               try:
-                  conn = self.pool.getconn()
-                  with conn.cursor() as cur:
-                      cur.execute("""
-                          INSERT INTO audit_log
-                          (user_id, user_role, action, table_name,
-                           record_id, phi_accessed, access_reason,
-                           success, timestamp)
-                          VALUES (%s, %s, %s, %s, %s, %s, %s, %s, NOW())
-                      """, (user_id, user_role, action, resource,
-                            resource_id, phi_accessed,
-                            access_reason, success))
+                  cls._pool = pool.SimpleConnectionPool(
+                      minconn=2,
+                      maxconn=10,
+                      host=os.getenv("DB_HOST", "localhost"),
+                      port=os.getenv("DB_PORT", "5432"),
+                      dbname=os.getenv("DB_NAME", "healthcare_management"),
+                      user=os.getenv("DB_USER", "postgres"),
+                      password=os.getenv("DB_PASSWORD", "")
+                  )
+              except OperationalError as e:
+                  print(f"Error: Cannot connect to database. Check .env settings.")
+                  print(f"Details: {e}")
+                  raise SystemExit(1)
+
+          @classmethod
+          @contextmanager
+          def get_connection(cls):
+              """
+              Borrow a connection from the pool.
+
+              Usage:
+                  with DatabaseConfig.get_connection() as conn:
+                      with conn.cursor() as cur:
+                          cur.execute("SELECT ...")
+
+              The connection is automatically returned to the pool
+              when the with-block exits, even if an exception occurs.
+              """
+              if cls._pool is None:
+                  cls.initialize()
+              conn = cls._pool.getconn()
+              try:
+                  yield conn
                   conn.commit()
+              except Exception:
+                  conn.rollback()
+                  raise
               finally:
-                  self.pool.putconn(conn)
+                  cls._pool.putconn(conn)
 
-.. dropdown:: 📋 Repository with Audit
+          @classmethod
+          def close_all(cls):
+              """Close all connections. Call at application shutdown."""
+              if cls._pool is not None:
+                  cls._pool.closeall()
+
+.. dropdown:: Task 3.3: Repository Pattern
+   :icon: gear
    :class-container: sd-border-primary
 
-   **All repositories must integrate audit logging**:
-   
+   Each major entity needs a repository with:
+
+   - ``find_by_id(id)`` -- Single record lookup
+   - ``find_all(limit, offset)`` -- Paginated list
+   - ``create(entity)`` -- Insert new record
+   - ``update(entity)`` -- Update existing
+   - ``delete(id)`` -- Remove record
+   - Custom query methods (e.g., ``find_active_prescriptions(patient_id)``)
+
+   **Example**:
+
    .. code-block:: python
-   
+
       class PatientRepository:
-          def __init__(self, pool, audit_service):
-              self.pool = pool
-              self.audit = audit_service
-          
-          def find_by_id(self, patient_id, user_id,
-                        user_role, access_reason):
-              """Retrieve patient with mandatory audit logging."""
-              # Check role permissions
-              if user_role == 'billing_staff':
-                  columns = "patient_id, mrn, first_name, last_name"
-              else:
-                  columns = "*"
-              
-              conn = self.pool.getconn()
-              try:
+          def find_by_id(self, patient_id):
+              with DatabaseConfig.get_connection() as conn:
                   with conn.cursor() as cur:
                       cur.execute(
-                          f"SELECT {columns} FROM patient WHERE patient_id = %s",
+                          "SELECT * FROM patient WHERE patient_id = %s",
                           (patient_id,)
                       )
                       row = cur.fetchone()
-                  
-                  # Log access (success or failure)
-                  self.audit.log_access(
-                      user_id=user_id, user_role=user_role,
-                      action="SELECT", resource="patient",
-                      resource_id=patient_id, phi_accessed=True,
-                      access_reason=access_reason,
-                      success=row is not None
-                  )
-                  
-                  return Patient.from_row(row) if row else None
-              finally:
-                  self.pool.putconn(conn)
+                      return Patient.from_row(row) if row else None
 
-.. dropdown:: 📋 Task 3.2: Secure REST API (2 points)
+          def find_all(self, limit=20, offset=0):
+              with DatabaseConfig.get_connection() as conn:
+                  with conn.cursor() as cur:
+                      cur.execute(
+                          "SELECT * FROM patient ORDER BY patient_id "
+                          "LIMIT %s OFFSET %s",
+                          (limit, offset)
+                      )
+                      return [Patient.from_row(row) for row in cur.fetchall()]
+
+.. dropdown:: Task 3.4: Menu-Driven CLI (2 points)
+   :icon: gear
    :class-container: sd-border-primary
 
-   Implement **at least 8 endpoints** with authentication and audit:
-   
-   **Clinical Endpoints** (3 minimum):
-   
-   - ``GET /patients/{id}`` - Retrieve patient (with access reason header)
-   - ``GET /patients/{id}/medications`` - Active medication list
-   - ``GET /patients/{id}/lab-results`` - Recent lab results
-   
-   **Financial Endpoints** (2 minimum):
-   
-   - ``GET /claims/denials`` - Claim denial analytics
-   - ``GET /billing/aging`` - Accounts receivable aging
-   
-   **Operational Endpoints** (2 minimum):
-   
-   - ``GET /providers/{id}/productivity`` - Provider metrics
-   - ``GET /controlled-substances/report`` - DEA audit report
-   
-   **Audit Endpoint** (1 minimum):
-   
-   - ``GET /audit/patient/{id}`` - PHI access history for patient
-   
-   **HIPAA Requirement**: Every endpoint accessing PHI requires:
-   
-   .. code-block:: python
-   
-      @app.get("/api/patients/{patient_id}")
-      async def get_patient(
-          patient_id: int,
-          access_reason: str = Header(..., alias="X-Access-Reason"),
-          user = Depends(get_current_user)
-      ):
-          # access_reason is HIPAA requirement
-          # Must document WHY this data is being accessed
-          return patient_service.get_patient(
-              patient_id, user.id, user.role, access_reason
-          )
-   
-   **File to create**: ``docs/api_documentation.md``
+   Build an interactive command-line interface that lets users explore the database through a menu system. The CLI should demonstrate your repository and service layer in action.
+
+   **Minimum menu options (6 required)**:
+
+   Clinical (2 minimum):
+
+   - Look up patient by MRN
+   - View active medications for a patient
+
+   Financial (2 minimum):
+
+   - Show claim denial analytics
+   - Display accounts receivable aging report
+
+   Operational (1 minimum):
+
+   - Show provider productivity metrics
+
+   Analytics (1 minimum):
+
+   - Show system-wide performance dashboard
+
+   **Example interaction**:
+
+   .. code-block:: text
+
+      === Healthcare Management System ===
+
+      1. Look up patient by MRN
+      2. View active medications
+      3. Claim denial analytics
+      4. Accounts receivable aging
+      5. Provider productivity
+      6. System dashboard
+      7. Exit
+
+      Select option: 1
+
+      Enter MRN: 0000000042
+
+      === Patient Record ===
+
+      Name:       Jane Smith
+      MRN:        0000000042
+      DOB:        1985-03-15
+      Provider:   Dr. Robert Chen (Cardiology)
+      Insurance:  BlueCross PPO (Policy: BC-2024-1234)
+      ...
+
+   **File to create**: ``cli/main.py``
 
 
-Part 4: Testing
----------------
+Part 4: Testing (Optional)
+---------------------------
 
-**Objective**: Write security-focused automated tests.
+.. note::
 
-.. dropdown:: 📋 Task 4.1: Test Categories (integrated into score)
+   Testing is **optional** for GP2. If you include tests, they will be considered favorably during grading but are not required. This section is provided for teams that want to practice writing automated tests.
+
+.. dropdown:: Test Suite
+   :icon: gear
    :class-container: sd-border-primary
-   :open:
 
-   **Security Tests** (critical):
-   
-   - Unauthorized access denied (billing staff cannot see full patient record)
-   - Role-based field filtering works correctly
-   - Audit logs created for all PHI access
-   - Failed access attempts logged
-   - Access reason validation (empty reason rejected)
-   
-   **Repository Tests**:
-   
-   - CRUD operations work correctly
-   - Clinical queries return expected results
-   - Error handling (constraint violations, not found)
-   
-   **API Tests**:
-   
-   - Endpoints return correct status codes
-   - Missing access reason returns 400
-   - Response format matches specification
-   - Error responses appropriate
+   Write tests using ``pytest`` that verify the behavior of your repositories and services.
 
-**Requirements**: Minimum 70% code coverage
+   **What to test in repositories**:
 
+   - ``find_by_id()`` returns the correct entity for a known ID
+   - ``find_by_id()`` returns ``None`` for a non-existent ID
+   - ``find_all()`` returns a list respecting ``limit`` and ``offset``
+   - ``create()`` inserts a record that can then be retrieved
+   - ``update()`` modifies a record and the changes persist
+   - ``delete()`` removes a record so it can no longer be found
+   - Constraint violations (e.g., duplicate MRN, invalid FK) raise appropriate exceptions
 
-Submission Requirements
-------------------------
+   **What to test in services**:
 
-.. important::
-   
-   **Single ZIP File Submission**
-   
-   Submit **ONE** ZIP file to Canvas:
-   
-   ``GP2_Healthcare_Team{X}.zip``
-   
-   Replace ``{X}`` with your team number (e.g., ``GP2_Healthcare_Team03.zip``)
+   - Business logic methods return correct results (e.g., ``get_polypharmacy_patients()`` returns patients sorted by prescription count)
+   - Methods that combine multiple repositories produce the expected combined output
+   - Edge cases: empty results, boundary values
+
+   **Running tests**:
+
+   .. code-block:: bash
+
+      pip install pytest pytest-cov
+      pytest tests/ --cov=src --cov-report=html
+
+   **Files to create**: ``tests/test_repositories.py`` and ``tests/test_services.py``
 
 
 Folder Structure
@@ -469,289 +444,102 @@ Folder Structure
 
    GP2_Healthcare_Team{X}/
    ├── postgresql/
-   │   ├── schema.sql
-   │   ├── data.sql
-   │   └── queries.sql
+   │   ├── schema.sql              # DDL with constraints, indexes, triggers
+   │   ├── data.sql                # Generated synthetic data
+   │   └── queries.sql             # 8+ documented queries
    ├── src/
    │   ├── config/
-   │   │   └── database.py
+   │   │   └── database.py         # Connection pooling
    │   ├── models/
-   │   │   ├── patient.py
-   │   │   └── [other models].py
+   │   │   └── [entity].py         # Dataclasses
    │   ├── repositories/
    │   │   ├── base_repository.py
-   │   │   ├── patient_repo.py
-   │   │   └── [other repos].py
+   │   │   └── [entity]_repo.py    # CRUD + custom queries
    │   ├── services/
-   │   │   ├── audit_service.py
-   │   │   ├── patient_service.py
-   │   │   └── [other services].py
-   │   └── api/
-   │       └── endpoints.py
-   ├── tests/
-   │   ├── test_security.py
+   │   │   └── patient_service.py  # Business logic
+   │   └── cli/
+   │       └── main.py             # Menu-driven interface
+   ├── tests/                      # Optional
    │   ├── test_repositories.py
-   │   ├── test_services.py
-   │   └── test_api.py
-   ├── docs/
-   │   ├── index_strategy.md
-   │   ├── query_catalog.md
-   │   ├── architecture.md
-   │   ├── api_documentation.md
-   │   └── hipaa_compliance.md
+   │   └── test_services.py
    ├── requirements.txt
    ├── .env.example
    ├── README.md
    └── team_contributions.md
 
 
-Required Files by Task
------------------------
+Documentation Files
+-------------------
 
-.. dropdown:: 📄 Part 1: HIPAA-Compliant Schema
-   :class-container: sd-border-info
+.. dropdown:: What goes in each file
+   :icon: gear
+   :class-container: sd-border-primary
+   :open:
 
-   **SQL Files** (3 files):
-   
-   - ``postgresql/schema.sql`` - DDL with roles, audit triggers, constraints
-   - ``postgresql/data.sql`` - Synthetic clinical data
-   - ``postgresql/queries.sql`` - 10+ documented clinical queries
-   
-   **Documentation** (2 files):
-   
-   - ``docs/index_strategy.md`` - Index justifications
-   - ``docs/query_catalog.md`` - Query summaries with EXPLAIN ANALYZE
+   **requirements.txt**
 
-.. dropdown:: 📄 Part 3: Secure Python Application
-   :class-container: sd-border-info
+   List all Python packages needed to run your application. At minimum this includes ``psycopg2-binary`` and ``python-dotenv``. Include ``pytest`` and ``pytest-cov`` if you are writing tests.
 
-   **Application** (full src/ directory):
-   
-   - ``src/config/database.py`` - Connection pooling
-   - ``src/models/*.py`` - Dataclass models
-   - ``src/repositories/*.py`` - CRUD with audit integration
-   - ``src/services/audit_service.py`` - HIPAA audit logging
-   - ``src/services/*.py`` - Business logic
-   - ``src/api/endpoints.py`` - Secure FastAPI routes
-   
-   **Documentation** (3 files):
-   
-   - ``docs/architecture.md`` - Application architecture
-   - ``docs/api_documentation.md`` - API endpoints with security notes
-   - ``docs/hipaa_compliance.md`` - HIPAA compliance documentation
+   **.env.example**
 
-.. dropdown:: 📄 Part 4: Testing + Supporting Files
-   :class-container: sd-border-info
+   A template showing the environment variables your application needs, with placeholder values. Teammates and graders copy this to ``.env`` and fill in their own database credentials.
 
-   **Tests** (4+ files):
-   
-   - ``tests/test_security.py`` - RBAC and audit tests
-   - ``tests/test_repositories.py``
-   - ``tests/test_services.py``
-   - ``tests/test_api.py``
-   
-   **Supporting Files** (3 files):
-   
-   - ``requirements.txt`` - Python dependencies
-   - ``README.md`` - Project overview with setup guide
-   - ``team_contributions.md`` - Individual contributions
+   .. warning::
+
+      **Never commit your real ``.env`` file to Git.** It contains your database password. Add ``.env`` to your ``.gitignore`` file to prevent accidentally pushing credentials to GitHub. Only ``.env.example`` (with placeholder values) should be in version control.
+
+   .. code-block:: text
+
+      DB_HOST=localhost
+      DB_PORT=5432
+      DB_NAME=healthcare_management
+      DB_USER=postgres
+      DB_PASSWORD=your_password_here
+
+   **README.md**
+
+   Setup and usage instructions. Include: prerequisites (Python 3, PostgreSQL), how to create the database and load the schema/data, how to configure ``.env``, how to install dependencies (``pip install -r requirements.txt``), how to run the application, and how to run tests (if applicable).
+
+   **team_contributions.md**
+
+   List each team member's name, the tasks they completed, hours contributed, and contribution percentage. Percentages must sum to 100%.
 
 
-README.md Template
-------------------
+Submission
+----------
 
-.. code-block:: markdown
+.. important::
 
-   # GP2: Healthcare Patient Management - PostgreSQL + Python
-   
-   **Team Number**: [Your team number]
-   
-   **Scenario**: Healthcare Patient Management Platform
-   
-   ## Team Members
-   
-   - [Name 1] - [Email] - [Contribution %]
-   - [Name 2] - [Email] - [Contribution %]
-   - [Name 3] - [Email] - [Contribution %]
-   - [Name 4] - [Email] - [Contribution %]
-   
-   ## Project Overview
-   
-   [2-3 sentence description of your HIPAA-compliant implementation]
-   
-   ## Setup Instructions
-   
-   ### Prerequisites
-   
-   - PostgreSQL 18
-   - Python 3.10+
-   
-   ### Database Setup
-   
-   ```bash
-   createdb healthcare_management
-   psql -d healthcare_management -f postgresql/schema.sql
-   psql -d healthcare_management -f postgresql/data.sql
-   ```
-   
-   ### Application Setup
-   
-   ```bash
-   pip install -r requirements.txt
-   cp .env.example .env
-   # Edit .env with database credentials
-   uvicorn src.api.endpoints:app --reload
-   ```
-   
-   ### Running Tests
-   
-   ```bash
-   pytest tests/ --cov=src --cov-report=html
-   ```
-   
-   ## HIPAA Compliance Summary
-   
-   - **Roles**: physician, nurse, billing_staff, auditor
-   - **Audit**: All PHI access logged with access reason
-   - **RBAC**: Field-level filtering by role
-   - **Data**: 100% synthetic (Faker library)
-   
-   ## Notes for Graders
-   
-   [Any special notes, clarifications, or highlights]
+   Submit **one** ZIP file to Canvas: ``GP2_Healthcare_Team{X}.zip``
+
+   Replace ``{X}`` with your team number (e.g., ``GP2_Healthcare_Team03.zip``).
 
 
-Team Contributions Template
-----------------------------
-
-.. code-block:: markdown
-
-   # Team Contributions - GP2
-   
-   ## [Member 1 Name]
-   
-   **Tasks Completed**:
-   
-   - Created schema.sql with roles and audit triggers
-   - Implemented RBAC with column-level security
-   - Wrote HIPAA compliance documentation
-   
-   **Hours Contributed**: [X hours]
-   
-   **Contribution Percentage**: 25%
-   
-   ## [Member 2 Name]
-   
-   **Tasks Completed**:
-   
-   - Generated synthetic data (data.sql) using Faker
-   - Wrote clinical queries 1-5
-   - Created query catalog with EXPLAIN ANALYZE
-   
-   **Hours Contributed**: [X hours]
-   
-   **Contribution Percentage**: 25%
-   
-   ## [Member 3 Name]
-   
-   **Tasks Completed**:
-   
-   - Built Python application (models, repositories with audit, services)
-   - Implemented AuditService
-   - Wrote architecture documentation
-   
-   **Hours Contributed**: [X hours]
-   
-   **Contribution Percentage**: 25%
-   
-   ## [Member 4 Name]
-   
-   **Tasks Completed**:
-   
-   - Built secure REST API with FastAPI
-   - Wrote all tests including security tests (70%+ coverage)
-   - Created API documentation and README
-   
-   **Hours Contributed**: [X hours]
-   
-   **Contribution Percentage**: 25%
-   
-   ## Collaboration Process
-   
-   - Met [X] times per week
-   - Used [collaboration tools: Zoom, Discord, etc.]
-   - Reviewed each other's work before finalizing
-   - [Any other collaboration details]
-
-
-Submission Checklist
----------------------
-
-.. admonition:: ✅ Before Submitting
+.. admonition:: Submission Checklist
    :class: tip
 
-   **SQL Files** (3 files):
-   
-   - [ ] schema.sql creates roles (physician, nurse, billing_staff, auditor)
-   - [ ] schema.sql includes audit triggers for all PHI tables
-   - [ ] schema.sql includes all 20+ constraints from GP1
-   - [ ] data.sql contains ONLY synthetic data (no real patient data!)
-   - [ ] data.sql meets minimum volume requirements (200+ patients, etc.)
-   - [ ] queries.sql contains 10+ queries with documentation headers
-   
+   **SQL Files**:
+
+   - [ ] ``schema.sql`` creates all tables, constraints, indexes, triggers
+   - [ ] ``schema.sql`` includes healthcare identifier constraints (MRN, NPI, DEA)
+   - [ ] ``data.sql`` contains ONLY synthetic data (no real patient data!)
+   - [ ] ``data.sql`` meets minimum volume requirements and loads without constraint violations
+   - [ ] ``queries.sql`` contains 8+ queries with documentation headers
+
    **Python Application**:
-   
-   - [ ] AuditService logs all PHI access
-   - [ ] Repositories integrate audit logging
-   - [ ] Role-based field filtering works (billing sees limited PHI)
-   - [ ] 8+ API endpoints with access reason header
-   - [ ] FastAPI auto-docs accessible at ``/docs``
-   
-   **Tests**:
-   
-   - [ ] Security tests verify RBAC and audit logging
-   - [ ] Coverage report shows 70%+ coverage
-   
-   **Documentation** (5 files):
-   
-   - [ ] Index strategy with clinical justifications
-   - [ ] Query catalog with EXPLAIN ANALYZE for 5+ queries
-   - [ ] Architecture overview with security layers
-   - [ ] API documentation with HIPAA security notes
-   - [ ] HIPAA compliance documentation
-   
-   **Quality Checks**:
-   
-   - [ ] ``schema.sql`` runs without errors on fresh database
-   - [ ] ``data.sql`` loads without constraint violations
-   - [ ] Contributions sum to 100%
-   - [ ] ZIP file named correctly: ``GP2_Healthcare_Team{X}.zip``
 
+   - [ ] Application runs from command line without errors
+   - [ ] Connection pooling implemented with context manager
+   - [ ] Repository pattern with CRUD for major entities
+   - [ ] Service layer with business logic
+   - [ ] 6+ menu options working in CLI
 
-Common Mistakes to Avoid
--------------------------
+   **Documentation**:
 
-.. danger::
-   
-   **Frequent Submission Errors**
-   
-   Learn from past teams' mistakes:
-   
-   ❌ **Using real patient data** - NEVER. Always use Faker or manual synthetic data
-   
-   ❌ **Missing audit triggers** - Every PHI table needs audit logging
-   
-   ❌ **No access reason tracking** - HIPAA requires documenting WHY data was accessed
-   
-   ❌ **Hardcoded credentials** - Database passwords in source code instead of .env
-   
-   ❌ **Same access for all roles** - Billing staff should NOT see full patient records
-   
-   ❌ **Audit failures silently ignored** - Audit logging must never fail silently
-   
-   ❌ **No security tests** - Must verify RBAC and audit logging work correctly
-   
-   ❌ **Clinical queries without context** - Each query needs clinical/business justification
+   - [ ] README.md with setup and usage instructions
+   - [ ] .env.example with placeholder values
+   - [ ] requirements.txt with all dependencies
+   - [ ] team_contributions.md
 
 
 Grading Rubric
@@ -759,59 +547,53 @@ Grading Rubric
 
 .. list-table::
    :header-rows: 1
-   :widths: 30 10 60
+   :widths: 35 10 55
    :class: compact-table
 
    * - Component
      - Points
      - Criteria
-   * - **Part 1: HIPAA Schema**
+   * - **Part 1: Schema**
      - 3
-     - Security controls and roles (1pt); Audit triggers for PHI tables (1pt); Constraints and indexes (1pt)
+     - Complete DDL (1pt); proper constraints and indexes (1pt); healthcare identifier constraints with triggers and ENUMs (1pt)
    * - **Part 1: Synthetic Data**
      - 2
-     - Realistic clinical patterns (1pt); Adequate volume and variety (1pt)
+     - Meets volume requirements (1pt); realistic clinical patterns, constraint-clean, and verified (1pt)
    * - **Part 2: SQL Queries**
      - 5
-     - 10+ queries across clinical/financial/operational (2pts); Correct results (1.5pts); Documentation and EXPLAIN ANALYZE (1.5pts)
-   * - **Part 3: Secure Python App**
+     - 8+ queries across clinical/financial/operational (2pts); correct results (1.5pts); query documentation (1.5pts)
+   * - **Part 3: Python Application**
      - 3
-     - Audit service integration (1pt); RBAC in repositories (1pt); Clean layered architecture (1pt)
-   * - **Part 3: REST API**
+     - Clean layered architecture (1pt); repository pattern with CRUD (1pt); error handling and connection pooling (1pt)
+   * - **Part 3: CLI Interface**
      - 2
-     - 8+ secure endpoints (1pt); Access reason tracking and documentation (1pt)
+     - 6+ working menu options (1pt); clear output formatting and input validation (1pt)
    * - **Total**
      - **15**
-     - 
+     -
+
+
+Common Mistakes to Avoid
+-------------------------
+
+.. danger::
+
+   **Frequent Errors**
+
+   - Using real patient data (NEVER; always use synthetic data)
+   - Hardcoded credentials (use .env files, never commit passwords)
+   - Missing healthcare identifier constraints (MRN uniqueness, DEA for controlled substances)
+   - Clinical queries without context (each query needs clinical/business justification)
+   - Forgetting triggers (``updated_at`` timestamps should be automatic)
 
 
 Tips for Success
 ----------------
 
 .. tip::
-   
-   **How to Excel in GP2**
-   
-   - **Start with security** - Implement roles and audit triggers before writing application code. Security is not an afterthought.
-   - **Test queries in psql first** - Write and debug SQL interactively before embedding in Python.
-   - **Use Faker creatively** - Generate realistic clinical data with appropriate age distributions, diagnosis codes, and medication combinations.
-   - **Write security tests first** - Verify RBAC and audit logging before building more features.
-   - **Think like a clinician** - For each query, ask "Why would a doctor/nurse/billing staff need this?"
-   - **Use office hours** - Bring your schema for security review. Ask about HIPAA compliance strategies.
 
-
-Next Steps
-----------
-
-After completing GP2, you will:
-
-- Receive feedback on your HIPAA compliance implementation
-- Identify clinical documentation that needs flexible schemas
-- Begin GP3: Adding MongoDB for clinical notes, care plans, and surveys
-- Design document schemas for variable-structure clinical data
-
-.. note::
-   
-   **Your GP2 implementation is the secure core** of the complete system. GP3 (MongoDB) and GP4 (Neo4j + deployment) extend this HIPAA-compliant foundation.
-   
-   Start thinking: Which clinical documents have variable structures that would benefit from a document database?
+   - **Start with the schema**: Get your database working and data loaded before touching Python. A solid schema prevents headaches later.
+   - **Test queries in psql first**: Write and debug SQL interactively before embedding in Python code.
+   - **Think like a clinician**: For each query, ask "Why would a doctor or billing staff need this?"
+   - **Layer your application**: Keep database logic in repositories, business logic in services, and user interaction in the CLI. This separation makes testing much easier.
+   - **Use office hours**: Bring your schema for review. Ask about query optimization strategies.

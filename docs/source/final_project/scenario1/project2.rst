@@ -5,30 +5,16 @@ Group Project 2: PostgreSQL + Python Integration
 Overview
 --------
 
-Implement your GP1 design in PostgreSQL, populate with realistic data, write complex SQL queries supporting traffic operations, and build a Python application with REST API.
+Implement your GP1 design in PostgreSQL, generate realistic sample data, write SQL queries supporting traffic operations, and build a Python command-line application with a menu-driven interface.
 
-**Timeline**: 5 weeks
+.. card::
+   :class-card: sd-bg-warning sd-bg-text-dark
 
-**Weight**: 15 points (37.5% of final project)
-
-**Team Size**: 4 students
+   **Timeline**: 3 weeks |
+   **Weight**: 15 points (30% of final project) |
+   **Team Size**: 4 students
 
 **Builds on**: Your GP1 relational design
-
-
-.. important::
-   
-   **What You'll Deliver**
-   
-   This project requires a **complete PostgreSQL implementation** with Python integration:
-   
-   - 3 SQL files (schema, data, queries)
-   - 4 documentation files (index strategy, query catalog, architecture, API docs)
-   - 1 Python application (config, models, repositories, services, API)
-   - 1 test suite with coverage report
-   - 1 README file
-   
-   **Submission**: Single ZIP file named ``GP2_Traffic_Team{X}.zip``
 
 
 Learning Objectives
@@ -38,13 +24,11 @@ By completing this group project, you will be able to:
 
 - Translate conceptual designs into physical PostgreSQL schemas
 - Write DDL with tables, constraints, indexes, and triggers
-- Generate realistic test data respecting all constraints
-- Master complex SQL (JOINs, CTEs, window functions, geospatial queries)
-- Optimize queries using indexes and EXPLAIN ANALYZE
+- Generate and validate sample data respecting all constraints
+- Write multi-table JOINs, aggregate queries, subqueries, and geospatial queries
 - Integrate PostgreSQL with Python using psycopg2
 - Design repository and service layer architecture
-- Build REST APIs with FastAPI
-- Write comprehensive tests (>70% coverage)
+- Build a menu-driven CLI application
 
 
 Part 1: Physical Database Implementation
@@ -52,80 +36,53 @@ Part 1: Physical Database Implementation
 
 **Objective**: Transform your GP1 design into a working PostgreSQL database with realistic data.
 
-.. dropdown:: 📋 Task 1.1: Schema Implementation (3 points)
+.. dropdown:: Task 1.1: Schema Implementation (3 points)
+   :icon: gear
    :class-container: sd-border-primary
    :open:
 
    Create ``schema.sql`` with:
-   
+
    - **Database setup**: Extensions (PostGIS for geospatial)
    - **Custom types**: ENUMs for constrained values
    - **All tables**: Complete with all columns from GP1
    - **Primary keys**: All defined correctly
-   - **Foreign keys**: With ON DELETE/UPDATE rules from GP1
-   - **Check constraints**: All business rules (15+ constraints)
+   - **Foreign keys**: With ON DELETE/UPDATE rules
+   - **Check constraints**: Business rules from your GP1 entity catalog
    - **NOT NULL constraints**: All mandatory fields
    - **UNIQUE constraints**: All candidate keys
    - **Indexes**: Strategic indexes for query performance
-   - **Triggers**: Automatic updated_at timestamps
-   
+   - **Triggers**: Automatic ``updated_at`` timestamps
+
    **PostGIS Integration**:
-   
+
    .. code-block:: sql
-   
+
       CREATE EXTENSION IF NOT EXISTS postgis;
-      
-      ALTER TABLE intersection 
+
+      ALTER TABLE intersection
       ADD COLUMN location GEOGRAPHY(POINT, 4326);
-      
-      CREATE INDEX idx_intersection_location 
+
+      CREATE INDEX idx_intersection_location
       ON intersection USING GIST (location);
-   
+
    **File to create**: ``postgresql/schema.sql``
 
-.. dropdown:: 📋 Task 1.2: Index Strategy
+.. dropdown:: Task 1.2: Sample Data Generation (2 points)
+   :icon: gear
    :class-container: sd-border-primary
 
-   For each index, document:
-   
-   - **Purpose**: What queries does this speed up?
-   - **Type**: B-tree (default), GIST (spatial), GIN (full-text)
-   - **Cost**: Impact on write performance
-   - **Justification**: Why benefits outweigh costs
-   
-   **Common Patterns**:
-   
-   - Foreign keys: Always index for JOIN performance
-   - Frequently filtered columns: Index if selective
-   - Geospatial: Use GIST indexes
-   - Composite: Consider query patterns (WHERE + ORDER BY)
-   
-   **Example Entry**:
-   
-   .. code-block:: text
-   
-      Index: idx_incident_severity_reported
-      Table: incident
-      Columns: (severity_level, reported_at DESC)
-      Type: B-tree (composite)
-      
-      Purpose: Speeds up dashboard query "recent critical incidents"
-      Query Pattern: WHERE severity_level = 'critical' ORDER BY reported_at DESC
-      
-      Justification:
-      - This query runs every 30 seconds on the operations dashboard
-      - Without index: sequential scan on 75+ incident rows
-      - With index: direct lookup + already sorted
-      - Write cost: Minimal (incidents inserted ~10/day)
-   
-   **File to create**: ``docs/index_strategy.md``
+   Generate realistic sample data that fits your schema. We provide a :doc:`Data Generation Guide <data_generation_guide>` containing a ready-to-use prompt. The workflow is:
 
-.. dropdown:: 📋 Task 1.3: Sample Data Generation (2 points)
-   :class-container: sd-border-primary
+   1. Export your schema definition with ``pg_dump`` or ``\d+`` commands
+   2. Paste the provided prompt and your schema into an LLM (e.g., Claude, ChatGPT)
+   3. Review the generated INSERT statements for correctness
+   4. Save as ``data.sql`` and load into your database
+   5. Fix any constraint violations and verify data quality
 
-   Create ``data.sql`` with minimum data volumes:
-   
-   - 50+ intersections in realistic city grid
+   **Minimum Data Volumes**:
+
+   - 50+ intersections in a realistic city grid
    - 100+ traffic signals across intersections
    - 150+ sensors (multiple per intersection)
    - 50+ road segments connecting intersections
@@ -137,147 +94,107 @@ Part 1: Physical Database Implementation
    - 5+ weather stations
    - 10+ parking facilities
    - 5+ traffic control zones
-   
-   **Realistic Patterns**:
-   
-   - Geographic clustering (downtown vs. suburbs)
-   - Temporal distribution (incidents during rush hour)
-   - Logical relationships (sensors match intersection type)
-   - Edge cases (NULL optional fields, boundary values)
-   
-   **Data Quality Checks**:
-   
+
+   **Data Quality Checks** (run after loading):
+
    .. code-block:: text
-   
+
       After loading data, verify:
-      
+
       1. All FK references resolve (no orphan records)
       2. All CHECK constraints pass
       3. Geographic coordinates form a realistic grid
       4. Temporal data spans at least 90 days
       5. Every intersection has at least one signal
       6. Every zone contains multiple intersections
-   
+
    **File to create**: ``postgresql/data.sql``
 
 
-Part 2: Complex SQL Queries
-----------------------------
+Part 2: SQL Queries
+--------------------
 
-**Objective**: Write 10+ queries demonstrating mastery of SQL features.
+**Objective**: Write 8+ queries demonstrating your ability to extract meaningful information from the database.
 
-.. dropdown:: 📋 Multi-Table JOINs (2 queries minimum)
+.. dropdown:: Query Categories (5 points total)
+   :icon: gear
    :class-container: sd-border-primary
    :open:
 
-   Combine 4+ tables to answer business questions.
-   
-   **Example Challenge**: 
-   *"Which intersections have the most incidents, and what is the maintenance status of their infrastructure?"*
-   
-   Requires: INTERSECTION, INCIDENT, TRAFFIC_SIGNAL, MAINTENANCE_SCHEDULE
+   Write at least **8 queries** covering all of the following categories:
 
-.. dropdown:: 📋 Aggregate Functions (2 queries minimum)
-   :class-container: sd-border-primary
+   **Multi-Table JOINs (3 queries minimum)**
+
+   Combine 3 or more tables to answer business questions.
+
+   Examples:
+
+   - *"Which intersections have the most incidents, and what sensors are installed there?"*
+   - *"List all maintenance tasks with crew details and intersection information."*
+   - *"Find signals at intersections that have had critical incidents in the last 30 days."*
+
+   **Aggregate Functions (2 queries minimum)**
 
    Use COUNT, SUM, AVG, MIN, MAX with GROUP BY and HAVING.
-   
-   **Example Challenge**:
-   *"Calculate average incident resolution time by severity level and zone"*
 
-.. dropdown:: 📋 Window Functions (2 queries minimum)
-   :class-container: sd-border-primary
+   Examples:
 
-   Use RANK(), ROW_NUMBER(), NTILE(), or aggregate window functions.
-   
-   **Example Challenge**:
-   *"Rank intersections by incident count with running totals and 7-day moving average"*
+   - *"Calculate average incident resolution time by severity level."*
+   - *"Count sensors per intersection and find intersections with fewer than 2 sensors."*
 
-.. dropdown:: 📋 CTEs and Subqueries (2 queries minimum)
-   :class-container: sd-border-primary
+   **Subqueries (1 query minimum)**
 
-   Use Common Table Expressions for complex logic.
-   
-   **Example Challenge**:
-   *"Find intersections with above-average incident rates in their zone"*
+   Use subqueries in WHERE, FROM, or SELECT clauses to solve multi-step problems.
 
-.. dropdown:: 📋 Advanced Features (2 queries minimum)
-   :class-container: sd-border-primary
+   Examples:
 
-   Choose from:
-   
-   - **Recursive CTEs**: Route finding between intersections
-   - **PostGIS Geospatial**: Find infrastructure within 500m of incidents
-   - **ROLLUP/CUBE**: Hierarchical summaries by zone/type/severity
-   - **Materialized Views**: Pre-computed performance metrics
+   - *"Find intersections with more incidents than the citywide average."*
+   - *"List crews that have never been assigned to a critical-priority maintenance task."*
 
-.. dropdown:: 📋 Query Documentation Template
+   **PostGIS Geospatial (2 queries minimum)**
+
+   Use PostGIS functions for location-based analysis.
+
+   Examples:
+
+   - *"Find all sensors within 500 meters of a given incident location."*
+   - *"List the 5 nearest emergency facilities to a specific intersection."*
+
+.. dropdown:: Query Documentation Format
+   :icon: gear
    :class-container: sd-border-primary
 
    Use this format for **every query** in ``queries.sql``:
-   
+
    .. code-block:: sql
-   
+
       -- Query #X: [Title]
       -- Business Question: [Problem being solved]
-      -- Complexity Features: [JOINs, aggregates, windows used]
+      -- Complexity Features: [JOINs, aggregates, subqueries, geospatial]
       -- Tables Used: [List all tables]
-      -- Index Usage: [Which indexes help this query]
-      -- Performance Notes: [Execution time, row estimates]
-      
+
       [YOUR SQL QUERY]
-      
+
       -- Expected Output: [Description of result columns]
       -- Sample Results: [First 3 rows with representative data]
-   
+
    **File to create**: ``postgresql/queries.sql``
 
-.. dropdown:: 📋 Query Catalog
-   :class-container: sd-border-primary
 
-   Create a summary document cataloging all queries:
-   
-   .. list-table::
-      :header-rows: 1
-      :class: compact-table
-   
-      * - Query #
-        - Title
-        - Category
-        - Tables Used
-        - Key Features
-      * - 1
-        - High-Incident Intersections
-        - Multi-Table JOIN
-        - INTERSECTION, INCIDENT, SIGNAL, MAINTENANCE
-        - 4-table JOIN, COUNT, GROUP BY
-      * - 2
-        - Resolution Time by Severity
-        - Aggregate
-        - INCIDENT, TRAFFIC_ZONE
-        - AVG, HAVING, date arithmetic
-   
-   Include EXPLAIN ANALYZE output for **at least 5 queries** showing:
-   
-   - Execution plan (index scans vs. sequential scans)
-   - Actual vs. estimated rows
-   - Total execution time
-   - Buffer usage
-   
-   **File to create**: ``docs/query_catalog.md``
+Part 3: Python CLI Application
+-------------------------------
 
+**Objective**: Build a layered Python application with a menu-driven command-line interface that connects to your PostgreSQL database.
 
-Part 3: Python Integration
----------------------------
-
-**Objective**: Build a layered Python application connecting to your PostgreSQL database.
-
-.. dropdown:: 📋 Task 3.1: Application Architecture (5 points)
+.. dropdown:: Task 3.1: Application Architecture (3 points)
+   :icon: gear
    :class-container: sd-border-primary
    :open:
 
+   Organize your code in layers:
+
    .. code-block:: text
-   
+
       traffic-management/
       ├── requirements.txt
       ├── .env.example
@@ -292,33 +209,47 @@ Part 3: Python Integration
       │   └── [other repos].py
       ├── services/
       │   └── traffic_service.py   # Business logic
-      ├── api/
-      │   └── endpoints.py         # FastAPI routes
+      ├── cli/
+      │   └── main.py              # Menu-driven interface
       └── tests/
 
-.. dropdown:: 📋 Connection Management
+   **Layer Responsibilities**:
+
+   - **config/**: Database connection pooling with psycopg2. Configuration loaded from environment variables.
+   - **models/**: Python dataclasses representing each entity. Each dataclass mirrors a database table and includes a ``from_row()`` class method to convert query results into objects.
+   - **repositories/**: CRUD operations and custom queries for each entity. Each repository handles its own SQL and returns model objects. Repositories do not contain business logic.
+   - **services/**: Business logic combining multiple repositories. For example, a ``traffic_service.get_intersection_dashboard(id)`` method might call the intersection repository, incident repository, and sensor repository to assemble a complete view.
+   - **cli/**: Menu-driven interface that calls service methods and formats output for the terminal. The CLI contains no SQL and no direct database access.
+
+.. dropdown:: Task 3.2: Connection Management
+   :icon: gear
    :class-container: sd-border-primary
 
-   Implement connection pooling with psycopg2:
-   
-   - Pool size: 2-10 connections
-   - Context manager for automatic cleanup
-   - Error handling for connection failures
-   - Configuration from environment variables
-   
-   **Example**:
-   
+   Implement connection pooling with psycopg2. Your connection management should handle four concerns:
+
+   **Pool size**: Use ``psycopg2.pool.SimpleConnectionPool`` with ``minconn=2`` and ``maxconn=10``. The pool pre-creates 2 connections at startup and can grow up to 10 under load. This avoids the overhead of creating a new connection for every query.
+
+   **Context manager for automatic cleanup**: Wrap pool access in a context manager so that connections are always returned to the pool, even if an exception occurs. This prevents connection leaks where a borrowed connection is never returned.
+
+   **Error handling for connection failures**: Catch ``psycopg2.OperationalError`` when creating the pool or borrowing connections. Print a clear error message (e.g., "Cannot connect to database. Check your .env settings.") instead of crashing with a raw stack trace.
+
+   **Configuration from environment variables**: Read database host, port, name, user, and password from environment variables (using ``os.getenv()`` with sensible defaults). Provide a ``.env.example`` file so teammates can set up their own environment without sharing credentials in version control.
+
+   **Example implementation**:
+
    .. code-block:: python
-   
-      from psycopg2 import pool
+
+      from psycopg2 import pool, OperationalError
+      from contextlib import contextmanager
       import os
-      
+
       class DatabaseConfig:
           _pool = None
-          
+
           @classmethod
-          def get_pool(cls):
-              if cls._pool is None:
+          def initialize(cls):
+              """Create the connection pool. Call once at application startup."""
+              try:
                   cls._pool = pool.SimpleConnectionPool(
                       minconn=2,
                       maxconn=10,
@@ -326,33 +257,65 @@ Part 3: Python Integration
                       port=os.getenv("DB_PORT", "5432"),
                       dbname=os.getenv("DB_NAME", "traffic_management"),
                       user=os.getenv("DB_USER", "postgres"),
-                      password=os.getenv("DB_PASSWORD")
+                      password=os.getenv("DB_PASSWORD", "")
                   )
-              return cls._pool
+              except OperationalError as e:
+                  print(f"Error: Cannot connect to database. Check .env settings.")
+                  print(f"Details: {e}")
+                  raise SystemExit(1)
 
-.. dropdown:: 📋 Repository Pattern
+          @classmethod
+          @contextmanager
+          def get_connection(cls):
+              """
+              Borrow a connection from the pool.
+
+              Usage:
+                  with DatabaseConfig.get_connection() as conn:
+                      with conn.cursor() as cur:
+                          cur.execute("SELECT ...")
+
+              The connection is automatically returned to the pool
+              when the with-block exits, even if an exception occurs.
+              """
+              if cls._pool is None:
+                  cls.initialize()
+              conn = cls._pool.getconn()
+              try:
+                  yield conn
+                  conn.commit()
+              except Exception:
+                  conn.rollback()
+                  raise
+              finally:
+                  cls._pool.putconn(conn)
+
+          @classmethod
+          def close_all(cls):
+              """Close all connections. Call at application shutdown."""
+              if cls._pool is not None:
+                  cls._pool.closeall()
+
+.. dropdown:: Task 3.3: Repository Pattern
+   :icon: gear
    :class-container: sd-border-primary
 
    Each major entity needs a repository with:
-   
-   - ``find_by_id(id)`` - Single record lookup
-   - ``find_all(limit, offset)`` - Paginated list
-   - ``create(entity)`` - Insert new record
-   - ``update(entity)`` - Update existing
-   - ``delete(id)`` - Remove record
+
+   - ``find_by_id(id)`` -- Single record lookup
+   - ``find_all(limit, offset)`` -- Paginated list
+   - ``create(entity)`` -- Insert new record
+   - ``update(entity)`` -- Update existing
+   - ``delete(id)`` -- Remove record
    - Custom query methods (e.g., ``find_by_zone(zone_id)``)
-   
+
    **Example**:
-   
+
    .. code-block:: python
-   
+
       class IntersectionRepository:
-          def __init__(self, pool):
-              self.pool = pool
-          
           def find_by_id(self, intersection_id):
-              conn = self.pool.getconn()
-              try:
+              with DatabaseConfig.get_connection() as conn:
                   with conn.cursor() as cur:
                       cur.execute(
                           "SELECT * FROM intersection WHERE intersection_id = %s",
@@ -360,91 +323,124 @@ Part 3: Python Integration
                       )
                       row = cur.fetchone()
                       return Intersection.from_row(row) if row else None
-              finally:
-                  self.pool.putconn(conn)
 
-.. dropdown:: 📋 Task 3.2: REST API (3 points)
+          def find_all(self, limit=20, offset=0):
+              with DatabaseConfig.get_connection() as conn:
+                  with conn.cursor() as cur:
+                      cur.execute(
+                          "SELECT * FROM intersection ORDER BY intersection_id "
+                          "LIMIT %s OFFSET %s",
+                          (limit, offset)
+                      )
+                      return [Intersection.from_row(row) for row in cur.fetchall()]
+
+.. dropdown:: Task 3.4: Menu-Driven CLI (2 points)
+   :icon: gear
    :class-container: sd-border-primary
 
-   Implement **at least 8 endpoints**:
-   
-   **Basic CRUD** (3 minimum):
-   
-   - ``GET /intersections/{id}`` - Retrieve intersection
-   - ``GET /intersections`` - List with pagination
-   - ``GET /incidents/recent`` - Recent incidents with filters
-   
-   **Complex Queries** (3 minimum):
-   
-   - ``GET /intersections/high-incident`` - Problematic intersections
-   - ``GET /analytics/incident-trends`` - Trends over time
-   - ``GET /maintenance/overdue`` - Overdue maintenance tasks
-   
-   **Geospatial** (1 minimum):
-   
-   - ``GET /intersections/nearby?lat={lat}&lon={lon}&radius={m}``
-   
-   **Analytics** (1 minimum):
-   
-   - ``GET /analytics/performance`` - System-wide metrics
+   Build an interactive command-line interface that lets users explore the database through a menu system. The CLI should demonstrate your repository and service layer in action.
 
-.. dropdown:: 📋 API Documentation
+   **Minimum menu options (6 required)**:
+
+   Basic CRUD (2 minimum):
+
+   - Look up an intersection by ID
+   - List intersections with pagination
+
+   Complex queries (2 minimum):
+
+   - Show high-incident intersections (multi-table JOIN)
+   - Display incident counts by severity (aggregation)
+
+   Geospatial (1 minimum):
+
+   - Find nearby intersections given coordinates and radius
+
+   Analytics (1 minimum):
+
+   - Show system-wide performance metrics
+
+   **Example interaction**:
+
+   .. code-block:: text
+
+      === Traffic Management System ===
+
+      1. Look up intersection by ID
+      2. List all intersections (paginated)
+      3. Show high-incident intersections
+      4. Incident counts by severity
+      5. Nearby intersections (geospatial)
+      6. System performance metrics
+      7. Exit
+
+      Select option: 3
+
+      === High-Incident Intersections (Last 90 Days) ===
+
+      Rank  Intersection            Zone        Incidents  Sensors
+      ----  ----------------------  ----------  ---------  -------
+      1     Main St & 1st Ave       Downtown    12         4
+      2     Oak Blvd & Highway 9    Industrial   9         3
+      3     School Rd & Park Ave    School Zone  7         2
+      ...
+
+   **File to create**: ``cli/main.py``
+
+
+Part 4: Testing (Optional)
+--------------------------
+
+.. note::
+
+   Testing is **optional** for GP2. If you include tests, they will be considered favorably during grading but are not required. This section is provided for teams that want to practice writing automated tests.
+
+.. dropdown:: Test Suite
+   :icon: gear
    :class-container: sd-border-primary
 
-   FastAPI provides automatic Swagger docs. Ensure:
-   
-   - All endpoints have descriptions
-   - Query parameters documented
-   - Response models defined
-   - Example responses provided
-   - Error responses documented
-   
-   **File to create**: ``docs/api_documentation.md``
+   Write tests using ``pytest`` that verify the behavior of your repositories and services. You are testing that your Python code correctly interacts with the database and returns the expected results.
 
+   **What to test in repositories**:
 
-Part 4: Testing
----------------
+   - ``find_by_id()`` returns the correct entity for a known ID
+   - ``find_by_id()`` returns ``None`` for a non-existent ID
+   - ``find_all()`` returns a list respecting ``limit`` and ``offset``
+   - ``create()`` inserts a record that can then be retrieved
+   - ``update()`` modifies a record and the changes persist
+   - ``delete()`` removes a record so it can no longer be found
+   - Constraint violations (e.g., duplicate PK, invalid FK) raise appropriate exceptions
 
-**Objective**: Write automated tests covering all application layers.
+   **What to test in services**:
 
-.. dropdown:: 📋 Task 4.1: Test Categories (integrated into score)
-   :class-container: sd-border-primary
-   :open:
+   - Business logic methods return correct results (e.g., ``get_high_incident_intersections()`` returns intersections sorted by incident count)
+   - Methods that combine multiple repositories produce the expected combined output
+   - Edge cases: empty results, boundary values
 
-   **Repository Tests**:
-   
-   - CRUD operations work correctly
-   - Complex queries return expected results
-   - Error handling (constraint violations, not found)
-   
-   **Service Tests**:
-   
-   - Business logic functions correctly
-   - Multi-repository operations
-   - Edge cases handled
-   
-   **API Tests**:
-   
-   - Endpoints return correct status codes
-   - Response format matches specification
-   - Input validation works
-   - Error responses appropriate
+   **Running tests**:
 
-**Requirements**: Minimum 70% code coverage
+   Install the testing packages (if not already in your ``requirements.txt``):
 
+   .. code-block:: bash
 
-Submission Requirements
-------------------------
+      pip install pytest pytest-cov
 
-.. important::
-   
-   **Single ZIP File Submission**
-   
-   Submit **ONE** ZIP file to Canvas:
-   
-   ``GP2_Traffic_Team{X}.zip``
-   
-   Replace ``{X}`` with your team number (e.g., ``GP2_Traffic_Team03.zip``)
+   Then, from the **project root directory** (the folder containing ``src/`` and ``tests/``), run:
+
+   .. code-block:: bash
+
+      pytest tests/ --cov=src --cov-report=html
+
+   This generates an HTML coverage report in ``htmlcov/`` so you can see which lines are tested (i.e., at least half of the lines in your ``repositories/`` and ``services/`` code are executed by your test suite).
+
+   **Files to create**: ``tests/test_repositories.py`` and ``tests/test_services.py``
+
+   We provide starter versions of both files with test structure, fixtures, and commented-out test cases matching the application architecture described above. Download them here:
+
+   - :download:`test_repositories.py <test_repositories.py>`
+   - :download:`test_services.py <test_services.py>`
+
+   Uncomment and adapt the tests to match your actual class names, method signatures, and data.
 
 
 Folder Structure
@@ -454,320 +450,101 @@ Folder Structure
 
    GP2_Traffic_Team{X}/
    ├── postgresql/
-   │   ├── schema.sql
-   │   ├── data.sql
-   │   └── queries.sql
+   │   ├── schema.sql              # DDL with constraints, indexes, triggers
+   │   ├── data.sql                # Generated sample data
+   │   └── queries.sql             # 8+ documented queries
    ├── src/
    │   ├── config/
-   │   │   └── database.py
+   │   │   └── database.py         # Connection pooling
    │   ├── models/
-   │   │   ├── intersection.py
-   │   │   └── [other models].py
+   │   │   └── [entity].py         # Dataclasses
    │   ├── repositories/
    │   │   ├── base_repository.py
-   │   │   ├── intersection_repo.py
-   │   │   └── [other repos].py
+   │   │   └── [entity]_repo.py    # CRUD + custom queries
    │   ├── services/
-   │   │   └── traffic_service.py
-   │   └── api/
-   │       └── endpoints.py
-   ├── tests/
+   │   │   └── traffic_service.py  # Business logic
+   │   └── cli/
+   │       └── main.py             # Menu-driven interface
+   ├── tests/                      # Optional
    │   ├── test_repositories.py
-   │   ├── test_services.py
-   │   └── test_api.py
-   ├── docs/
-   │   ├── index_strategy.md
-   │   ├── query_catalog.md
-   │   ├── architecture.md
-   │   └── api_documentation.md
+   │   └── test_services.py
    ├── requirements.txt
    ├── .env.example
    ├── README.md
    └── team_contributions.md
 
 
-Required Files by Task
------------------------
+Documentation Files
+-------------------
 
-.. dropdown:: 📄 Part 1: Physical Database Implementation
-   :class-container: sd-border-info
+.. dropdown:: What goes in each file
+   :icon: gear
+   :class-container: sd-border-primary
+   :open:
 
-   **SQL Files** (3 files):
-   
-   - ``postgresql/schema.sql`` - Complete DDL with constraints, indexes, triggers
-   - ``postgresql/data.sql`` - Realistic sample data meeting volume requirements
-   - ``postgresql/queries.sql`` - 10+ documented queries
-   
-   **Documentation** (2 files):
-   
-   - ``docs/index_strategy.md`` - Index justifications
-   - ``docs/query_catalog.md`` - Query summaries with EXPLAIN ANALYZE
+   **requirements.txt**
 
-.. dropdown:: 📄 Part 3: Python Integration
-   :class-container: sd-border-info
+   List all Python packages needed to run your application. At minimum this includes ``psycopg2-binary`` and ``python-dotenv``. Include ``pytest`` and ``pytest-cov`` if you are writing tests.
 
-   **Application** (full src/ directory):
-   
-   - ``src/config/database.py`` - Connection pooling
-   - ``src/models/*.py`` - Dataclass models
-   - ``src/repositories/*.py`` - CRUD and custom queries
-   - ``src/services/*.py`` - Business logic layer
-   - ``src/api/endpoints.py`` - FastAPI routes
-   
-   **Documentation** (2 files):
-   
-   - ``docs/architecture.md`` - Application architecture overview
-   - ``docs/api_documentation.md`` - API endpoint documentation
+   **.env.example**
 
-.. dropdown:: 📄 Part 4: Testing + Supporting Files
-   :class-container: sd-border-info
+   A template showing the environment variables your application needs, with placeholder values. Teammates and graders copy this to ``.env`` and fill in their own database credentials.
 
-   **Tests** (3+ files):
-   
-   - ``tests/test_repositories.py``
-   - ``tests/test_services.py``
-   - ``tests/test_api.py``
-   
-   **Supporting Files** (3 files):
-   
-   - ``requirements.txt`` - Python dependencies
-   - ``README.md`` - Project overview and setup guide
-   - ``team_contributions.md`` - Individual contributions
+   .. warning::
+
+      **Never commit your real ``.env`` file to Git.** It contains your database password. Add ``.env`` to your ``.gitignore`` file to prevent accidentally pushing credentials to GitHub. Only ``.env.example`` (with placeholder values) should be in version control.
+
+   .. code-block:: text
+
+      DB_HOST=localhost
+      DB_PORT=5432
+      DB_NAME=traffic_management
+      DB_USER=postgres
+      DB_PASSWORD=your_password_here
+
+   **README.md**
+
+   Setup and usage instructions. Include: prerequisites (Python 3, PostgreSQL with PostGIS), how to create the database and load the schema/data, how to configure ``.env``, how to install dependencies (``pip install -r requirements.txt``), how to run the application, and how to run tests (if applicable).
+
+   **team_contributions.md**
+
+   List each team member's name, the tasks they completed, hours contributed, and contribution percentage. Percentages must sum to 100%.
 
 
-README.md Template
-------------------
+Submission
+----------
 
-.. code-block:: markdown
+.. important::
 
-   # GP2: Traffic Management System - PostgreSQL + Python Integration
-   
-   **Team Number**: [Your team number]
-   
-   **Scenario**: Smart City Traffic Management
-   
-   ## Team Members
-   
-   - [Name 1] - [Email] - [Contribution %]
-   - [Name 2] - [Email] - [Contribution %]
-   - [Name 3] - [Email] - [Contribution %]
-   - [Name 4] - [Email] - [Contribution %]
-   
-   ## Project Overview
-   
-   [2-3 sentence description of your implementation approach]
-   
-   ## Setup Instructions
-   
-   ### Prerequisites
-   
-   - PostgreSQL 18 with PostGIS extension
-   - Python 3.10+
-   - pip
-   
-   ### Database Setup
-   
-   ```bash
-   createdb traffic_management
-   psql -d traffic_management -f postgresql/schema.sql
-   psql -d traffic_management -f postgresql/data.sql
-   ```
-   
-   ### Application Setup
-   
-   ```bash
-   pip install -r requirements.txt
-   cp .env.example .env
-   # Edit .env with your database credentials
-   uvicorn src.api.endpoints:app --reload
-   ```
-   
-   ### Running Tests
-   
-   ```bash
-   pytest tests/ --cov=src --cov-report=html
-   ```
-   
-   ## Key Design Decisions
-   
-   1. **Decision 1**: [Brief explanation and rationale]
-   2. **Decision 2**: [Brief explanation and rationale]
-   3. **Decision 3**: [Brief explanation and rationale]
-   
-   ## Query Highlights
-   
-   - Query #X: [Most interesting query and what it demonstrates]
-   - Query #Y: [Another highlight]
-   
-   ## API Endpoints Summary
-   
-   | Method | Endpoint | Description |
-   |--------|----------|-------------|
-   | GET | /intersections/{id} | Retrieve intersection |
-   | GET | /intersections | List with pagination |
-   | [Continue for all endpoints] | | |
-   
-   ## File Guide
-   
-   - `postgresql/schema.sql` - Database schema with constraints and indexes
-   - `postgresql/data.sql` - Sample data (50+ intersections, 100+ signals, etc.)
-   - `postgresql/queries.sql` - 10+ complex SQL queries
-   - `src/` - Python application (config, models, repositories, services, API)
-   - `tests/` - Test suite with 70%+ coverage
-   - `docs/` - Technical documentation
-   
-   ## Tools Used
-   
-   - **Database**: PostgreSQL 18 + PostGIS
-   - **Language**: Python 3.x
-   - **Framework**: FastAPI
-   - **Testing**: pytest + pytest-cov
-   - **Documentation**: [Swagger/OpenAPI, Markdown, etc.]
-   
-   ## Notes for Graders
-   
-   [Any special notes, clarifications, or highlights]
+   Submit **one** ZIP file to Canvas: ``GP2_Traffic_Team{X}.zip``
+
+   Replace ``{X}`` with your team number (e.g., ``GP2_Traffic_Team03.zip``).
 
 
-Team Contributions Template
-----------------------------
-
-.. code-block:: markdown
-
-   # Team Contributions - GP2
-   
-   ## [Member 1 Name]
-   
-   **Tasks Completed**:
-   
-   - Created schema.sql with all tables and constraints
-   - Implemented PostGIS integration
-   - Wrote index strategy document
-   
-   **Hours Contributed**: [X hours]
-   
-   **Contribution Percentage**: 25%
-   
-   ## [Member 2 Name]
-   
-   **Tasks Completed**:
-   
-   - Generated sample data (data.sql)
-   - Wrote queries 1-5 (JOINs and aggregates)
-   - Created query catalog with EXPLAIN ANALYZE
-   
-   **Hours Contributed**: [X hours]
-   
-   **Contribution Percentage**: 25%
-   
-   ## [Member 3 Name]
-   
-   **Tasks Completed**:
-   
-   - Built Python application (models, repositories, services)
-   - Implemented connection pooling
-   - Wrote architecture documentation
-   
-   **Hours Contributed**: [X hours]
-   
-   **Contribution Percentage**: 25%
-   
-   ## [Member 4 Name]
-   
-   **Tasks Completed**:
-   
-   - Built REST API with FastAPI
-   - Wrote all tests (70%+ coverage)
-   - Created API documentation and README
-   
-   **Hours Contributed**: [X hours]
-   
-   **Contribution Percentage**: 25%
-   
-   ## Collaboration Process
-   
-   - Met [X] times per week
-   - Used [collaboration tools: Zoom, Discord, etc.]
-   - Reviewed each other's work before finalizing
-   - [Any other collaboration details]
-
-
-Submission Checklist
----------------------
-
-.. admonition:: ✅ Before Submitting
+.. admonition:: Submission Checklist
    :class: tip
 
-   **SQL Files** (3 files):
-   
-   - [ ] schema.sql creates all tables, constraints, indexes, triggers
-   - [ ] schema.sql includes PostGIS extension and geography columns
-   - [ ] data.sql meets minimum volume requirements (50+ intersections, etc.)
-   - [ ] data.sql passes all constraints (no errors on import)
-   - [ ] queries.sql contains 10+ queries with documentation headers
-   
+   **SQL Files**:
+
+   - [ ] ``schema.sql`` creates all tables, constraints, indexes, triggers
+   - [ ] ``schema.sql`` includes PostGIS extension and geography columns
+   - [ ] ``data.sql`` meets minimum volume requirements and loads without constraint violations
+   - [ ] ``queries.sql`` contains 8+ queries with documentation headers
+
    **Python Application**:
-   
-   - [ ] Application runs with ``uvicorn`` without errors
-   - [ ] Connection pooling implemented and configured
+
+   - [ ] Application runs from command line without errors
+   - [ ] Connection pooling implemented with context manager
    - [ ] Repository pattern with CRUD for major entities
    - [ ] Service layer with business logic
-   - [ ] 8+ API endpoints working
-   - [ ] FastAPI auto-docs accessible at ``/docs``
-   
-   **Tests**:
-   
-   - [ ] Test suite runs with ``pytest``
-   - [ ] Coverage report shows 70%+ coverage
-   - [ ] Repository, service, and API tests included
-   
-   **Documentation** (4 files):
-   
-   - [ ] Index strategy with justifications for each index
-   - [ ] Query catalog with EXPLAIN ANALYZE for 5+ queries
-   - [ ] Architecture overview describing layer responsibilities
-   - [ ] API documentation with all endpoints
-   
-   **Supporting Files**:
-   
-   - [ ] README.md with setup instructions
-   - [ ] team_contributions.md with individual contributions
-   - [ ] requirements.txt with all Python dependencies
-   - [ ] .env.example with required environment variables
-   
-   **Quality Checks**:
-   
-   - [ ] ``schema.sql`` runs without errors on fresh database
-   - [ ] ``data.sql`` loads without constraint violations
-   - [ ] All API endpoints return correct responses
-   - [ ] Contributions sum to 100%
-   - [ ] ZIP file named correctly: ``GP2_Traffic_Team{X}.zip``
+   - [ ] 6+ menu options working in CLI
 
+   **Documentation**:
 
-Common Mistakes to Avoid
--------------------------
-
-.. danger::
-   
-   **Frequent Submission Errors**
-   
-   Learn from past teams' mistakes:
-   
-   ❌ **No PostGIS extension** - Forgetting to enable PostGIS for geospatial queries
-   
-   ❌ **Hardcoded credentials** - Database passwords in source code instead of .env
-   
-   ❌ **Missing indexes** - Schema works but queries are painfully slow
-   
-   ❌ **Unrealistic data** - Random values that don't make geographic or temporal sense
-   
-   ❌ **No error handling** - Application crashes on bad input or missing records
-   
-   ❌ **Queries without documentation** - SQL files with no comments explaining purpose
-   
-   ❌ **Tests that don't run** - Test suite depends on specific data or environment
-   
-   ❌ **No EXPLAIN ANALYZE** - Missing query performance analysis
+   - [ ] README.md with setup and usage instructions
+   - [ ] .env.example with placeholder values
+   - [ ] requirements.txt with all dependencies
+   - [ ] team_contributions.md
 
 
 Grading Rubric
@@ -775,7 +552,7 @@ Grading Rubric
 
 .. list-table::
    :header-rows: 1
-   :widths: 30 10 60
+   :widths: 35 10 55
    :class: compact-table
 
    * - Component
@@ -783,51 +560,30 @@ Grading Rubric
      - Criteria
    * - **Part 1: Schema**
      - 3
-     - Complete DDL (1pt); Proper constraints and indexes (1pt); PostGIS integration (0.5pt); Triggers and ENUMs (0.5pt)
+     - Complete DDL (1pt); proper constraints and indexes (1pt); PostGIS integration with triggers and ENUMs (1pt)
    * - **Part 1: Sample Data**
      - 2
-     - Meets volume requirements (1pt); Realistic patterns and edge cases (1pt)
+     - Meets volume requirements (1pt); realistic patterns, constraint-clean, and verified (1pt)
    * - **Part 2: SQL Queries**
      - 5
-     - 10+ queries covering all categories (2pts); Correct results (1.5pts); Documentation and EXPLAIN ANALYZE (1.5pts)
-   * - **Part 3: Python App**
+     - 8+ queries covering all categories (2pts); correct results (1.5pts); query documentation (1.5pts)
+   * - **Part 3: Python Application**
      - 3
-     - Clean architecture with layers (1pt); Repository pattern with CRUD (1pt); Error handling and connection pooling (1pt)
-   * - **Part 3: REST API**
+     - Clean layered architecture (1pt); repository pattern with CRUD (1pt); error handling and connection pooling (1pt)
+   * - **Part 3: CLI Interface**
      - 2
-     - 8+ working endpoints (1pt); Documentation and response models (1pt)
+     - 6+ working menu options (1pt); clear output formatting and input validation (1pt)
    * - **Total**
      - **15**
-     - 
+     -
 
 
 Tips for Success
 ----------------
 
 .. tip::
-   
-   **How to Excel in GP2**
-   
-   - **Start with the schema** - Get your database working and data loaded before touching Python. A solid schema prevents headaches later.
-   - **Test queries in psql first** - Write and debug SQL interactively before embedding in Python code.
-   - **Use EXPLAIN ANALYZE frequently** - Understand query plans early. Add indexes when you see sequential scans on large tables.
-   - **Write tests as you go** - Don't wait until the end. Test each repository method as you build it.
-   - **Layer your application** - Keep database logic in repositories, business logic in services, and HTTP handling in API. This separation makes testing much easier.
-   - **Use office hours** - Bring your schema for review. Ask about query optimization strategies.
 
-
-Next Steps
-----------
-
-After completing GP2, you will:
-
-- Receive feedback from instructors
-- Identify performance bottlenecks in your PostgreSQL system
-- Begin GP3: Adding MongoDB for high-volume traffic event data
-- Design document schemas for sensor readings and traffic flow
-
-.. note::
-   
-   **Your GP2 implementation is the core** of the complete system. GP3 (MongoDB) and GP4 (Redis + deployment) extend this foundation.
-   
-   Start thinking: What data has flexible schemas or high write volume that might be better suited for a document database?
+   - **Start with the schema**: Get your database working and data loaded before touching Python. A solid schema prevents headaches later.
+   - **Test queries in psql first**: Write and debug SQL interactively before embedding in Python code.
+   - **Layer your application**: Keep database logic in repositories, business logic in services, and user interaction in the CLI. This separation makes testing much easier.
+   - **Use office hours**: Bring your schema for review. Ask about query optimization strategies.

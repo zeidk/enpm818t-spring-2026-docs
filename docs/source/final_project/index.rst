@@ -7,7 +7,7 @@ Overview
 
 The final project is the capstone experience of ENPM818T, where you will design, implement, and deploy a complete polyglot persistence system. Working in teams of 4 students, you will build a real-world database application that leverages multiple database technologies, each chosen for its specific strengths.
 
-The project spans 10 weeks through four progressive group projects (GP1 through GP4), allowing you to apply everything you learn in lectures to a substantial, portfolio-worthy system.
+The project spans 9 weeks through four progressive group projects (GP1 through GP4), allowing you to apply everything you learn in lectures to a substantial, portfolio-worthy system.
 
 
 What is Polyglot Persistence?
@@ -28,11 +28,17 @@ Rather than forcing all data into a single database technology (the traditional 
 
 **Example in This Project**:
 
-Your traffic management system will use:
+In Scenario 1 (Traffic Management), you might use:
 
 - **PostgreSQL** for infrastructure data (intersections, signals, maintenance schedules)
-- **MongoDB** for high-volume traffic events (1000+ writes per second)
-- **Redis** for real-time signal states (sub-millisecond latency required)
+- **MongoDB** for high-volume traffic events and sensor readings
+- **Redis** for real-time signal states and live congestion metrics
+
+In Scenario 2 (Healthcare), you might use:
+
+- **PostgreSQL** for structured patient records, appointments, and billing
+- **MongoDB** for clinical notes, imaging metadata, and flexible care plans
+- **Neo4j** for a medical knowledge graph modeling drug interactions
 
 Each database is chosen because it solves a specific problem better than the alternatives.
 
@@ -40,7 +46,7 @@ Each database is chosen because it solves a specific problem better than the alt
 Learn More About Polyglot Persistence
 --------------------------------------
 
-.. admonition:: 📚 Recommended Reading
+.. admonition:: Recommended Reading
    :class: note
 
    **Foundational Articles**:
@@ -110,24 +116,24 @@ The final project accounts for **40% of your overall course grade** and consists
      - Duration
    * - GP1: Relational Database Design
      - 10
-     - 25%
+     - 20%
      - 2 weeks
    * - GP2: PostgreSQL + Python Integration
      - 15
-     - 37.5%
+     - 30%
      - 3 weeks
    * - GP3: NoSQL Database Integration
      - 10
-     - 25%
+     - 20%
      - 2 weeks
    * - GP4: System Integration + Report
      - 15
-     - 12.5%
-     - 3 weeks
+     - 30%
+     - 2 weeks
    * - **Total**
      - **50**
      - **100%**
-     - **10 weeks**
+     - **9 weeks**
 
 
 Learning Objectives
@@ -165,11 +171,11 @@ Build a system managing traffic flow across 500+ urban intersections using:
 
 Build an integrated clinical and administrative system using:
 
-- **PostgreSQL**: Patient records, appointments, prescriptions, billing (HIPAA-compliant)
+- **PostgreSQL**: Patient records, appointments, prescriptions, billing
 - **MongoDB**: Clinical documents, imaging metadata, care plans (flexible schemas)
 - **Neo4j**: Medical knowledge graph for drug interactions and clinical decision support
 
-*Focus*: Regulatory compliance, complex relationships, clinical workflows
+*Focus*: Complex relationships, clinical workflows, medical knowledge modeling
 
 
 Progressive Structure
@@ -179,36 +185,34 @@ Each group project builds on the previous work:
 
 **GP1: Relational Database Design (2 weeks)**
 
-- Create **Conceptual Model** using Chen notation (entities with attributes as ovals)
-- Create **Logical Model** using Crow's Foot notation (entity tables with cardinalities)
+- Create **Conceptual Model** using Chen notation with (min,max) participation
+- Create **Logical Model** using Crow's Foot notation
 - Identify keys, constraints, and relationships
 - Normalize to 3NF with functional dependency analysis
-- Analyze denormalization trade-offs
+- Write 8-to-12-page design report
 
 **GP2: PostgreSQL Implementation (3 weeks)**
 
 - Implement your GP1 design in PostgreSQL
-- Generate realistic sample data
-- Write 10+ complex SQL queries (JOINs, CTEs, window functions)
+- Generate realistic synthetic data using LLM-assisted workflow
+- Write 8+ SQL queries (JOINs, aggregates, subqueries)
 - Build Python application with repository and service layers
-- Create REST API using FastAPI
-- Write comprehensive tests
+- Create menu-driven CLI application
 
 **GP3: NoSQL Integration (2 weeks)**
 
-- Design schemas for high-volume or semi-structured data
-- Choose appropriate NoSQL database for your scenario
-- Implement document collections, graph nodes, or key-value structures
-- Write 8+ complex NoSQL queries (aggregations, graph traversals)
+- Design MongoDB collections for semi-structured data
+- Implement document schemas with embedding and referencing
+- Write 6+ MongoDB queries (aggregation pipelines, text search, array operations)
 - Integrate with existing PostgreSQL application
-- Handle cross-database queries
+- Document polyglot data partitioning decisions
 
-**GP4: Complete System Integration (3 weeks)**
+**GP4: Complete System Integration (2 weeks)**
 
-- Add second NoSQL database (Redis for Traffic, Neo4j for Healthcare)
+- Add third database (Redis for Traffic, Neo4j for Healthcare)
 - Implement complete three-database architecture
 - Deploy using Docker Compose
-- Write comprehensive technical report (10 to 15 pages)
+- Write 8-to-12-page technical report
 - Optional: Present system to class
 
 
@@ -225,7 +229,7 @@ Team Formation
 2. Form teams with complementary skills:
    
    - Strong SQL background
-   - Python/API development experience
+   - Python development experience
    - System architecture interest
    - Documentation skills
 
@@ -238,20 +242,22 @@ Academic Integrity
 
 .. warning::
 
-   **No AI-Generated Code**
-   
-   Per syllabus, you may NOT use ChatGPT, GitHub Copilot, or similar tools to generate code for group projects. All code must be original team work.
-   
+   **AI Usage Policy**
+
+   All application code (Python, SQL queries, CLI) must be original team work. You may NOT use ChatGPT, GitHub Copilot, or similar tools to generate application code.
+
    **Permitted**:
-   - Using AI for brainstorming ideas
-   - Getting help understanding concepts
-   - Debugging assistance (must understand and explain fixes)
-   
+
+   - Generating synthetic INSERT data using the provided Data Generation Guide
+   - Brainstorming ideas and understanding concepts
+   - Debugging assistance (you must understand and be able to explain all fixes)
+
    **Prohibited**:
-   - Generating complete functions or queries
-   - Copy-pasting AI-generated code
-   - Using AI to write documentation
-   
+
+   - Generating complete functions, queries, or modules
+   - Copy-pasting AI-generated application code
+   - Using AI to write documentation or reports
+
    Violations will be treated as academic dishonesty.
 
 **Collaboration Guidelines**:
@@ -331,7 +337,6 @@ Support Resources
 - MongoDB: https://docs.mongodb.com/
 - Redis: https://redis.io/documentation
 - Neo4j: https://neo4j.com/docs/
-- FastAPI: https://fastapi.tiangolo.com/
 
 **Discussion Forum**
 
@@ -351,12 +356,3 @@ Scenario Details
 
    scenario1/index
    scenario2/index
-
-
-Next Steps
-----------
-
-- **This Week**: Review both scenario specifications
-- **Week 3**: Form teams and choose scenario
-- **Week 4**: Begin GP1 (Relational Database Design)
-- **Ongoing**: Attend office hours with questions
