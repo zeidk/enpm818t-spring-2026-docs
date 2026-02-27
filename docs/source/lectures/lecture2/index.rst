@@ -10,7 +10,7 @@ This lecture introduces conceptual data modeling using Entity-Relationship
 attributes, and keys; classify attributes by type; model relationships with
 cardinality and participation constraints; distinguish strong and weak
 entities; and apply Extended ER (EER) concepts including
-specialization/generalization, aggregation, and categories.  The session
+specialization/generalization and categories.  The session
 includes a complete walkthrough of a university course management system
 use case.
 
@@ -26,7 +26,7 @@ By the end of this lecture, you will be able to:
 - Identify when to promote an attribute to a lookup entity.
 - Specify cardinality ratios (1:1, 1:N, M:N) and participation constraints (total, partial, min-max).
 - Model weak entities with identifying relationships and partial keys.
-- Apply Extended ER concepts: specialization/generalization, aggregation, and categories.
+- Apply Extended ER concepts: specialization/generalization and categories (union types).
 - Evaluate design trade-offs and detect common modeling errors.
 
 

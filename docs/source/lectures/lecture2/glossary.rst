@@ -136,8 +136,8 @@ E
 .. glossary::
 
    EER Model
-      **Enhanced Entity-Relationship Model** — an extension of the original
-      ER model that adds specialization/generalization, aggregation, and
+      **Enhanced Entity-Relationship Model** -- an extension of the original
+      ER model that adds specialization/generalization and
       categories (union types). Introduced in the 1980s to support more
       complex modeling scenarios.
 

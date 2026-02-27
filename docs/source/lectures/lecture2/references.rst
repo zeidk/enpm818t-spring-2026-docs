@@ -15,7 +15,7 @@ References
         diagrams using Chen notation, entities (strong vs. weak), attributes
         (simple, composite, multivalued, derived), keys (superkey, candidate key,
         primary key, partial key), relationships with cardinality and participation
-        constraints, Extended ER concepts (specialization/generalization, aggregation,
+        constraints, Extended ER concepts (specialization/generalization,
         categories), and a complete university system use case walkthrough.
 
 
