@@ -409,7 +409,7 @@ Part 4: Testing (Optional)
    :icon: gear
    :class-container: sd-border-primary
 
-   Write tests using ``pytest`` that verify the behavior of your repositories and services.
+   Write tests using ``pytest`` that verify the behavior of your repositories and services. You are testing that your Python code correctly interacts with the database and returns the expected results.
 
    **What to test in repositories**:
 
@@ -429,12 +429,28 @@ Part 4: Testing (Optional)
 
    **Running tests**:
 
+   Install the testing packages (if not already in your ``requirements.txt``):
+
    .. code-block:: bash
 
       pip install pytest pytest-cov
+
+   Then, from the **project root directory** (the folder containing ``src/`` and ``tests/``), run:
+
+   .. code-block:: bash
+
       pytest tests/ --cov=src --cov-report=html
 
+   This generates an HTML coverage report in ``htmlcov/`` so you can see which lines are tested (i.e., at least half of the lines in your ``repositories/`` and ``services/`` code are executed by your test suite).
+
    **Files to create**: ``tests/test_repositories.py`` and ``tests/test_services.py``
+
+   We provide starter versions of both files with test structure, fixtures, and commented-out test cases matching the application architecture described above. Download them here:
+
+   - :download:`test_repositories.py <test_repositories.py>`
+   - :download:`test_services.py <test_services.py>`
+
+   Uncomment and adapt the tests to match your actual class names, method signatures, and data.
 
 
 Folder Structure
