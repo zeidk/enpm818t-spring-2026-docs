@@ -49,8 +49,8 @@ html_theme_options = {
     # Logo (place files in _static/images/)
     "logo": {
         "text": "ENPM818T Spring 2026",
-        "image_light": "images/enpm818t_logo_light.png",
-        "image_dark": "images/enpm818t_logo_dark.png",
+        "image_light": "_static/images/enpm818t_logo_light.png",
+        "image_dark": "_static/images/enpm818t_logo_dark.png",
     },
     # Header / navbar icon links
     "icon_links": [
@@ -61,6 +61,7 @@ html_theme_options = {
             "type": "fontawesome",
         },
     ],
+    "back_to_top_button": True,
     # Light/dark mode toggle
     "navbar_end": ["theme-switcher", "navbar-icon-links"],
     # Navigation
@@ -82,6 +83,7 @@ html_context = {
     "github_repo": "enpm818t-spring-2026-docs",
     "github_version": "main",
     "doc_path": "docs/source",
+    "default_mode": "dark",
 }
 
 numfig = True
