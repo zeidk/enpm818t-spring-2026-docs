@@ -135,11 +135,6 @@ F
 
 .. glossary::
 
-   First Normal Form (1NF)
-      A relation is in 1NF if every attribute value is atomic
-      (indivisible). No repeating groups, no arrays, no comma-separated
-      lists, no nested structures.
-
    Functional Dependency (FD)
       A constraint :math:`X \to Y` stating that for any two tuples with
       the same values on all attributes in :math:`X`, their values on
@@ -200,13 +195,6 @@ N
       allows. The hierarchy is: 1NF :math:`\subset` 2NF :math:`\subset`
       3NF :math:`\subset` BCNF. Each level eliminates a broader class of
       anomalies.
-
-   Normalization
-      The process of organizing a relational database schema to reduce
-      redundancy and improve data integrity by decomposing relations based
-      on their functional dependencies into progressively higher normal
-      forms.
-
 
 .. _t4-glossary-o:
 

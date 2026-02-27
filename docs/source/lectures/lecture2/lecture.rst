@@ -72,8 +72,8 @@ Foundations & Motivation
 
    An **ER notation** is a standardized set of graphical symbols and conventions used to visually represent entities, attributes, and relationships in an Entity-Relationship diagram.
 
-   Chen Notation (1976)
-   ~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Chen Notation (1976)
+
 
    .. grid:: 1 2 2 2
        :gutter: 2
@@ -96,8 +96,8 @@ Foundations & Motivation
            - Standard in academia
            - Clear visual distinction between concepts
 
-   Crow's Foot / IE Notation
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Crow's Foot / IE Notation
+
 
    .. grid:: 1 2 2 2
        :gutter: 2
@@ -119,8 +119,8 @@ Foundations & Motivation
            - More compact diagrams
            - Closer to logical model
 
-   Other Notations
-   ~~~~~~~~~~~~~~~
+   .. rubric:: Other Notations
+
 
    .. list-table::
       :widths: 20 80
@@ -227,49 +227,49 @@ Entities, Attributes & Keys
    :class-container: sd-border-secondary
    :open:
 
-   Definitions from the Literature
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Definitions from the Literature
+
 
    .. card::
        :class-card: sd-border-secondary
 
        **From Foundational Papers and Textbooks**
 
-       - **Chen (1976)**: "An entity is a 'thing' which can be distinctly identified. A specific person, company, or event is an example of an entity."
-       - **Elmasri & Navathe**: "An entity is a thing in the real world with an independent existence. It may be an object with physical existence ... or ... conceptual existence."
-       - **Silberschatz, Korth & Sudarshan**: "An entity is an object that exists and is distinguishable from other objects ... described by a set of attributes."
+       - **Chen (1976)** [Chen1976]_: "An entity is a 'thing' which can be distinctly identified. A specific person, company, or event is an example of an entity."
+       - **Elmasri & Navathe** [Elmasri2016]_: "An entity is a thing in the real world with an independent existence. It may be an object with physical existence ... or ... conceptual existence."
+       - **Silberschatz, Korth & Sudarshan** [Silberschatz2019]_: "An entity is an object that exists and is distinguishable from other objects ... described by a set of attributes."
 
-   Synthesized Definition
-   ~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Synthesized Definition
+
 
    An **entity** is a distinctly identifiable thing in the real world (physical or conceptual) about which we need to store data. It may be a **person** (a student), a **physical object** (a room), an **organization** (a department), an **event** (an enrollment), or an **abstract concept** (a course). Each entity has **instances** (Alice, Bob, and Charlie are instances of ``STUDENT``), and each instance is described by a set of **attributes**.
 
    .. note::
 
-      **Chen (1976) Insight**: Chen acknowledges that the boundary between entity and relationship is a modeling choice: "It is possible that some people may view something (e.g., marriage) as an entity while other people may view it as a relationship ... this is a decision which has to be made by the enterprise administrator."
+      **Chen (1976) Insight** [Chen1976]_: Chen acknowledges that the boundary between entity and relationship is a modeling choice: "It is possible that some people may view something (e.g., marriage) as an entity while other people may view it as a relationship ... this is a decision which has to be made by the enterprise administrator."
 
 
 .. dropdown:: Entity Type vs. Entity Set
    :class-container: sd-border-secondary
 
-   Definitions from the Literature
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Definitions from the Literature
+
 
    .. card::
        :class-card: sd-border-secondary
 
        **Terminology Clarification**
 
-       - **Chen (1976)**: Entities are "classified into different *entity sets* such as EMPLOYEE, PROJECT, and DEPARTMENT. There is a predicate associated with each entity set to test whether an entity belongs to it."
-       - **Elmasri & Navathe**: An *entity type* defines a collection of entities that have the same attributes; an *entity set* is the current collection of instances of that type at a point in time.
-       - **Silberschatz et al.**: "An *entity set* is a set of entities of the same type that share the same properties."
+       - **Chen (1976)** [Chen1976]_: Entities are "classified into different *entity sets* such as EMPLOYEE, PROJECT, and DEPARTMENT. There is a predicate associated with each entity set to test whether an entity belongs to it."
+       - **Elmasri & Navathe** [Elmasri2016]_: An *entity type* defines a collection of entities that have the same attributes; an *entity set* is the current collection of instances of that type at a point in time.
+       - **Silberschatz et al.** [Silberschatz2019]_: "An *entity set* is a set of entities of the same type that share the same properties."
 
    .. warning::
 
-      **Terminology Note**: Chen uses **entity set** for the concept that Elmasri & Navathe split into **entity type** (the schema/structure) and **entity set** (the current instances). Silberschatz uses **entity set** closer to Chen's usage. Be aware of this when reading different textbooks.
+      **Terminology Note**: Chen [Chen1976]_ uses **entity set** for the concept that Elmasri & Navathe [Elmasri2016]_ split into **entity type** (the schema/structure) and **entity set** (the current instances). Silberschatz [Silberschatz2019]_ uses **entity set** closer to Chen's usage. Be aware of this when reading different textbooks.
 
-   Sample Entity Types and Instances
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Sample Entity Types and Instances
+
 
    .. list-table::
       :widths: 25 40 35
@@ -300,19 +300,19 @@ Entities, Attributes & Keys
 .. dropdown:: Strong vs. Weak Entities
    :class-container: sd-border-secondary
 
-   Definitions from the Literature
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Definitions from the Literature
+
 
    .. card::
        :class-card: sd-border-secondary
 
-       **From Elmasri & Navathe and Silberschatz et al.**
+       **From Elmasri & Navathe** [Elmasri2016]_ **and Silberschatz et al.** [Silberschatz2019]_
 
-       - **Elmasri & Navathe**: Entity types that do not have key attributes of their own are called *weak entity types*; those that do are called *strong* (or *regular*) entity types.
-       - **Silberschatz et al.**: "An entity that does not have a primary key is referred to as a *weak entity set*. The existence of a weak entity set depends on the existence of an *identifying entity set*."
+       - **Elmasri & Navathe** [Elmasri2016]_: Entity types that do not have key attributes of their own are called *weak entity types*; those that do are called *strong* (or *regular*) entity types.
+       - **Silberschatz et al.** [Silberschatz2019]_: "An entity that does not have a primary key is referred to as a *weak entity set*. The existence of a weak entity set depends on the existence of an *identifying entity set*."
 
-   Strong Entity
-   ~~~~~~~~~~~~~
+   .. rubric:: Strong Entity
+
 
    - Has its own **primary key**
    - Exists **independently**
@@ -344,8 +344,8 @@ Entities, Attributes & Keys
 
          Strong entity.
 
-   Weak Entity
-   ~~~~~~~~~~~
+   .. rubric:: Weak Entity
+
 
    - **Cannot be uniquely identified** by its own attributes alone
    - **Existence-dependent** on an owner (identifying) entity
@@ -388,20 +388,20 @@ Entities, Attributes & Keys
 .. dropdown:: What Is an Attribute?
    :class-container: sd-border-secondary
 
-   Definitions from the Literature
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Definitions from the Literature
+
 
    .. card::
        :class-card: sd-border-secondary
 
-       **From Chen, Elmasri & Navathe, and Silberschatz et al.**
+       **From Chen** [Chen1976]_\ **, Elmasri & Navathe** [Elmasri2016]_\ **, and Silberschatz et al.** [Silberschatz2019]_
 
-       - **Chen (1976)**: "The information about an entity or a relationship is obtained by observation or measurement, and is expressed by a set of attribute-value pairs." An attribute is formally "a function which maps from an entity set or a relationship set into a value set."
-       - **Elmasri & Navathe**: Each entity has particular *attributes*; the properties that describe it. An entity is represented in the database by a collection of attributes; a particular entity will have a *value* for each of its attributes.
-       - **Silberschatz et al.**: "An entity is represented by a set of attributes, that is, descriptive properties possessed by all members of an entity set."
+       - **Chen (1976)** [Chen1976]_: "The information about an entity or a relationship is obtained by observation or measurement, and is expressed by a set of attribute-value pairs." An attribute is formally "a function which maps from an entity set or a relationship set into a value set."
+       - **Elmasri & Navathe** [Elmasri2016]_: Each entity has particular *attributes*; the properties that describe it. An entity is represented in the database by a collection of attributes; a particular entity will have a *value* for each of its attributes.
+       - **Silberschatz et al.** [Silberschatz2019]_: "An entity is represented by a set of attributes, that is, descriptive properties possessed by all members of an entity set."
 
-   Synthesized Definition
-   ~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Synthesized Definition
+
 
    An **attribute** is a named property of an entity (or relationship) that maps each instance to a value drawn from a defined **domain**, i.e., the set of permitted values (e.g., GPA ∈ [0.0, 4.0]; rank ∈ {Assistant, Associate, Full}).
 
@@ -541,8 +541,8 @@ Entities, Attributes & Keys
 .. dropdown:: Composite and Multivalued: A Closer Look
    :class-container: sd-border-secondary
 
-   Composite Attributes
-   ~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Composite Attributes
+
 
    .. grid:: 1 2 2 2
        :gutter: 2
@@ -563,8 +563,8 @@ Entities, Attributes & Keys
            - address → {street, city, state, zip}
            - DOB → {day, month, year}
 
-   Multivalued Attributes
-   ~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Multivalued Attributes
+
 
    .. grid:: 1 2 2 2
        :gutter: 2
@@ -594,8 +594,8 @@ Entities, Attributes & Keys
 .. dropdown:: Domain Constraints and Fixed Value Sets
    :class-container: sd-border-secondary
 
-   Attributes with Constrained Domains
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Attributes with Constrained Domains
+
 
    Some attributes can only take values from a small, fixed set. At the conceptual level, we specify this as a **domain constraint** (the permitted values are documented as part of the attribute's definition).
 
@@ -623,8 +623,8 @@ Entities, Attributes & Keys
         - {Lecture Hall, Lab, Seminar, Office}
         - ``ROOM``
 
-   Chen Notation Example
-   ~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Chen Notation Example
+
 
    .. only:: html
 
@@ -655,13 +655,13 @@ Entities, Attributes & Keys
 .. dropdown:: Attribute vs. Lookup Entity
    :class-container: sd-border-secondary
 
-   When to Promote a Constrained Attribute to a Lookup Entity
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: When to Promote a Constrained Attribute to a Lookup Entity
+
 
    Sometimes a fixed value set should be modeled as its own entity rather than a domain constraint on an attribute.
 
-   Keep as Attribute When...
-   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+   .. rubric:: Keep as Attribute When...
+
 
    .. card::
        :class-card: sd-border-success
@@ -674,8 +674,8 @@ Entities, Attributes & Keys
        - At the conceptual level: documented in the **data dictionary**
        - At the physical level: enforced as schema constraints (``CHECK`` or ``ENUM``)
 
-   Promote to Entity When...
-   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+   .. rubric:: Promote to Entity When...
+
 
    .. card::
        :class-card: sd-border-warning
@@ -690,8 +690,8 @@ Entities, Attributes & Keys
 
       **The Test**: If removing the value set would lose information beyond the label itself, promote it to an entity. If the value is just a label with nothing else to say about it, keep it as an attribute.
 
-   Example: Why Promote "rank" to a Lookup Entity?
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Example: Why Promote "rank" to a Lookup Entity?
+
 
    .. only:: html
 
@@ -736,20 +736,20 @@ Entities, Attributes & Keys
 .. dropdown:: What Is a Key?
    :class-container: sd-border-secondary
 
-   Definitions from the Literature
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Definitions from the Literature
+
 
    .. card::
        :class-card: sd-border-secondary
 
-       **From Chen, Elmasri & Navathe, and Silberschatz et al.**
+       **From Chen** [Chen1976]_\ **, Elmasri & Navathe** [Elmasri2016]_\ **, and Silberschatz et al.** [Silberschatz2019]_
 
-       - **Chen (1976)**: Entities within an entity set are distinguishable from one another through their attributes. Chen uses underlined attributes in ER diagrams to denote identifiers, but does not formalize a hierarchy of key types (superkey, candidate key). That terminology originates from Codd's relational model and was later integrated into ER modeling by subsequent authors.
-       - **Elmasri & Navathe**: "An attribute of an entity type for which each entity must have a unique value is called a *key attribute*. ... A key attribute may be composite."
-       - **Silberschatz et al.**: "A *superkey* is a set of one or more attributes that, taken collectively, allow us to identify uniquely an entity in the entity set." A *candidate key* is a minimal superkey.
+       - **Chen (1976)** [Chen1976]_: Entities within an entity set are distinguishable from one another through their attributes. Chen uses underlined attributes in ER diagrams to denote identifiers, but does not formalize a hierarchy of key types (superkey, candidate key). That terminology originates from Codd's relational model and was later integrated into ER modeling by subsequent authors.
+       - **Elmasri & Navathe** [Elmasri2016]_: "An attribute of an entity type for which each entity must have a unique value is called a *key attribute*. ... A key attribute may be composite."
+       - **Silberschatz et al.** [Silberschatz2019]_: "A *superkey* is a set of one or more attributes that, taken collectively, allow us to identify uniquely an entity in the entity set." A *candidate key* is a minimal superkey.
 
-   Synthesized Definition
-   ~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Synthesized Definition
+
 
    A **key** is an attribute (or minimal combination of attributes) whose values **uniquely identify** each instance of an entity. No two students share the same ``student_id``: that is what makes it a key. Without keys, we cannot distinguish one entity instance from another.
 
@@ -785,8 +785,8 @@ Entities, Attributes & Keys
         - Discriminator for weak entities; combined with owner's key to form full identity
         - ``COURSE_SECTION``: section_no + owner's course_id
 
-   Superkey vs. Candidate Key
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Superkey vs. Candidate Key
+
 
    ``PERSON`` has attributes: person_id, first_name, last_name, email_address, date_of_birth.
 
@@ -828,8 +828,8 @@ Entities, Attributes & Keys
 .. dropdown:: Keys in Chen Notation
    :class-container: sd-border-secondary
 
-   How Keys Appear in Chen Diagrams
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: How Keys Appear in Chen Diagrams
+
 
    .. only:: html
 
@@ -887,8 +887,8 @@ Relationships & Cardinality
    :class-container: sd-border-secondary
    :open:
 
-   Relationship
-   ~~~~~~~~~~~~
+   .. rubric:: Relationship
+
 
    A **relationship** is a meaningful association between two or more entities. It captures the fact that entities are connected in the real world.
 
@@ -896,8 +896,8 @@ Relationships & Cardinality
    - A student *enrolls in* a course section
    - A department *offers* a course
 
-   In Chen Notation
-   ~~~~~~~~~~~~~~~~
+   .. rubric:: In Chen Notation
+
 
    A relationship is drawn as a **diamond** connected by lines to the participating entities.
 
@@ -905,7 +905,7 @@ Relationships & Cardinality
 
       .. figure:: /_static/images/l2/relationship-light.png
          :alt: Basic relationship in Chen notation
-         :width: 40%
+         :width: 20%
          :align: center
          :class: only-light
 
@@ -913,7 +913,7 @@ Relationships & Cardinality
 
       .. figure:: /_static/images/l2/relationship-dark.png
          :alt: Basic relationship in Chen notation
-         :width: 40%
+         :width: 20%
          :align: center
          :class: only-dark
 
@@ -921,7 +921,7 @@ Relationships & Cardinality
 
       .. figure:: /_static/images/l2/relationship-light.png
          :alt: Basic relationship in Chen notation
-         :width: 40%
+         :width: 20%
          :align: center
 
          **Binary relationship**: ``PROFESSOR`` -- ``BELONGS_TO`` -- ``DEPARTMENT``
@@ -983,139 +983,138 @@ Relationships & Cardinality
 .. dropdown:: Cardinality Ratios
    :class-container: sd-border-secondary
 
-   What Is Cardinality?
-   ~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: What Is Cardinality?
+
 
    **Cardinality** specifies the *maximum* number of relationship instances an entity can participate in. It answers: "How many on each side?"
 
-   1:1 --- One-to-One
-   ~~~~~~~~~~~~~~~~~~
+   .. tab-set::
 
-   Each entity on side A is associated with **at most one** entity on side B, and vice versa.
+      .. tab-item:: 1:1 (One-to-One)
 
-   .. only:: html
+         Each entity on side A is associated with **at most one** entity on side B, and vice versa.
 
-      .. figure:: /_static/images/l2/relationship-1-1-light.png
-         :alt: One-to-one cardinality
-         :width: 60%
-         :align: center
-         :class: only-light
+         .. only:: html
 
-         **1:1 Relationship**: ``DEPARTMENT`` -- ``CHAIRS`` -- ``PROFESSOR``
+            .. figure:: /_static/images/l2/relationship-1-1-light.png
+               :alt: One-to-one cardinality
+               :width: 60%
+               :align: center
+               :class: only-light
 
-      .. figure:: /_static/images/l2/relationship-1-1-dark.png
-         :alt: One-to-one cardinality
-         :width: 60%
-         :align: center
-         :class: only-dark
+               **1:1 Relationship**: ``DEPARTMENT`` -- ``CHAIRS`` -- ``PROFESSOR``
 
-   .. only:: latex
+            .. figure:: /_static/images/l2/relationship-1-1-dark.png
+               :alt: One-to-one cardinality
+               :width: 60%
+               :align: center
+               :class: only-dark
 
-      .. figure:: /_static/images/l2/relationship-1-1-light.png
-         :alt: One-to-one cardinality
-         :width: 60%
-         :align: center
+         .. only:: latex
 
-         **1:1 Relationship**: ``DEPARTMENT`` -- ``CHAIRS`` -- ``PROFESSOR``
+            .. figure:: /_static/images/l2/relationship-1-1-light.png
+               :alt: One-to-one cardinality
+               :width: 60%
+               :align: center
 
-   - Each department has **at most one** chair
-   - Each professor chairs **at most one** department
-   - **How to read the labels (Chen convention)**: The label next to an entity tells you the maximum number of instances *of that entity* that can participate per instance of the opposite entity. The **1** next to ``DEPARTMENT`` means "for each professor, at most one department"; the **1** next to ``PROFESSOR`` means "for each department, at most one professor"
+               **1:1 Relationship**: ``DEPARTMENT`` -- ``CHAIRS`` -- ``PROFESSOR``
 
-   .. card::
-       :class-card: sd-border-warning
+         - Each department has **at most one** chair
+         - Each professor chairs **at most one** department
+         - **How to read the labels (Chen convention)**: The label next to an entity tells you the maximum number of instances *of that entity* that can participate per instance of the opposite entity. The **1** next to ``DEPARTMENT`` means "for each professor, at most one department"; the **1** next to ``PROFESSOR`` means "for each department, at most one professor"
 
-       **1:1 relationships are relatively rare.** If you find many of them in your model, consider whether the two entities should be merged into one.
+         .. card::
+             :class-card: sd-border-warning
 
-   1:N --- One-to-Many
-   ~~~~~~~~~~~~~~~~~~~
+             **1:1 relationships are relatively rare.** If you find many of them in your model, consider whether the two entities should be merged into one.
 
-   Each entity on the "one" side can be associated with **many** entities on the "many" side, but each entity on the "many" side is associated with **at most one** on the other.
+      .. tab-item:: 1:N (One-to-Many)
 
-   .. only:: html
+         Each entity on the "one" side can be associated with **many** entities on the "many" side, but each entity on the "many" side is associated with **at most one** on the other.
 
-      .. figure:: /_static/images/l2/relationship-1-N-light.png
-         :alt: One-to-many cardinality
-         :width: 60%
-         :align: center
-         :class: only-light
+         .. only:: html
 
-         **1:N Relationship**: ``DEPARTMENT`` -- ``BELONGS_TO`` -- ``PROFESSOR``
+            .. figure:: /_static/images/l2/relationship-1-N-light.png
+               :alt: One-to-many cardinality
+               :width: 60%
+               :align: center
+               :class: only-light
 
-      .. figure:: /_static/images/l2/relationship-1-N-dark.png
-         :alt: One-to-many cardinality
-         :width: 60%
-         :align: center
-         :class: only-dark
+               **1:N Relationship**: ``DEPARTMENT`` -- ``BELONGS_TO`` -- ``PROFESSOR``
 
-   .. only:: latex
+            .. figure:: /_static/images/l2/relationship-1-N-dark.png
+               :alt: One-to-many cardinality
+               :width: 60%
+               :align: center
+               :class: only-dark
 
-      .. figure:: /_static/images/l2/relationship-1-N-light.png
-         :alt: One-to-many cardinality
-         :width: 60%
-         :align: center
+         .. only:: latex
 
-         **1:N Relationship**: ``DEPARTMENT`` -- ``BELONGS_TO`` -- ``PROFESSOR``
+            .. figure:: /_static/images/l2/relationship-1-N-light.png
+               :alt: One-to-many cardinality
+               :width: 60%
+               :align: center
 
-   - One department has **many** professors who belong to it
-   - Each professor belongs to **exactly one** department
-   - The **N** next to ``PROFESSOR`` means "for each department, potentially many professors"
+               **1:N Relationship**: ``DEPARTMENT`` -- ``BELONGS_TO`` -- ``PROFESSOR``
 
-   Other 1:N examples from our use case:
+         - One department has **many** professors who belong to it
+         - Each professor belongs to **exactly one** department
+         - The **N** next to ``PROFESSOR`` means "for each department, potentially many professors"
 
-   - ``COURSE`` (1) -- ``HAS_SECTION`` -- ``COURSE_SECTION`` (N)
-   - ``PROFESSOR`` (1) -- ``ADVISED_BY`` -- ``STUDENT`` (N)
-   - ``PROFESSOR`` (1) -- ``TEACHES`` -- ``COURSE_SECTION`` (N)
-   - ``DEPARTMENT`` (1) -- ``OFFERS`` -- ``COURSE`` (N)
+         Other 1:N examples from our use case:
 
-   .. tip::
+         - ``COURSE`` (1) -- ``HAS_SECTION`` -- ``COURSE_SECTION`` (N)
+         - ``PROFESSOR`` (1) -- ``ADVISED_BY`` -- ``STUDENT`` (N)
+         - ``PROFESSOR`` (1) -- ``TEACHES`` -- ``COURSE_SECTION`` (N)
+         - ``DEPARTMENT`` (1) -- ``OFFERS`` -- ``COURSE`` (N)
 
-      **1:N is the most common cardinality** in relational databases. It maps cleanly to a foreign key on the "many" side pointing to the "one" side (covered in Lecture 3).
+         .. tip::
 
-   M:N --- Many-to-Many
-   ~~~~~~~~~~~~~~~~~~~~
+            **1:N is the most common cardinality** in relational databases. It maps cleanly to a foreign key on the "many" side pointing to the "one" side (covered in Lecture 3).
 
-   Each entity on side A can be associated with **many** entities on side B, *and* vice versa.
+      .. tab-item:: M:N (Many-to-Many)
 
-   .. only:: html
+         Each entity on side A can be associated with **many** entities on side B, *and* vice versa.
 
-      .. figure:: /_static/images/l2/relationship-M-N-light.png
-         :alt: Many-to-many cardinality
-         :width: 60%
-         :align: center
-         :class: only-light
+         .. only:: html
 
-         **M:N Relationship**: ``STUDENT`` -- ``ENROLLS_IN`` -- ``COURSE_SECTION``
+            .. figure:: /_static/images/l2/relationship-M-N-light.png
+               :alt: Many-to-many cardinality
+               :width: 60%
+               :align: center
+               :class: only-light
 
-      .. figure:: /_static/images/l2/relationship-M-N-dark.png
-         :alt: Many-to-many cardinality
-         :width: 60%
-         :align: center
-         :class: only-dark
+               **M:N Relationship**: ``STUDENT`` -- ``ENROLLS_IN`` -- ``COURSE_SECTION``
 
-   .. only:: latex
+            .. figure:: /_static/images/l2/relationship-M-N-dark.png
+               :alt: Many-to-many cardinality
+               :width: 60%
+               :align: center
+               :class: only-dark
 
-      .. figure:: /_static/images/l2/relationship-M-N-light.png
-         :alt: Many-to-many cardinality
-         :width: 60%
-         :align: center
+         .. only:: latex
 
-         **M:N Relationship**: ``STUDENT`` -- ``ENROLLS_IN`` -- ``COURSE_SECTION``
+            .. figure:: /_static/images/l2/relationship-M-N-light.png
+               :alt: Many-to-many cardinality
+               :width: 60%
+               :align: center
 
-   - A student enrolls in **many** course sections
-   - A course section has **many** students enrolled
-   - Neither side is limited to one — both carry "many" labels
+               **M:N Relationship**: ``STUDENT`` -- ``ENROLLS_IN`` -- ``COURSE_SECTION``
 
-   .. warning::
+         - A student enrolls in **many** course sections
+         - A course section has **many** students enrolled
+         - Neither side is limited to one; both carry "many" labels
 
-      **Important**: M:N relationships *cannot* be implemented directly using a simple foreign key. At the logical level (Lecture 3), we will resolve every M:N relationship into a **junction table** (also called an associative entity or bridge table) that holds foreign keys to both sides.
+         .. warning::
+
+            **Important**: M:N relationships *cannot* be implemented directly using a simple foreign key. At the logical level (Lecture 3), we will resolve every M:N relationship into a **junction table** (also called an associative entity or bridge table) that holds foreign keys to both sides.
 
 
 .. dropdown:: Relationship Attributes
    :class-container: sd-border-secondary
 
-   When Do Relationships Have Their Own Attributes?
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: When Do Relationships Have Their Own Attributes?
+
 
    Some facts belong to the **association itself**, not to either participating entity.
 
@@ -1156,8 +1155,8 @@ Relationships & Cardinality
 .. dropdown:: Total and Partial Participation
    :class-container: sd-border-secondary
 
-   What Are Participation Constraints?
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: What Are Participation Constraints?
+
 
    Cardinality tells us the *maximum* number of instances that can participate. **Participation constraints** tell us the *minimum*: must every instance participate, or is participation optional?
 
@@ -1190,106 +1189,108 @@ Relationships & Cardinality
 
        **Who decides?** Participation constraints are not technical decisions. They encode **business rules** that must be elicited from stakeholders. The same schema can have total or partial participation depending on the organization's policies.
 
-   Contrasting Participation Patterns
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Contrasting Participation Patterns
 
-   **Total on Both Sides: OFFERS**
 
-   .. only:: html
+   .. tab-set::
 
-      .. figure:: /_static/images/l2/total-participation-light.png
-         :alt: Total participation on both sides
-         :width: 60%
-         :align: center
-         :class: only-light
+      .. tab-item:: Total on Both Sides
 
-         **Total on both sides**: ``DEPARTMENT`` -- ``OFFERS`` -- ``COURSE``
+         .. only:: html
 
-      .. figure:: /_static/images/l2/total-participation-dark.png
-         :alt: Total participation on both sides
-         :width: 60%
-         :align: center
-         :class: only-dark
+            .. figure:: /_static/images/l2/total-participation-light.png
+               :alt: Total participation on both sides
+               :width: 60%
+               :align: center
+               :class: only-light
 
-   .. only:: latex
+               **Total on both sides**: ``DEPARTMENT`` -- ``OFFERS`` -- ``COURSE``
 
-      .. figure:: /_static/images/l2/total-participation-light.png
-         :alt: Total participation on both sides
-         :width: 60%
-         :align: center
+            .. figure:: /_static/images/l2/total-participation-dark.png
+               :alt: Total participation on both sides
+               :width: 60%
+               :align: center
+               :class: only-dark
 
-         **Total on both sides**: ``DEPARTMENT`` -- ``OFFERS`` -- ``COURSE``
+         .. only:: latex
 
-   - Both sides have **double lines**: every department must offer ≥1 course, and every course must belong to a department.
-   - Neither entity can exist without participating.
+            .. figure:: /_static/images/l2/total-participation-light.png
+               :alt: Total participation on both sides
+               :width: 60%
+               :align: center
 
-   **Mixed: HELD_IN**
+               **Total on both sides**: ``DEPARTMENT`` -- ``OFFERS`` -- ``COURSE``
 
-   .. only:: html
+         - Both sides have **double lines**: every department must offer ≥1 course, and every course must belong to a department.
+         - Neither entity can exist without participating.
 
-      .. figure:: /_static/images/l2/mixed-participation-light.png
-         :alt: Mixed participation
-         :width: 70%
-         :align: center
-         :class: only-light
+      .. tab-item:: Mixed
 
-         **Mixed participation**: ``COURSE_SECTION`` has total (must meet in a room), ``ROOM`` has partial (can exist unused)
+         .. only:: html
 
-      .. figure:: /_static/images/l2/mixed-participation-dark.png
-         :alt: Mixed participation
-         :width: 70%
-         :align: center
-         :class: only-dark
+            .. figure:: /_static/images/l2/mixed-participation-light.png
+               :alt: Mixed participation
+               :width: 70%
+               :align: center
+               :class: only-light
 
-   .. only:: latex
+               **Mixed participation**: ``COURSE_SECTION`` has total (must meet in a room), ``ROOM`` has partial (can exist unused)
 
-      .. figure:: /_static/images/l2/mixed-participation-light.png
-         :alt: Mixed participation
-         :width: 70%
-         :align: center
+            .. figure:: /_static/images/l2/mixed-participation-dark.png
+               :alt: Mixed participation
+               :width: 70%
+               :align: center
+               :class: only-dark
 
-         **Mixed participation**: ``COURSE_SECTION`` has total (must meet in a room), ``ROOM`` has partial (can exist unused)
+         .. only:: latex
 
-   - ``COURSE_SECTION`` has **total** participation (double line): every section must meet in a room.
-   - ``ROOM`` has **partial** participation (single line): a room can exist without hosting any section.
+            .. figure:: /_static/images/l2/mixed-participation-light.png
+               :alt: Mixed participation
+               :width: 70%
+               :align: center
 
-   **Partial on Both Sides: HAS_PREREQ (Recursive)**
+               **Mixed participation**: ``COURSE_SECTION`` has total (must meet in a room), ``ROOM`` has partial (can exist unused)
 
-   .. only:: html
+         - ``COURSE_SECTION`` has **total** participation (double line): every section must meet in a room.
+         - ``ROOM`` has **partial** participation (single line): a room can exist without hosting any section.
 
-      .. figure:: /_static/images/l2/partial-participation-light.png
-         :alt: Partial participation on both sides (recursive)
-         :width: 60%
-         :align: center
-         :class: only-light
+      .. tab-item:: Partial on Both Sides
 
-         **Partial on both sides**: ``COURSE`` -- ``HAS_PREREQ`` -- ``COURSE`` (recursive)
+         .. only:: html
 
-      .. figure:: /_static/images/l2/partial-participation-dark.png
-         :alt: Partial participation on both sides (recursive)
-         :width: 60%
-         :align: center
-         :class: only-dark
+            .. figure:: /_static/images/l2/partial-participation-light.png
+               :alt: Partial participation on both sides (recursive)
+               :width: 60%
+               :align: center
+               :class: only-light
 
-   .. only:: latex
+               **Partial on both sides**: ``COURSE`` -- ``HAS_PREREQ`` -- ``COURSE`` (recursive)
 
-      .. figure:: /_static/images/l2/partial-participation-light.png
-         :alt: Partial participation on both sides (recursive)
-         :width: 60%
-         :align: center
+            .. figure:: /_static/images/l2/partial-participation-dark.png
+               :alt: Partial participation on both sides (recursive)
+               :width: 60%
+               :align: center
+               :class: only-dark
 
-         **Partial on both sides**: ``COURSE`` -- ``HAS_PREREQ`` -- ``COURSE`` (recursive)
+         .. only:: latex
 
-   - Both sides have **single lines**: not every course has prerequisites, and not every course is a prerequisite for another.
-   - This is a **recursive (unary) relationship**: the same entity type participates twice.
-   - **Role labels** distinguish the two participants: "prerequisite" vs. "successor"
+            .. figure:: /_static/images/l2/partial-participation-light.png
+               :alt: Partial participation on both sides (recursive)
+               :width: 60%
+               :align: center
+
+               **Partial on both sides**: ``COURSE`` -- ``HAS_PREREQ`` -- ``COURSE`` (recursive)
+
+         - Both sides have **single lines**: not every course has prerequisites, and not every course is a prerequisite for another.
+         - This is a **recursive (unary) relationship**: the same entity type participates twice.
+         - **Role labels** distinguish the two participants: "prerequisite" vs. "successor"
 
 
 .. dropdown:: (min, max) Notation
    :class-container: sd-border-secondary
 
-   A More Precise Alternative
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: A More Precise Alternative
+
 
    Instead of using two separate notations (single/double lines for participation and 1, M, N labels for cardinality), the **(min, max)** notation captures **both constraints in one place**. The **min** encodes participation (0 = partial, >= 1 = total) and the **max** encodes cardinality (1 = single-valued, N = multi-valued).
 
@@ -1350,7 +1351,7 @@ Relationships & Cardinality
 
    .. warning::
 
-      **Careful: Two conventions, opposite reading directions.** Chen cardinality ratios are read *across*: the label next to entity A tells you how many A's per B. But (min, max) notation is read *locally*: the label next to entity A tells you how many times A participates. The numbers sit in the same position but mean different things. We follow Elmasri & Navathe's convention for (min, max) throughout this course.
+      **Careful: Two conventions, opposite reading directions.** Chen cardinality ratios are read *across*: the label next to entity A tells you how many A's per B. But (min, max) notation is read *locally*: the label next to entity A tells you how many times A participates. The numbers sit in the same position but mean different things. We follow Elmasri & Navathe's [Elmasri2016]_ convention for (min, max) throughout this course.
 
    .. note::
 
@@ -1360,8 +1361,8 @@ Relationships & Cardinality
 .. dropdown:: Identifying Relationships
    :class-container: sd-border-secondary
 
-   Identifying Relationships (Weak Entity Support)
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Identifying Relationships (Weak Entity Support)
+
 
    An **identifying relationship** connects a weak entity to its owner entity. It is how the weak entity "borrows" part of its identity.
 
@@ -1487,8 +1488,8 @@ Advanced ER Concepts
          Attribute inheritance.
 
 
-   Keys in ISA Hierarchies
-   ~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Keys in ISA Hierarchies
+
 
    In an ISA hierarchy, subclasses **inherit** all attributes from the superclass, including the primary key. A ``STUDENT`` *is a* ``PERSON``, so a student's identity *is* their person identity.
 
@@ -1501,8 +1502,8 @@ Advanced ER Concepts
    3. **Identity flows from the superclass.** A student is uniquely identified as ``person_id = P101`` (from ``PERSON``), not as ``student_id = S101`` (from ``STUDENT``). The ``student_id`` is a business identifier (printed on ID cards, used by the registrar) but not the database key.
 
 
-   Why Use the Superclass Key?
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Why Use the Superclass Key?
+
 
    .. card::
        :class-card: sd-border-info
@@ -1534,8 +1535,8 @@ Advanced ER Concepts
 .. dropdown:: Specialization Constraints
    :class-container: sd-border-secondary
 
-   Four Constraint Combinations
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Four Constraint Combinations
+
 
    .. grid:: 1 2 2 2
        :gutter: 2
@@ -1623,8 +1624,8 @@ Advanced ER Concepts
 .. dropdown:: Ternary Relationships
    :class-container: sd-border-secondary
 
-   Ternary (and Higher-Degree) Relationships
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Ternary (and Higher-Degree) Relationships
+
 
    When a relationship involves **three or more entities simultaneously**, it's ternary (or n-ary).
 
@@ -1665,8 +1666,8 @@ Advanced ER Concepts
 .. dropdown:: Categories (Union Types)
    :class-container: sd-border-secondary
 
-   Categories (Union Types)
-   ~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Categories (Union Types)
+
 
    A **category** (or union type) is a subclass with **multiple possible superclasses**.
 
@@ -1728,8 +1729,8 @@ Full Use Case Walkthrough
    :class-container: sd-border-secondary
    :open:
 
-   All Entities in the University System
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: All Entities in the University System
+
 
    .. list-table::
       :widths: 20 15 20 45
@@ -1785,8 +1786,8 @@ Full Use Case Walkthrough
 .. dropdown:: Complete Relationship Inventory
    :class-container: sd-border-secondary
 
-   All Relationships in the University System
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: All Relationships in the University System
+
 
    .. list-table::
       :widths: 20 25 15 12 12 16
@@ -1868,8 +1869,8 @@ Full Use Case Walkthrough
 .. dropdown:: Design Decisions & Trade-offs
    :class-container: sd-border-secondary
 
-   Five Key Design Trade-offs
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Five Key Design Trade-offs
+
 
    1. **Entity vs. Attribute**: Should "semester" be an entity or just an attribute of ``COURSE_SECTION``? If we need semester-level data (start/end dates, holidays), promote it to an entity.
 
@@ -1892,8 +1893,8 @@ Wrap-Up & Practice
    :class-container: sd-border-secondary
    :open:
 
-   Five Common Modeling Errors
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Five Common Modeling Errors
+
 
    .. list-table::
       :widths: 25 75
@@ -1917,8 +1918,8 @@ Wrap-Up & Practice
 .. dropdown:: Quality Checklist
    :class-container: sd-border-secondary
 
-   Conceptual Model Quality Checklist
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Conceptual Model Quality Checklist
+
 
    .. card::
        :class-card: sd-border-success
@@ -1941,8 +1942,8 @@ Wrap-Up & Practice
 .. dropdown:: Key Takeaways
    :class-container: sd-border-secondary
 
-   Six Key Takeaways
-   ~~~~~~~~~~~~~~~~~
+   .. rubric:: Six Key Takeaways
+
 
    1. Conceptual models capture **what** data exists and **how** it relates, independent of technology
 
@@ -1956,3 +1957,11 @@ Wrap-Up & Practice
 
    6. Good models are **validated against business rules** and reviewed with stakeholders
 
+
+.. rubric:: References
+
+.. [Chen1976] Chen, P. P.-S. (1976). The Entity-Relationship Model: Toward a Unified View of Data. *ACM Transactions on Database Systems*, 1(1), 9--36. https://doi.org/10.1145/320434.320440
+
+.. [Elmasri2016] Elmasri, R. & Navathe, S. B. (2016). *Fundamentals of Database Systems* (7th ed.). Pearson.
+
+.. [Silberschatz2019] Silberschatz, A., Korth, H. F., & Sudarshan, S. (2019). *Database System Concepts* (7th ed.). McGraw-Hill Education.

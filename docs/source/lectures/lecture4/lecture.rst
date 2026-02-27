@@ -12,13 +12,13 @@ Why Normalization Matters
    :class-container: sd-border-secondary
    :open:
 
-   Definition
-   ~~~~~~~~~~
+   .. rubric:: Definition
+
 
    **Normalization** is the process of organizing a relational database schema to reduce redundancy and improve data integrity by decomposing relations into smaller, well-structured relations based on their functional dependencies.
 
-   Key Ideas
-   ^^^^^^^^^
+   .. rubric:: Key Ideas
+
 
    1. Each relation should represent **one fact about one entity**. A student table stores student data, not course data.
 
@@ -35,8 +35,8 @@ Why Normalization Matters
 .. dropdown:: Where Normalization Fits
    :class-container: sd-border-secondary
 
-   The Database Design Pipeline
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: The Database Design Pipeline
+
 
    A careful ER design often produces schemas that are already close to normalized. However, mapping to relations can introduce redundancy, especially with composite keys, multi-valued attributes, and complex relationships. Normalization is a formal verification and repair step that catches what intuition may miss.
 
@@ -47,8 +47,8 @@ Why Normalization Matters
    :class-container: sd-border-secondary
    :open:
 
-   A Poorly Designed Table
-   ~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: A Poorly Designed Table
+
 
    This ``Course_Enrollment`` table mixes facts about three entities (students, courses, and enrollments) into a single relation:
 
@@ -97,8 +97,8 @@ Why Normalization Matters
    :class-container: sd-border-secondary
    :open:
 
-   What Goes Wrong?
-   ~~~~~~~~~~~~~~~~
+   .. rubric:: What Goes Wrong?
+
 
    Because the ``Course_Enrollment`` table stores facts about multiple entities in one relation, three types of anomalies arise:
 
@@ -112,8 +112,8 @@ Why Normalization Matters
 .. dropdown:: The Solution: Normalization
    :class-container: sd-border-secondary
 
-   After Normalization
-   ~~~~~~~~~~~~~~~~~~~
+   .. rubric:: After Normalization
+
 
    Decompose so each relation captures one entity:
 
@@ -176,8 +176,8 @@ Why Normalization Matters
 .. dropdown:: Goals of Normalization
    :class-container: sd-border-secondary
 
-   Four Primary Goals
-   ~~~~~~~~~~~~~~~~~~
+   .. rubric:: Four Primary Goals
+
 
    1. **Minimize redundancy**: Store each fact exactly once. Reduces storage and prevents inconsistency from partial updates.
 
@@ -202,13 +202,13 @@ Functional Dependencies
    :class-container: sd-border-secondary
    :open:
 
-   From Intuition to Formalism
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: From Intuition to Formalism
+
 
    In the previous section, we relied on intuition to identify problems and decompose the ``Course_Enrollment`` table. But consider these questions: How do we **know** which columns cause redundancy? How do we decide **where to split** a table? How do we **prove** the result is correct?
 
-   The Role of Functional Dependencies
-   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   .. rubric:: The Role of Functional Dependencies
+
 
    A **functional dependency** (FD) captures the rule that one set of attributes uniquely determines another. In the enrollment example, we implicitly used these FDs:
 
@@ -227,8 +227,8 @@ Functional Dependencies
    :class-container: sd-border-secondary
    :open:
 
-   Definition
-   ~~~~~~~~~~
+   .. rubric:: Definition
+
 
    A **functional dependency** (FD), written :math:`X \to Y`, states that for each value of :math:`X`, there is exactly one corresponding value of :math:`Y`. The name comes from mathematics: :math:`Y` is a *function* of :math:`X`. Both :math:`X` and :math:`Y` can be single attributes or sets of multiple attributes. Formally, given a relation schema :math:`R` with :math:`X, Y \subseteq R`:
 
@@ -238,8 +238,8 @@ Functional Dependencies
 
    For every pair of tuples :math:`t_1` and :math:`t_2` in the relation: if they have the same values on **all** attributes in :math:`X`, then they must also have the same values on **all** attributes in :math:`Y`.
 
-   Terminology
-   ^^^^^^^^^^^
+   .. rubric:: Terminology
+
 
    - :math:`X` is the **determinant** (left-hand side), one or more attributes
    - :math:`Y` is the **dependent** (right-hand side), one or more attributes
@@ -250,8 +250,8 @@ Functional Dependencies
 .. dropdown:: FDs from University Business Rules
    :class-container: sd-border-secondary
 
-   Intuition with Examples
-   ~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Intuition with Examples
+
 
    Here are some FDs from the university domain. Each is derived from a specific business rule, not from inspecting rows:
 
@@ -289,8 +289,8 @@ Functional Dependencies
 .. dropdown:: Trivial and Non-Trivial FDs
    :class-container: sd-border-secondary
 
-   Trivial FD: :math:`X \to Y` where :math:`Y \subseteq X`
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Trivial FD: :math:`X \to Y` where :math:`Y \subseteq X`
+
 
    A trivial FD is one where the dependent is already part of the determinant. It is always true regardless of the data or business rules.
 
@@ -298,8 +298,8 @@ Functional Dependencies
 
    Normalization cares about FDs that reveal **hidden structure**: which attributes determine other, *different* attributes. Trivial FDs reveal nothing because the answer is already contained in the question.
 
-   Non-Trivial FD: :math:`X \to Y` where :math:`Y \not\subseteq X`
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Non-Trivial FD: :math:`X \to Y` where :math:`Y \not\subseteq X`
+
 
    A non-trivial FD is one where the dependent contains at least one attribute **not already in** the determinant. These encode real business constraints.
 
@@ -317,13 +317,13 @@ Functional Dependencies
    :class-container: sd-border-secondary
    :open:
 
-   Why Do We Need Rules for Deriving FDs?
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Why Do We Need Rules for Deriving FDs?
+
 
    In practice, a set of known FDs implies **additional FDs** that are not explicitly stated. For example, if ``course_id`` :math:`\to` ``dept_id`` and ``dept_id`` :math:`\to` ``dept_name``, then ``course_id`` :math:`\to` ``dept_name`` also holds via transitivity. **Armstrong's axioms** (1974) provide a small set of inference rules that are **sound** (every derived FD is true) and **complete** (every true FD can be derived).
 
-   The Three Axioms
-   ^^^^^^^^^^^^^^^^
+   .. rubric:: The Three Axioms
+
 
    1. **Reflexivity**: If :math:`Y \subseteq X`, then :math:`X \to Y`. A set of attributes always determines any of its subsets. This is why trivial FDs are always true.
 
@@ -331,8 +331,8 @@ Functional Dependencies
 
    3. **Transitivity**: If :math:`X \to Y` and :math:`Y \to Z`, then :math:`X \to Z`. If :math:`X` determines :math:`Y` and :math:`Y` determines :math:`Z`, then :math:`X` determines :math:`Z` through the chain.
 
-   Two Useful Shortcuts
-   ^^^^^^^^^^^^^^^^^^^^
+   .. rubric:: Two Useful Shortcuts
+
 
    **Union**: If :math:`X \to Y` and :math:`X \to Z`, then :math:`X \to YZ`. Example: ``course_id`` :math:`\to` ``title`` and ``course_id`` :math:`\to` ``dept_id`` gives ``course_id`` :math:`\to` {``title``, ``dept_id``}.
 
@@ -348,20 +348,20 @@ Functional Dependencies
    :class-container: sd-border-secondary
    :open:
 
-   What Is Attribute Closure?
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: What Is Attribute Closure?
+
 
    Given a set of FDs :math:`F` and a set of attributes :math:`X`, the **closure of** :math:`X` **under** :math:`F`, written :math:`X^{+}`, is the set of all attributes that are functionally determined by :math:`X`.
 
-   Why Is This Useful?
-   ^^^^^^^^^^^^^^^^^^^
+   .. rubric:: Why Is This Useful?
+
 
    - **Test if an FD is implied**: Does :math:`X \to Y` follow from :math:`F`? Compute :math:`X^{+}` and check if :math:`Y \subseteq X^{+}`.
    - **Test if** :math:`X` **is a superkey**: Compute :math:`X^{+}` and check if :math:`X^{+} = R` (all attributes of the relation).
    - **Find candidate keys**: Find minimal sets of attributes whose closure equals :math:`R`.
 
-   Algorithm to Compute :math:`X^{+}`
-   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   .. rubric:: Algorithm to Compute :math:`X^{+}`
+
 
    1. Initialize: :math:`X^{+} = X`
    2. Repeat until no change: For each FD :math:`Y \to Z` in :math:`F`, if **every attribute** in :math:`Y` is in :math:`X^{+}`, then :math:`X^{+} = X^{+} \cup Z`
@@ -373,8 +373,8 @@ Functional Dependencies
        **Intuition**: Start with what you know (:math:`X`). Scan the FDs. Whenever you already know the **entire** left side of an FD, add its right side to what you know. Repeat until nothing new is added. If you only know *some* attributes of the left side, you cannot fire that FD.
 
 
-   Step-by-Step Closure Example
-   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   .. rubric:: Step-by-Step Closure Example
+
 
    **Given**: ``Course_Section``(``course_id``, ``section_no``, ``title``, ``dept_id``, ``professor_person_id``) with FDs:
 
@@ -420,14 +420,14 @@ Functional Dependencies
 .. dropdown:: Using Closures to Test Keys
    :class-container: sd-border-secondary
 
-   Superkeys and Candidate Keys
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Superkeys and Candidate Keys
+
 
    - A **superkey** is any set of attributes whose closure reaches all attributes in the relation. It can uniquely identify every row, but it might contain extra columns.
    - A **candidate key** is a superkey with no unnecessary attributes. Remove any single attribute and it stops being a superkey.
 
-   Testing {``course_id``, ``section_no``}
-   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   .. rubric:: Testing {``course_id``, ``section_no``}
+
 
    From the previous example, {``course_id``, ``section_no``}\ :sup:`+` includes all attributes, so it is a superkey. Is it minimal?
 
@@ -445,8 +445,8 @@ Functional Dependencies
 .. dropdown:: Canonical Cover (Minimal Cover)
    :class-container: sd-border-secondary
 
-   Why Simplify FD Sets?
-   ~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Why Simplify FD Sets?
+
 
    FD sets collected from business rules are often messy. Before we can run normalization algorithms, we need to clean them up. Three types of clutter can appear:
 
@@ -456,8 +456,8 @@ Functional Dependencies
 
    3. **Redundant FDs**: If ``course_id`` :math:`\to` ``dept_name`` is derivable from ``course_id`` :math:`\to` ``dept_id`` and ``dept_id`` :math:`\to` ``dept_name``, it adds no information.
 
-   Algorithm
-   ^^^^^^^^^
+   .. rubric:: Algorithm
+
 
    A **canonical cover** :math:`F_c` is an equivalent, simplified version of :math:`F` with all three types of clutter removed:
 
@@ -475,8 +475,8 @@ Normal Forms: 1NF to BCNF
    :class-container: sd-border-secondary
    :open:
 
-   Connecting the Pieces
-   ~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Connecting the Pieces
+
 
    Normal forms are tests we apply to a relation to check whether its FDs cause redundancy. Each normal form targets a specific type of problematic FD pattern. If a relation fails a test, we **decompose** it into smaller relations that pass.
 
@@ -491,13 +491,13 @@ Normal Forms: 1NF to BCNF
 .. dropdown:: First Normal Form (1NF)
    :class-container: sd-border-secondary
 
-   Definition
-   ~~~~~~~~~~
+   .. rubric:: Definition
+
 
    A relation is in **1NF** if every attribute contains only **atomic** (indivisible) values. No repeating groups, no nested relations, no multi-valued attributes.
 
-   Violation Example
-   ^^^^^^^^^^^^^^^^^
+   .. rubric:: Violation Example
+
 
    .. list-table::
       :widths: 20 20 60
@@ -525,8 +525,8 @@ Normal Forms: 1NF to BCNF
 .. dropdown:: Second Normal Form (2NF)
    :class-container: sd-border-secondary
 
-   Definition
-   ~~~~~~~~~~
+   .. rubric:: Definition
+
 
    A relation is in **2NF** if it is in 1NF, and no non-prime attribute is partially dependent on any candidate key.
 
@@ -536,8 +536,8 @@ Normal Forms: 1NF to BCNF
 
       2NF violations can only occur when the candidate key is **composite** (two or more attributes). If every candidate key is a single attribute, the relation is automatically in 2NF.
 
-   Violation Example
-   ^^^^^^^^^^^^^^^^^
+   .. rubric:: Violation Example
+
 
    ``Section_Detail``\ (\ **course_id**, **section_no**, title, professor_person_id, capacity)
 
@@ -549,8 +549,8 @@ Normal Forms: 1NF to BCNF
 .. dropdown:: Third Normal Form (3NF)
    :class-container: sd-border-secondary
 
-   Definition
-   ~~~~~~~~~~
+   .. rubric:: Definition
+
 
    A relation is in **3NF** if it is in 2NF, and no non-prime attribute is transitively dependent on any candidate key.
 
@@ -563,8 +563,8 @@ Normal Forms: 1NF to BCNF
 
        **Intuition**: 3NF says non-key attributes must depend *directly* on the key, not through another non-key attribute. If ``course_id`` :math:`\to` ``dept_id`` :math:`\to` ``dept_name``, then ``dept_name`` reaches the key only via the middleman ``dept_id``. That middleman creates redundancy.
 
-   Violation Example
-   ^^^^^^^^^^^^^^^^^
+   .. rubric:: Violation Example
+
 
    ``Course``\ (\ **course_id**, title, dept_id, dept_name)
 
@@ -576,13 +576,13 @@ Normal Forms: 1NF to BCNF
 .. dropdown:: Boyce-Codd Normal Form (BCNF)
    :class-container: sd-border-secondary
 
-   Definition
-   ~~~~~~~~~~
+   .. rubric:: Definition
+
 
    A relation :math:`R` is in **BCNF** if for every non-trivial FD :math:`X \to Y`, :math:`X` is a superkey. In other words: *every determinant must be a superkey*. No exceptions.
 
-   How Does BCNF Differ from 3NF?
-   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   .. rubric:: How Does BCNF Differ from 3NF?
+
 
    3NF has an escape clause: the FD :math:`X \to Y` is allowed if :math:`Y` consists entirely of prime attributes, even when :math:`X` is not a superkey. BCNF removes this exception.
 
@@ -613,8 +613,8 @@ Normal Forms: 1NF to BCNF
 .. dropdown:: Normal Form Summary
    :class-container: sd-border-secondary
 
-   Quick Reference
-   ~~~~~~~~~~~~~~~
+   .. rubric:: Quick Reference
+
 
    .. list-table::
       :widths: 12 40 48
@@ -652,8 +652,8 @@ Decomposition Algorithms
    :class-container: sd-border-secondary
    :open:
 
-   Two Critical Properties
-   ~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Two Critical Properties
+
 
    1. **Lossless Join (Non-additive Join)**: Joining the decomposed relations reconstructs the original relation *exactly*. No spurious (phantom) tuples are introduced. **Always required**: Without this, decomposition corrupts data.
 
@@ -664,8 +664,8 @@ Decomposition Algorithms
 
        **Trade-off**: 3NF decomposition preserves both properties. BCNF decomposition guarantees lossless join but may lose dependency preservation. Choose based on system requirements.
 
-   Lossless Join Test
-   ^^^^^^^^^^^^^^^^^^
+   .. rubric:: Lossless Join Test
+
 
    A decomposition of :math:`R` into :math:`R_1` and :math:`R_2` is lossless if and only if :math:`R_1 \cap R_2 \to R_1` or :math:`R_1 \cap R_2 \to R_2`. The common attributes must be a superkey of at least one side.
 
@@ -673,8 +673,8 @@ Decomposition Algorithms
 .. dropdown:: 3NF Synthesis Algorithm
    :class-container: sd-border-secondary
 
-   Algorithm to Decompose into 3NF
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Algorithm to Decompose into 3NF
+
 
    **Input**: Relation :math:`R` with FD set :math:`F`
 
@@ -696,8 +696,8 @@ Decomposition Algorithms
 .. dropdown:: BCNF Decomposition Algorithm
    :class-container: sd-border-secondary
 
-   Algorithm to Decompose into BCNF
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Algorithm to Decompose into BCNF
+
 
    **Input**: Relation :math:`R` with FD set :math:`F`
 
@@ -719,8 +719,8 @@ Decomposition Algorithms
 .. dropdown:: BCNF vs. 3NF Trade-offs
    :class-container: sd-border-secondary
 
-   When to Use Each
-   ~~~~~~~~~~~~~~~~
+   .. rubric:: When to Use Each
+
 
    .. list-table::
       :widths: 20 40 40
@@ -758,8 +758,8 @@ When to Denormalize
    :class-container: sd-border-secondary
    :open:
 
-   Why Denormalize?
-   ~~~~~~~~~~~~~~~~
+   .. rubric:: Why Denormalize?
+
 
    **Normalization optimizes for write consistency**. Denormalization optimizes for **read performance**.
 
@@ -777,8 +777,8 @@ When to Denormalize
 .. dropdown:: Costs of Denormalization
    :class-container: sd-border-secondary
 
-   The Price You Pay
-   ~~~~~~~~~~~~~~~~~
+   .. rubric:: The Price You Pay
+
 
    1. **Redundancy returns**: Data is duplicated across tables. Increased storage and risk of stale data.
 
@@ -792,8 +792,8 @@ When to Denormalize
 .. dropdown:: Denormalization Patterns
    :class-container: sd-border-secondary
 
-   Common Techniques
-   ~~~~~~~~~~~~~~~~~
+   .. rubric:: Common Techniques
+
 
    1. **Materialized Views**: Precompute and store query results as a physical table. Database refreshes the view periodically or on demand. Example: Store enrollment counts per course per semester.
 
@@ -807,8 +807,8 @@ When to Denormalize
 .. dropdown:: Materialized View Example
    :class-container: sd-border-secondary
 
-   Precomputing Expensive Joins
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Precomputing Expensive Joins
+
 
    **Scenario**: A dashboard frequently needs student names with their enrollments and grades.
 
@@ -848,8 +848,8 @@ When to Denormalize
 .. dropdown:: Redundant Column Example
    :class-container: sd-border-secondary
 
-   Avoiding Repetitive Joins
-   ~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Avoiding Repetitive Joins
+
 
    **Scenario**: Course listings always show department name alongside course title. The join to ``Department`` happens in 80% of queries.
 
@@ -876,8 +876,8 @@ When to Denormalize
 .. dropdown:: OLTP vs. OLAP
    :class-container: sd-border-secondary
 
-   Different Needs, Different Schemas
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Different Needs, Different Schemas
+
 
    .. list-table::
       :widths: 18 41 41
@@ -915,8 +915,8 @@ When to Denormalize
 .. dropdown:: Guidelines for Safe Denormalization
    :class-container: sd-border-secondary
 
-   Best Practices
-   ~~~~~~~~~~~~~~
+   .. rubric:: Best Practices
+
 
    1. **Measure before optimizing**: Profile queries with ``EXPLAIN ANALYZE``. Identify actual bottlenecks, not perceived ones.
 

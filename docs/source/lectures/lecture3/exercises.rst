@@ -5,7 +5,8 @@ Exercises
 This page contains exercises for Lecture 3. These exercises are designed to reinforce your understanding of logical data modeling, the relational model, and the ER-to-Relational mapping algorithm.
 
 
-.. dropdown:: 🎯 Exercise 1 -- Relational Model Fundamentals
+.. dropdown:: Exercise 1 -- Relational Model Fundamentals
+    :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
@@ -13,7 +14,7 @@ This page contains exercises for Lecture 3. These exercises are designed to rein
 
     Practice identifying and applying the core concepts of the relational model: relations, tuples, attributes, domains, keys, and properties.
 
-    ----
+
 
     **Specification**
 
@@ -52,7 +53,7 @@ This page contains exercises for Lecture 3. These exercises are designed to rein
     3. Explain why referencing a column by name (``credits``) is preferred over referencing by position ("the 4th column").
     4. Give one example of a non-atomic value that could appear in a ``COURSE`` column and explain how to fix it.
 
-    ----
+
 
     **Deliverables**
 
@@ -63,7 +64,8 @@ This page contains exercises for Lecture 3. These exercises are designed to rein
     - **Part C**: One example per property (4 total)
 
 
-.. dropdown:: 🔗 Exercise 2 -- Mapping Strong and Weak Entities (Steps 1-2)
+.. dropdown:: Exercise 2 -- Mapping Strong and Weak Entities (Steps 1-2)
+    :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
@@ -71,7 +73,7 @@ This page contains exercises for Lecture 3. These exercises are designed to rein
 
     Practice applying Steps 1 and 2 of the mapping algorithm: mapping strong entities and weak entities to relational tables.
 
-    ----
+
 
     **Specification**
 
@@ -113,7 +115,7 @@ This page contains exercises for Lecture 3. These exercises are designed to rein
     3. Show how ``ROOM`` would reference this lookup table via FK
     4. Compare the lookup table approach with a ``CHECK`` constraint approach: when would you prefer each?
 
-    ----
+
 
     **Deliverables**
 
@@ -124,7 +126,8 @@ This page contains exercises for Lecture 3. These exercises are designed to rein
     - **Part C**: ``ROOM_TYPE`` lookup table design with sample data and comparison
 
 
-.. dropdown:: 🔀 Exercise 3 -- Mapping Relationships (Steps 3-5)
+.. dropdown:: Exercise 3 -- Mapping Relationships (Steps 3-5)
+    :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
@@ -132,7 +135,7 @@ This page contains exercises for Lecture 3. These exercises are designed to rein
 
     Practice applying Steps 3-5 of the mapping algorithm: mapping 1:1, 1:N, and M:N relationships to relational schemas.
 
-    ----
+
 
     **Specification**
 
@@ -184,7 +187,7 @@ This page contains exercises for Lecture 3. These exercises are designed to rein
 
        **Why a junction table?** Placing an FK on either ``STUDENT`` or ``COURSE_SECTION`` would require multiple values in a single cell. The junction table resolves this by creating one row per (student, section) pairing.
 
-    ----
+
 
     **Deliverables**
 
@@ -195,7 +198,8 @@ This page contains exercises for Lecture 3. These exercises are designed to rein
     - **Part C**: ``ENROLLMENT`` junction table with composite PK, FKs, attributes, and sample data
 
 
-.. dropdown:: 🏗️ Exercise 4 -- Complete Mapping
+.. dropdown:: Exercise 4 -- Complete Mapping
+    :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
@@ -203,7 +207,7 @@ This page contains exercises for Lecture 3. These exercises are designed to rein
 
     Integrate all mapping steps by performing a complete ER-to-Relational mapping for a new domain.
 
-    ----
+
 
     **Specification**
 
@@ -271,7 +275,7 @@ This page contains exercises for Lecture 3. These exercises are designed to rein
     - ☑ ISA strategy is justified and correctly implemented
     - ☑ Lookup table for ``SPECIES`` is designed with metadata columns
 
-    ----
+
 
     **Deliverables**
 

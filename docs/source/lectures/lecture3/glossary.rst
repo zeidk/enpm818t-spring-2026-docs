@@ -47,11 +47,6 @@ C
 
 .. glossary::
 
-   Candidate Key
-      A minimal superkey: a set of one or more attributes that uniquely
-      identifies each tuple, with no unnecessary attributes. One candidate
-      key is chosen as the primary key; others become alternate keys.
-
    Cardinality (of a relation)
       The number of tuples (rows) in a particular relation instance at a
       point in time. Changes with every ``INSERT``, ``UPDATE``, or ``DELETE``.
@@ -73,23 +68,10 @@ C
       ``ENROLLMENT``.(``course_id``, ``section_no``) referencing
       ``COURSE_SECTION``.(``course_id``, ``section_no``).
 
-   Composite Key
-      A primary key composed of two or more attributes that together
-      uniquely identify a tuple. Common in junction tables and weak entity
-      tables. Example: (``course_id``, ``section_no``) in
-      ``COURSE_SECTION``.
-
    Cross-Reference
       A 1:1 mapping strategy (Option C) used when both sides have partial
       participation. The FK is placed on the side with fewer NULLs and
       constrained with ``UNIQUE``.
-
-   Crow's Foot Notation
-      The industry-standard notation for logical data models. Entities are
-      drawn as rectangles with columns listed inside. Relationships are
-      lines between tables with fork/bar/circle symbols at the ends to
-      indicate cardinality and participation.
-
 
 .. _t3-glossary-d:
 
@@ -170,24 +152,12 @@ K
 
 .. glossary::
 
-   Key Attribute
-      An attribute that participates in a key (superkey, candidate key,
-      primary key, or alternate key). Key attributes enforce uniqueness
-      and are used to identify tuples.
-
-
 .. _t3-glossary-l:
 
 L
 =
 
 .. glossary::
-
-   Logical Data Model
-      The second stage of database design that translates the conceptual
-      model into relational schemas (tables, columns, keys, constraints).
-      DBMS-family specific (relational vs. NoSQL) but not tied to a
-      particular product or version.
 
    Lookup Table
       A reference table that constrains a column to a fixed set of valid
@@ -276,12 +246,6 @@ S
       (4) binary 1:N, (5) binary M:N, (6) multivalued attributes,
       (7) n-ary relationships. ISA and categories are sometimes added
       as Steps 8 and 9.
-
-   Superkey
-      Any set of one or more attributes that uniquely identifies each
-      tuple in a relation. Need not be minimal (may contain unnecessary
-      attributes). Every candidate key is a superkey, but not every
-      superkey is a candidate key.
 
    Surrogate Key
       A system-generated key with no business meaning. Examples:

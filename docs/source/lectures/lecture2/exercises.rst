@@ -5,7 +5,8 @@ Exercises
 This page contains exercises for Lecture 2. These exercises are designed to reinforce your understanding of conceptual data modeling using Entity-Relationship diagrams in Chen notation.
 
 
-.. dropdown:: 🎯 Exercise 1 – Entity, Attribute & Key Identification
+.. dropdown:: Exercise 1 – Entity, Attribute & Key Identification
+    :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
@@ -13,7 +14,7 @@ This page contains exercises for Lecture 2. These exercises are designed to rein
 
     Practice identifying and classifying entities, attributes, and keys for a given domain. Develop your ability to distinguish between strong and weak entities and to choose appropriate primary keys.
 
-    ----
+
 
     **Specification**
 
@@ -65,7 +66,7 @@ This page contains exercises for Lecture 2. These exercises are designed to rein
        - Regular oval for **simple attributes**
        - Composite attributes shown with sub-ovals
 
-    ----
+
 
     **Deliverables**
 
@@ -77,7 +78,8 @@ This page contains exercises for Lecture 2. These exercises are designed to rein
     - **Diagram Requirements**: Hand-drawn or digital (use ERDPlus, draw.io, or similar). Must show the entity rectangle, all attributes as ovals, and proper notation (underlines, double borders, dashes).
 
 
-.. dropdown:: 🔗 Exercise 2 – Modeling New Relationships
+.. dropdown:: Exercise 2 – Modeling New Relationships
+    :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
@@ -85,7 +87,7 @@ This page contains exercises for Lecture 2. These exercises are designed to rein
 
     Practice modeling binary and recursive relationships with correct cardinality ratios, participation constraints, and relationship attributes.
 
-    ----
+
 
     **Specification**
 
@@ -138,7 +140,7 @@ This page contains exercises for Lecture 2. These exercises are designed to rein
     - Carefully determine participation on **both sides**: Is it total or partial?
     - Justify your participation constraints based on the business rules
 
-    ----
+
 
     **For Each Relationship You Draw**
 
@@ -152,7 +154,7 @@ This page contains exercises for Lecture 2. These exercises are designed to rein
 
        **Justify your constraints**: For each (min, max) you assign, write **one sentence** explaining the business rule behind it. There is no single correct answer; different assumptions lead to different models. Your justification matters more than the specific numbers you choose.
 
-    ----
+
 
     **Deliverables**
 
@@ -163,7 +165,8 @@ This page contains exercises for Lecture 2. These exercises are designed to rein
     - **Diagram Requirements**: Hand-drawn or digital. Must show entities as rectangles, relationship as diamond, proper line notation (single vs. double), cardinality labels, and (min, max) constraints on both sides.
 
 
-.. dropdown:: 🏗️ Exercise 3 – Specialization Hierarchy
+.. dropdown:: Exercise 3 – Specialization Hierarchy
+    :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
@@ -171,7 +174,7 @@ This page contains exercises for Lecture 2. These exercises are designed to rein
 
     Practice modeling specialization/generalization hierarchies with correct constraint notation (disjoint/overlapping, total/partial).
 
-    ----
+
 
     **Specification**
 
@@ -217,7 +220,7 @@ This page contains exercises for Lecture 2. These exercises are designed to rein
 
        - ``GRAD_STUDENT``: ``thesis_topic``, ``advisor_id`` (could also be a relationship)
 
-    ----
+
 
     **Deliverables**
 
@@ -233,7 +236,8 @@ This page contains exercises for Lecture 2. These exercises are designed to rein
     - **Diagram Requirements**: Hand-drawn or digital. Must show rectangles for entities, ISA triangle/circle, proper line notation (single vs. double), constraint labels (d/o, total/partial), and all attributes with correct oval styles.
 
 
-.. dropdown:: 📊 Exercise 4 – Complete ER Diagram
+.. dropdown:: Exercise 4 – Complete ER Diagram
+    :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
@@ -241,7 +245,7 @@ This page contains exercises for Lecture 2. These exercises are designed to rein
 
     Integrate all concepts from the lecture by drawing a complete ER diagram for a simplified version of the university system.
 
-    ----
+
 
     **Specification**
 
@@ -303,7 +307,7 @@ This page contains exercises for Lecture 2. These exercises are designed to rein
     - ☑ Specialization constraints are marked
     - ☑ No obvious redundant relationships
 
-    ----
+
 
     **Deliverables**
 

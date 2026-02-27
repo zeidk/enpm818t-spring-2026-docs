@@ -12,11 +12,11 @@ From Conceptual to Logical
    :class-container: sd-border-secondary
    :open:
 
-   Three Levels of Data Modeling (Revisited)
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Three Levels of Data Modeling (Revisited)
+
 
    .. list-table::
-      :widths: 15 22 22 22 19
+      :widths: 15 28 28 29
       :header-rows: 1
       :class: compact-table
 
@@ -53,8 +53,8 @@ From Conceptual to Logical
 .. dropdown:: Why Not Jump Straight to SQL?
    :class-container: sd-border-secondary
 
-   Four Reasons for a Logical Layer
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Four Reasons for a Logical Layer
+
 
    1. **Conceptual constructs have no direct SQL equivalent.** :math:`M{:}N` relationships, multivalued attributes, weak entities, ISA hierarchies, and categories must be *resolved* into tables and foreign keys.
 
@@ -68,8 +68,8 @@ From Conceptual to Logical
 .. dropdown:: Crow's Foot Notation: Quick Reference
    :class-container: sd-border-secondary
 
-   Key Differences from Chen
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Key Differences from Chen
+
 
    .. list-table::
       :widths: 25 35 40
@@ -113,8 +113,8 @@ From Conceptual to Logical
        **Crow's Foot is closer to implementation**: Every entity is already a table. Every attribute is a column. Relationships are foreign keys. This is the standard in industry tools (ERwin, DbSchema, DataGrip, pgAdmin, DBeaver).
 
 
-   Reading Crow's Foot Cardinality Symbols
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Reading Crow's Foot Cardinality Symbols
+
 
    Each end of a relationship line has two components: the **inner symbol** (closest to the entity) specifies *maximum* cardinality, and the **outer symbol** (farther from the entity) specifies *minimum* participation.
 
@@ -145,8 +145,8 @@ From Conceptual to Logical
         - Partial, :math:`N`
 
 
-   Reading a Crow's Foot Diagram
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Reading a Crow's Foot Diagram
+
 
    .. only:: html
 
@@ -175,16 +175,16 @@ From Conceptual to Logical
 
 
 
-   Table Symbols
-   ^^^^^^^^^^^^^^
+   .. rubric:: Table Symbols
+
 
    - **PK (Primary Key)**: Uniquely identifies each row. Cannot be ``NULL`` or duplicated. Example: ``dept_id`` in ``DEPARTMENT``.
    - **FK (Foreign Key)**: References a PK in another table, enforcing a link. Example: ``dept_id`` in ``PROFESSOR`` must match a valid ``dept_id`` in ``DEPARTMENT``.
    - **PK, FK**: A column that is both the table's PK and an FK to another table. Example: ``person_id`` in ``PROFESSOR`` is inherited from ``PERSON`` (ISA).
    - **UK (Unique Key)**: Must be unique across all rows but is not the chosen PK. Example: ``professor_id`` is a business identifier enforced with ``UNIQUE``. Also called an **Alternate Key (AK)**.
 
-   Reading the Line
-   ^^^^^^^^^^^^^^^^^
+   .. rubric:: Reading the Line
+
 
    - **Bar + bar** at ``DEPARTMENT``: exactly one (each professor belongs to one department)
    - **Crow's foot + bar** at ``PROFESSOR``: one or many (a department has one or more professors)
@@ -234,8 +234,8 @@ Relational Database Fundamentals
         - ``STUDENT`` (``person_id``, ``gpa``, ...)
 
 
-   Four Benefits of the Relational Model
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Four Benefits of the Relational Model
+
 
    1. **Data integrity through constraints.** The database itself enforces rules: primary keys guarantee uniqueness, foreign keys prevent orphaned records, ``NOT NULL`` eliminates missing required values, and ``CHECK`` constraints restrict domains. Bad data is rejected *at the database level*, not left for application code to catch.
 
@@ -261,8 +261,8 @@ Relational Database Fundamentals
 
       That is, :math:`R` is a **subset of the Cartesian product** of its attribute domains. Each element of :math:`R` is an :math:`n`-tuple :math:`(d_1, d_2, \ldots, d_n)` where :math:`d_i \in D_i`.
 
-   Example: The PERSON Relation
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Example: The PERSON Relation
+
 
    - **Domains** (simplified): :math:`D_1` = String (``person_id``), :math:`D_2` = String (``first_name``), :math:`D_3` = String (``middle_name``), :math:`D_4` = String (``last_name``), :math:`D_5` = Date (``date_of_birth``)
    - The **Cartesian product** :math:`D_1 \times D_2 \times \cdots \times D_5` contains every conceivable combination, including nonsensical ones like ``('P999', 'Zz', 'Qq', 'Xx', 1900-01-01)``
@@ -274,8 +274,8 @@ Relational Database Fundamentals
 .. dropdown:: Schema vs. Instance
    :class-container: sd-border-secondary
 
-   Relation Schema (Intension)
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Relation Schema (Intension)
+
 
    A **relation schema** defines the *structure* of a relation: the relation name, its attribute names, and their domains. Formally:
 
@@ -292,8 +292,8 @@ Relational Database Fundamentals
       We dropped ``phone_numbers`` and ``email_addresses`` from the schema. As multivalued attributes, they cannot be represented as single atomic columns. They will be handled in their own tables during mapping (Step 6).
 
 
-   Relation Instance (Extension)
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Relation Instance (Extension)
+
 
    A **relation instance** :math:`r(R)` is a specific **set of tuples** conforming to schema :math:`R` at a point in time. It changes with every ``INSERT``, ``UPDATE``, or ``DELETE``. The instance is like the **objects in memory** (OOP): the actual data that currently exists.
 
@@ -366,8 +366,8 @@ Relational Database Fundamentals
 .. dropdown:: Four Properties of Relations
    :class-container: sd-border-secondary
 
-   Four Properties from Set Theory
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Four Properties from Set Theory
+
 
    1. **No duplicate tuples.** Every row is unique. Inserting :math:`(\text{P101},\, \text{Alice},\, \text{Maria},\, \text{Smith},\, \text{1998-03-15})` a second time is **not allowed** because a relation is a *set*, not a bag (multiset). This is guaranteed by the **primary key**: no two tuples share the same ``person_id``.
 
@@ -378,8 +378,8 @@ Relational Database Fundamentals
    4. **Values are atomic.** Each cell holds exactly **one indivisible value**: this is why we store ``first_name``, ``middle_name``, and ``last_name`` as separate attributes rather than a single ``name`` field containing "Alice Maria Smith". No arrays, no comma-separated lists, no nested structures inside a cell. This is **First Normal Form (1NF)**, covered in detail in L4. This is exactly why ``phone_numbers`` had to be removed from the schema earlier.
 
 
-   SQL Tables Are Not Pure Relations
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: SQL Tables Are Not Pure Relations
+
 
    The relational model as defined by Codd is a mathematical ideal. SQL, the language we use to interact with relational databases, is a **practical approximation** that deviates in several important ways:
 
@@ -413,8 +413,8 @@ Relational Database Fundamentals
        **Why does this matter?** Understanding the theoretical model helps you recognize *why* constraints exist. When you declare a ``PRIMARY KEY``, you are enforcing the "no duplicate tuples" property. When you add ``NOT NULL``, you are choosing to exclude ``NULL`` s that the theory did not originally anticipate. Every constraint you write in SQL is a deliberate step toward making your table behave more like a true relation.
 
 
-   Connecting Theory to Practice
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Connecting Theory to Practice
+
 
    .. card::
        :class-card: sd-border-success sd-shadow-sm
@@ -430,8 +430,8 @@ Relational Database Fundamentals
 .. dropdown:: Key Taxonomy
    :class-container: sd-border-secondary
 
-   Types of Keys in the Relational Model
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Types of Keys in the Relational Model
+
 
    In Lecture 2, we marked key attributes with underlined ovals. In the relational model, keys have a formal hierarchy:
 
@@ -485,8 +485,8 @@ Relational Database Fundamentals
         - ``COURSE``.``dept_id`` :math:`\to` ``DEPARTMENT``.``dept_id``
 
 
-   Orthogonal Key Properties
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Orthogonal Key Properties
+
 
    Keys can also be classified along two independent axes:
 
@@ -569,8 +569,8 @@ Relational Database Fundamentals
       **Naming convention**: A common pattern is ``role_referenced_pk``, e.g., ``advisor_person_id``. This is especially important when a table has **multiple FKs to the same table** (e.g., both ``successor_id`` and ``prereq_id`` reference ``COURSE``).
 
 
-   FK Varieties and Cascade Behavior
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: FK Varieties and Cascade Behavior
+
 
    - **Simple FK**: Single column referencing a single-column PK (e.g., ``COURSE``.``dept_id`` :math:`\to` ``DEPARTMENT``.``dept_id``)
    - **Composite FK**: Multiple columns referencing a composite PK (e.g., ``ENROLLMENT``.(``course_id``, ``section_no``) :math:`\to` ``COURSE_SECTION``.(``course_id``, ``section_no``))
@@ -638,8 +638,8 @@ Relational Database Fundamentals
 .. dropdown:: Table Design Best Practices
    :class-container: sd-border-secondary
 
-   Principles of Good Table Design
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Principles of Good Table Design
+
 
    - **Atomicity**: Every column stores indivisible values. Store ``first_name`` and ``last_name`` separately, not a combined "name" field. No comma-separated lists. (This is also 1NF, covered in L4.)
    - **Avoid redundancy**: Each fact should be stored *once*. If a department name appears in 500 course rows, it should live in a ``DEPARTMENT`` table instead, referenced by FK.
@@ -648,8 +648,8 @@ Relational Database Fundamentals
    - **Enforce constraints**: Use ``NOT NULL``, ``UNIQUE``, ``CHECK``, and ``FOREIGN KEY`` constraints to catch bad data at the database level, not just in application code.
 
 
-   Three Common Table Design Pitfalls
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Three Common Table Design Pitfalls
+
 
    1. **Unnecessary duplication.** Storing a customer's address in both the ``CUSTOMER`` and ``ORDER`` tables instead of linking via FK. Leads to update anomalies (change address in one place, forget the other), increased storage, and maintenance headaches. **Fix**: Normalize. Store shared data once, reference with FKs.
 
@@ -708,13 +708,13 @@ The 7-Step Mapping Algorithm
 .. dropdown:: Step 1: Strong Entity Types
    :class-container: sd-border-secondary
 
-   Map Each Strong Entity to a Table
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Map Each Strong Entity to a Table
+
 
    **Rule**: For each strong entity type :math:`E`, create a relation :math:`R` with all **simple attributes**. Choose one candidate key as the **primary key**.
 
-   Handling Attribute Types
-   ^^^^^^^^^^^^^^^^^^^^^^^^^
+   .. rubric:: Handling Attribute Types
+
 
    .. list-table::
       :widths: 25 75
@@ -735,8 +735,8 @@ The 7-Step Mapping Algorithm
         - Mark as ``PRIMARY KEY`` (PK)
 
 
-   University Example
-   ^^^^^^^^^^^^^^^^^^^
+   .. rubric:: University Example
+
 
    .. list-table::
       :widths: 15 85
@@ -781,8 +781,8 @@ The 7-Step Mapping Algorithm
          **Mapping the PERSON entity**: Chen attributes are flattened into table columns. Composite attribute ``name`` becomes ``first_name``, ``middle_name``, ``last_name``. Multivalued attributes (phone_numbers, email_addresses) are deferred to Step 6.
 
 
-   Lookup Tables (The Enum Pattern)
-   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   .. rubric:: Lookup Tables (The Enum Pattern)
+
 
    Some strong entities exist solely to constrain a column to a **fixed set of valid values**. These are called **lookup tables** (also known as reference tables or code tables). They serve the same purpose as an enum in programming languages, but at the database level.
 
@@ -797,8 +797,8 @@ The 7-Step Mapping Algorithm
      - You want **FK enforcement** rather than a string-based check
 
 
-   University Example: ACADEMIC_RANK
-   """"""""""""""""""""""""""""""""""
+   .. rubric:: University Example: ACADEMIC_RANK
+
 
    .. list-table::
       :widths: 25 40 35
@@ -826,8 +826,8 @@ The 7-Step Mapping Algorithm
    - ``rank_order``: enables sorting by seniority without relying on alphabetical order
 
 
-   How Lookup Tables Connect
-   """""""""""""""""""""""""""
+   .. rubric:: How Lookup Tables Connect
+
 
    .. only:: html
 
@@ -861,8 +861,8 @@ The 7-Step Mapping Algorithm
    - Multiple professors can share the same rank (no ``UNIQUE`` on the FK)
 
 
-   Other Lookup Table Candidates
-   """""""""""""""""""""""""""""""
+   .. rubric:: Other Lookup Table Candidates
+
 
    .. list-table::
       :widths: 25 25 50
@@ -894,8 +894,8 @@ The 7-Step Mapping Algorithm
 .. dropdown:: Step 2: Weak Entity Types
    :class-container: sd-border-secondary
 
-   Map Each Weak Entity to a Table
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Map Each Weak Entity to a Table
+
 
    **Rule**: For each weak entity :math:`W` with owner entity :math:`E`:
 
@@ -904,8 +904,8 @@ The 7-Step Mapping Algorithm
    - **PK of** :math:`R_W` = owner's PK + partial key (discriminator)
 
 
-   University Example: COURSE_SECTION (owned by COURSE)
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: University Example: COURSE_SECTION (owned by COURSE)
+
 
    .. only:: html
 
@@ -946,8 +946,8 @@ The 7-Step Mapping Algorithm
 .. dropdown:: Step 3: Binary :math:`1{:}1` Relationships
    :class-container: sd-border-secondary
 
-   Map Binary :math:`1{:}1` Relationships
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Map Binary :math:`1{:}1` Relationships
+
 
    **Rule**: Three options depending on participation:
 
@@ -1013,7 +1013,7 @@ The 7-Step Mapping Algorithm
             Placing FK (``chairs_dept_id`` :math:`\to` ``DEPARTMENT``.``dept_id``) on ``PROFESSOR`` means most professors are **not** chairs, so the column is mostly ``NULL``.
 
             .. list-table::
-               :widths: 10 10 10 12 12 15 15 16
+               :widths: 12 12 10 10 14 14 14
                :header-rows: 1
                :class: compact-table
 
@@ -1244,13 +1244,13 @@ The 7-Step Mapping Algorithm
 .. dropdown:: Step 4: Binary :math:`1{:}N` Relationships
    :class-container: sd-border-secondary
 
-   Map Binary :math:`1{:}N` Relationships
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Map Binary :math:`1{:}N` Relationships
+
 
    **Rule**: Add the PK of the "one" side as a **FK on the "many" side**. Relationship attributes also go on the "many" side. Total participation :math:`\Rightarrow` ``NOT NULL``; partial :math:`\Rightarrow` nullable.
 
-   University Example
-   ^^^^^^^^^^^^^^^^^^^^
+   .. rubric:: University Example
+
 
    ``PROFESSOR`` :math:`(1,1)` -- ``BELONGS_TO`` -- :math:`(1,N)` ``DEPARTMENT``. Each professor belongs to exactly one department; a department has one or more professors.
 
@@ -1365,16 +1365,16 @@ The 7-Step Mapping Algorithm
 .. dropdown:: Step 5: Binary :math:`M{:}N` Relationships
    :class-container: sd-border-secondary
 
-   Map Binary :math:`M{:}N` Relationships
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Map Binary :math:`M{:}N` Relationships
+
 
    **Rule**: Create a **junction table** (also called a **bridge** or **associative** table) to represent the :math:`M{:}N` relationship.
 
    - Unlike :math:`1{:}1` or :math:`1{:}N`, there is **no way** to represent :math:`M{:}N` with a simple FK on either side
    - Each row in the junction table represents one pairing between the two entities
 
-   Building the Junction Table
-   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   .. rubric:: Building the Junction Table
+
 
    - **Primary key**: The composite PK is formed by combining the PKs of both participating entities.
    - **Foreign keys**: Each component of the composite PK is also an FK referencing its source entity. These are inherently ``NOT NULL`` since they form the PK.
@@ -1385,8 +1385,8 @@ The 7-Step Mapping Algorithm
       A relationship attribute like ``grade`` only has meaning when *both* entities are known. Asking "What is the grade?" makes no sense without specifying which student *and* which course section.
 
 
-   Example: STUDENT -- ENROLLS_IN -- COURSE_SECTION
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Example: STUDENT -- ENROLLS_IN -- COURSE_SECTION
+
 
    A student enrolls in many course sections; a course section has many students.
 
@@ -1416,8 +1416,8 @@ The 7-Step Mapping Algorithm
          **Mapping :math:`M{:}N` relationships with a junction table** (``ENROLLMENT``)
 
 
-   Example: COURSE Prerequisites (Recursive M:N)
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Example: COURSE Prerequisites (Recursive M:N)
+
 
    A course can have many prerequisites; a course can be a prerequisite for many others. This is a **recursive** :math:`M{:}N` relationship on the same entity.
 
@@ -1458,8 +1458,8 @@ The 7-Step Mapping Algorithm
 .. dropdown:: Step 6: Multivalued Attributes
    :class-container: sd-border-secondary
 
-   Map Multivalued Attributes
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Map Multivalued Attributes
+
 
    **Rule**: For each multivalued attribute :math:`A` of entity :math:`E`: create a new table with PK = (FK to :math:`E` + attribute value). If composite+multivalued, include all leaf sub-attributes.
 
@@ -1521,14 +1521,14 @@ The 7-Step Mapping Algorithm
 .. dropdown:: Step 7: :math:`n`-ary Relationships
    :class-container: sd-border-secondary
 
-   Map :math:`n`-ary (Ternary+) Relationships
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Map :math:`n`-ary (Ternary+) Relationships
+
 
    **Rule**: Create a new table with FKs to each participant. PK typically includes all FKs unless cardinality allows simplification.
 
 
-   TA_ASSIGN (Ternary: GRAD_STUDENT, COURSE_SECTION, PROFESSOR)
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: TA_ASSIGN (Ternary: GRAD_STUDENT, COURSE_SECTION, PROFESSOR)
+
 
    ``TA_ASSIGNMENT`` (``course_id``, ``section_no``, ``grad_person_id``, ``professor_person_id``)
 
@@ -1575,8 +1575,8 @@ The 7-Step Mapping Algorithm
 .. dropdown:: Transformation Summary
    :class-container: sd-border-secondary
 
-   Chen to Crow's Foot: What Disappears, What Appears
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Chen to Crow's Foot: What Disappears, What Appears
+
 
    .. list-table::
       :widths: 25 30 45
@@ -1630,8 +1630,8 @@ Mapping ISA and Categories
    :class-container: sd-border-secondary
    :open:
 
-   Strategy Comparison
-   ~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Strategy Comparison
+
 
    .. list-table::
       :widths: 18 22 25 35
@@ -1661,8 +1661,8 @@ Mapping ISA and Categories
        **No universally "best" strategy.** Choice depends on specialization constraints (disjoint/overlapping, total/partial), number of subclass-specific attributes, and query patterns. The flowchart below is a **starting point**; practical considerations (shared queries, data volume, application needs) may override it.
 
 
-   Choosing the Right ISA Strategy
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Choosing the Right ISA Strategy
+
 
    .. only:: html
 
@@ -1689,8 +1689,8 @@ Mapping ISA and Categories
 
          **ISA strategy decision flowchart**
 
-   How to Read the Flowchart
-   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+   .. rubric:: How to Read the Flowchart
+
 
    - Start with the specialization constraints (disjoint/overlapping, total/partial)
    - Consider the number of subclass-specific attributes
@@ -1755,8 +1755,8 @@ Mapping ISA and Categories
         - (``person_id``, ``visa_type``, ``country_of_origin``, ``passport_number``, ``visa_expiration_date``): PK/FK :math:`\to` ``STUDENT``
 
 
-   ISA1: PERSON :math:`\to` STUDENT / PROFESSOR (disjoint, total)
-   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   .. rubric:: ISA1: PERSON :math:`\to` STUDENT / PROFESSOR (disjoint, total)
+
 
    - The flowchart says: disjoint + total with many subclass attrs :math:`\Rightarrow` Strategy B
    - **But**: We need the ``PERSON`` table for shared queries ("list all people with last name Smith"), phone numbers (``PERSON_PHONE`` references ``PERSON``), and the address attributes that both students and professors share
@@ -1764,8 +1764,8 @@ Mapping ISA and Categories
    - **Decision**: Strategy A. The shared-query benefit outweighs the extra ``JOIN`` s.
 
 
-   ISA2: STUDENT :math:`\to` GRAD_STUDENT / INTL_STUDENT (overlapping, partial)
-   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   .. rubric:: ISA2: STUDENT :math:`\to` GRAD_STUDENT / INTL_STUDENT (overlapping, partial)
+
 
    - The flowchart says: overlapping or partial :math:`\Rightarrow` Strategy A
    - **Overlapping**: A student can be both a grad student and an international student (rows in both subtables)
@@ -1781,16 +1781,16 @@ Mapping ISA and Categories
 .. dropdown:: Step 9: Mapping Categories (Union Types)
    :class-container: sd-border-secondary
 
-   How to Map a Category
-   ~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: How to Map a Category
+
 
    A **category** (union type) is a subclass whose instances come from **multiple unrelated superclass hierarchies**. From L2: ``VEHICLE_OWNER`` is a category of ``PERSON`` :math:`\cup` ``COMPANY`` :math:`\cup` ``BANK``.
 
    *Note: This example is outside the university model. A vehicle can be owned by a person, a company, or a bank (repossession).*
 
 
-   Why Categories Are Different from ISA
-   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   .. rubric:: Why Categories Are Different from ISA
+
 
    - In ISA, subclasses share a **common superclass** with a single PK
    - In a category, the superclasses are **unrelated** with **incompatible PKs** (``ssn`` vs. ``tax_id`` vs. ``routing_no``)
@@ -1798,8 +1798,8 @@ Mapping ISA and Categories
    - Solution: a **surrogate PK** + a **discriminator** + **mutually exclusive nullable FKs**
 
 
-   Mapping Rule
-   ^^^^^^^^^^^^^^
+   .. rubric:: Mapping Rule
+
 
    - Create a **surrogate PK** (``owner_id``)
    - Add a **type discriminator** column (``owner_type``)
@@ -1836,8 +1836,8 @@ Mapping ISA and Categories
          **Mapping categories**: Chen (left) to Crow's Foot (right)
 
 
-   Category Table: Sample Data
-   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   .. rubric:: Category Table: Sample Data
+
 
    .. list-table::
       :widths: 10 12 18 18 18 15
@@ -1893,8 +1893,8 @@ Complete Mapping Result
    :class-container: sd-border-secondary
    :open:
 
-   All Tables, Organized by Mapping Step
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: All Tables, Organized by Mapping Step
+
 
    .. list-table::
       :widths: 8 18 50 24
@@ -1978,8 +1978,8 @@ Complete Mapping Result
 .. dropdown:: Validation Checklist
    :class-container: sd-border-secondary
 
-   Verifying the Mapping
-   ~~~~~~~~~~~~~~~~~~~~~~
+   .. rubric:: Verifying the Mapping
+
 
    .. card::
        :class-card: sd-border-success

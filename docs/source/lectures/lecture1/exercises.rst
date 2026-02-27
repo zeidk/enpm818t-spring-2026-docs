@@ -8,7 +8,8 @@ exercises ask you to **explore that environment on your own** and
 document what you find.
 
 
-.. dropdown:: 🖥️ Exercise 1 – Explore psql
+.. dropdown:: Exercise 1 – Explore psql
+    :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
@@ -17,7 +18,7 @@ document what you find.
     Verify your PostgreSQL installation and become familiar with the
     ``psql`` interactive terminal and its meta-commands.
 
-    ----
+
 
     **Specification**
 
@@ -92,7 +93,7 @@ document what you find.
           PostgreSQL is running.  Always use proper PostgreSQL commands or
           configuration tools.
 
-    ----
+
 
     **Deliverables**
 
@@ -107,7 +108,8 @@ document what you find.
       documentation.)*
 
 
-.. dropdown:: 🗄️ Exercise 2 – Explore DataGrip
+.. dropdown:: Exercise 2 – Explore DataGrip
+    :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
@@ -116,7 +118,7 @@ document what you find.
     Connect DataGrip to your local PostgreSQL instance and explore the
     graphical interface.
 
-    ----
+
 
     **Specification**
 
@@ -147,7 +149,7 @@ document what you find.
        - Right-click a schema → **Diagrams** → **Show Visualization**.
        - This feature generates ER diagrams automatically.
 
-    ----
+
 
     **Deliverables**
 
@@ -158,7 +160,8 @@ document what you find.
     - **Screenshot 5**: DataGrip Query Console open (empty is fine).
 
 
-.. dropdown:: 💾 Exercise 3 – Storage Architecture Matching
+.. dropdown:: Exercise 3 – Storage Architecture Matching
+    :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
@@ -167,7 +170,7 @@ document what you find.
     Reinforce your understanding of storage architectures by matching
     real-world scenarios to the most appropriate storage type.
 
-    ----
+
 
     **Specification**
 
@@ -192,7 +195,7 @@ document what you find.
        and a managed PostgreSQL database but has no budget for physical
        hardware.
 
-    ----
+
 
     **Deliverables**
 

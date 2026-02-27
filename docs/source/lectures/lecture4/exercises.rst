@@ -5,7 +5,8 @@ Exercises
 This page contains exercises for Lecture 4. These exercises are designed to reinforce your understanding of functional dependencies, attribute closures, canonical covers, normal forms, and decomposition algorithms.
 
 
-.. dropdown:: 🎯 Exercise 1 -- Spot the Anomaly
+.. dropdown:: Exercise 1 -- Spot the Anomaly
+    :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
@@ -13,7 +14,7 @@ This page contains exercises for Lecture 4. These exercises are designed to rein
 
     Build intuition for why normalization matters by identifying anomalies in a merged table.
 
-    ----
+
 
     **Specification**
 
@@ -32,7 +33,7 @@ This page contains exercises for Lecture 4. These exercises are designed to rein
     2. Which of the three anomalies (insertion, deletion, update) would this merged table suffer from?
     3. Write a concrete example row that demonstrates each problem.
 
-    ----
+
 
     **Deliverables**
 
@@ -40,7 +41,8 @@ This page contains exercises for Lecture 4. These exercises are designed to rein
     - One concrete example per anomaly type (3 total)
 
 
-.. dropdown:: 🔗 Exercise 2 -- Business Rules to FDs
+.. dropdown:: Exercise 2 -- Business Rules to FDs
+    :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
@@ -48,7 +50,7 @@ This page contains exercises for Lecture 4. These exercises are designed to rein
 
     Practice translating business rules into formal functional dependencies and reasoning about FD validity.
 
-    ----
+
 
     **Specification**
 
@@ -94,7 +96,7 @@ This page contains exercises for Lecture 4. These exercises are designed to rein
     2. Someone claims ``borrower_id`` :math:`\to` ``isbn``. Is that consistent with the business rules? Can the data confirm or disprove it?
     3. What is the smallest set of columns you would need to know to uniquely identify a single row?
 
-    ----
+
 
     **Deliverables**
 
@@ -103,7 +105,8 @@ This page contains exercises for Lecture 4. These exercises are designed to rein
     - Candidate key identification with reasoning
 
 
-.. dropdown:: 🧮 Exercise 3 -- Applying Armstrong's Axioms
+.. dropdown:: Exercise 3 -- Applying Armstrong's Axioms
+    :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
@@ -111,7 +114,7 @@ This page contains exercises for Lecture 4. These exercises are designed to rein
 
     Practice applying the three axioms and their shortcuts (union, decomposition) to derive new FDs.
 
-    ----
+
 
     **Specification**
 
@@ -127,7 +130,7 @@ This page contains exercises for Lecture 4. These exercises are designed to rein
 
        For the challenge question, think about what the axioms can and cannot derive. Soundness means we only derive true FDs, so if you cannot derive it, it does not follow from :math:`F`.
 
-    ----
+
 
     **Deliverables**
 
@@ -136,7 +139,8 @@ This page contains exercises for Lecture 4. These exercises are designed to rein
     - Proof or disproof of :math:`C \to A` with explanation
 
 
-.. dropdown:: 📐 Exercise 4 -- Compute a Closure
+.. dropdown:: Exercise 4 -- Compute a Closure
+    :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
@@ -144,7 +148,7 @@ This page contains exercises for Lecture 4. These exercises are designed to rein
 
     Practice the attribute closure algorithm to test superkeys, candidate keys, and FD implication.
 
-    ----
+
 
     **Specification**
 
@@ -161,7 +165,7 @@ This page contains exercises for Lecture 4. These exercises are designed to rein
 
        After finishing, compare answers with a neighbor. If you found different candidate keys, verify both using closures.
 
-    ----
+
 
     **Deliverables**
 
@@ -170,7 +174,8 @@ This page contains exercises for Lecture 4. These exercises are designed to rein
     - At least one additional candidate key with closure verification
 
 
-.. dropdown:: 🧹 Exercise 5 -- Compute a Canonical Cover
+.. dropdown:: Exercise 5 -- Compute a Canonical Cover
+    :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
@@ -178,7 +183,7 @@ This page contains exercises for Lecture 4. These exercises are designed to rein
 
     Practice the three-step canonical cover algorithm: decompose, reduce left sides, remove redundant FDs.
 
-    ----
+
 
     **Specification**
 
@@ -195,7 +200,7 @@ This page contains exercises for Lecture 4. These exercises are designed to rein
 
        Your canonical cover should have 4 FDs, each with a single attribute on both sides.
 
-    ----
+
 
     **Deliverables**
 
@@ -203,7 +208,8 @@ This page contains exercises for Lecture 4. These exercises are designed to rein
     - Final canonical cover :math:`F_c`
 
 
-.. dropdown:: 🏗️ Exercise 6 -- End-to-End Normalization
+.. dropdown:: Exercise 6 -- End-to-End Normalization
+    :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
@@ -211,7 +217,7 @@ This page contains exercises for Lecture 4. These exercises are designed to rein
 
     Integrate all normalization concepts by performing a complete normalization from an unnormalized relation to BCNF.
 
-    ----
+
 
     **Specification**
 
@@ -231,7 +237,7 @@ This page contains exercises for Lecture 4. These exercises are designed to rein
     4. Verify the lossless join property at each step.
     5. Are all original FDs preserved? If not, which one is lost?
 
-    ----
+
 
     **Deliverables**
 
