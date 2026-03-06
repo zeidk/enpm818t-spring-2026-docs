@@ -5,42 +5,24 @@ Changelog
 All notable changes to the ENPM818T Spring 2026 course documentation are recorded here.
 
 
-.. dropdown:: v2.2.0 -- Lectures 4-5 Documentation (2026-03-06)
+.. dropdown:: v2.2.0 -- Cheat Sheet Fixes (2026-03-06)
    :icon: tag
    :class-container: sd-border-success
 
-   .. rubric:: Lecture 4-5: Normalization and Denormalization
+   .. rubric:: lecture4/cheat_sheet.rst
 
-   **quiz.rst**
+   **Sphinx Build Fixes**
 
-   - Expanded from 23 to 31 questions across three sections
-   - Updated intro to reference Lectures 4 and 5; added question ranges to section headers
-   - Added 7 new multiple choice questions (Q11-Q17): 1NF definition, canonical cover step order, identifying a 3NF violation, extraneous attributes, the 3NF escape clause, lossless join formal test, and OLTP vs. OLAP schema design
-   - Renumbered former Q11-Q20 (True/False) to Q18-Q27 and former Q21-Q23 (Essays) to Q28-Q30
-   - Added essay Q31: canonical cover properties, three-step algorithm, and why it must precede decomposition algorithms
+   - Replaced ``.. tabs::`` / ``.. tab::`` directives (unknown to docutils) with four nested ``.. dropdown::`` directives inside Box 4 (Attribute Closure), one per worked closure example
+   - Fixed figure path from ``_static/...`` to ``/_static/...`` (root-relative) to resolve the ``image.not_readable`` warning when building from a subdirectory source file
+   - Added ``cheat_sheet`` to the lecture4 ``index.rst`` toctree to resolve the ``document isn't included in any toctree`` warning
 
-   **references.rst**
+   **Layout Restructure**
 
-   - Corrected lecture card title from ``L4`` to ``L4-L5``
-   - Added "Before next class" note: complete normalization exercises; optional reading Elmasri Ch. 6-8 or Silberschatz Ch. 3-6
-   - Elmasri & Navathe card: added Ch. 6-8 as optional pre-reading for L6
-   - Silberschatz card: added Ch. 3-6 as optional pre-reading for L6
-   - "Related Topics" card: corrected ``L5`` to ``L6``; updated topic list to match the Next Class slide (relational algebra operators, SQL syntax, all join types)
-
-   **exercises.rst**
-
-   - Added Exercise 7 (Test Normal Forms): :math:`R(A,B,C,D,E)` with :math:`F=\{AB\to C,\; C\to D,\; D\to B\}` -- find candidate keys, classify prime/non-prime attributes, test each FD against 2NF/3NF/BCNF, state highest normal form, propose decomposition
-
-   **glossary.rst**
-
-   - Added 11 missing terms: First Normal Form (1NF), BCNF Decomposition, 3NF Synthesis, Superkey, Candidate Key, Spurious Tuple, Insertion Anomaly, Star Schema, Snowflake Schema, Decomposition Rule
-   - Added new I section (Insertion Anomaly); updated index line to include the I anchor
-
-   **index.rst** (course-level)
-
-   - Replaced em dashes with colons or commas in title and course description
-   - Fixed double spaces after sentence-ending periods (three occurrences)
-   - Added Lecture Overview table with rows for L1 through L4-L5
+   - Removed all ``.. grid::`` / ``.. grid-item-card::`` directives; all 15 boxes are now sequential ``.. dropdown::`` directives (one per box, full-width, vertical stack)
+   - Box 14 (Lossless Join & Dependency Preservation): removed internal two-column grid; lossless join test and dependency preservation test are now sequential ``.. rubric::`` sections
+   - Removed all ``----`` horizontal rule separators (previously used as visual dividers between grid rows)
+   - Removed ``:open:`` from all dropdowns; all 15 boxes are collapsed by default
 
 
 .. dropdown:: v2.1.0 -- Scenario 2 Rewrite (2026-02-27)

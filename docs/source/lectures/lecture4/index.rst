@@ -40,6 +40,7 @@ Contents
    exercises
    glossary
    references
+   cheat_sheet
 
 Next Steps
 ----------

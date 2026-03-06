@@ -1,5 +1,5 @@
 ====================================================
-Lectures 4-5: Normalization and Denormalization
+Lecture
 ====================================================
 
 
@@ -1402,3 +1402,15 @@ Key Takeaways
 6. **Lossless join** is mandatory; **dependency preservation** is desirable (guaranteed by 3NF, not always by BCNF).
 
 7. **Denormalization trades integrity for performance**; use it strategically for read-heavy workloads with proven bottlenecks.
+
+
+Quick Reference
+---------------
+
+.. seealso::
+
+   :doc:`cheat_sheet` -- a condensed, box-by-box reference covering all 15 topics from
+   this lecture: anomalies, functional dependencies, Armstrong's axioms, attribute closure,
+   candidate keys, canonical cover, normal forms (1NF through BCNF), decomposition
+   algorithms, lossless join, dependency preservation, and the full normalization pipeline
+   flowchart.
