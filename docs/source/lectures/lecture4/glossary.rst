@@ -2,7 +2,7 @@
 Glossary
 ====================================================
 
-:ref:`A <t4-glossary-a>` · :ref:`B <t4-glossary-b>` · :ref:`C <t4-glossary-c>` · :ref:`D <t4-glossary-d>` · :ref:`E <t4-glossary-e>` · :ref:`F <t4-glossary-f>` · :ref:`L <t4-glossary-l>` · :ref:`M <t4-glossary-m>` · :ref:`N <t4-glossary-n>` · :ref:`O <t4-glossary-o>` · :ref:`P <t4-glossary-p>` · :ref:`R <t4-glossary-r>` · :ref:`S <t4-glossary-s>` · :ref:`T <t4-glossary-t>` · :ref:`U <t4-glossary-u>`
+:ref:`A <t4-glossary-a>` · :ref:`B <t4-glossary-b>` · :ref:`C <t4-glossary-c>` · :ref:`D <t4-glossary-d>` · :ref:`E <t4-glossary-e>` · :ref:`F <t4-glossary-f>` · :ref:`I <t4-glossary-i>` · :ref:`L <t4-glossary-l>` · :ref:`M <t4-glossary-m>` · :ref:`N <t4-glossary-n>` · :ref:`O <t4-glossary-o>` · :ref:`P <t4-glossary-p>` · :ref:`R <t4-glossary-r>` · :ref:`S <t4-glossary-s>` · :ref:`T <t4-glossary-t>` · :ref:`U <t4-glossary-u>`
 
 ----
 
@@ -53,6 +53,14 @@ B
       anomalies but may not preserve all dependencies during
       decomposition.
 
+   BCNF Decomposition
+      A top-down decomposition algorithm that starts with a relation
+      :math:`R` and repeatedly splits it on BCNF violations until every
+      resulting relation has only superkey determinants. Guarantees
+      lossless join at every step but does not guarantee dependency
+      preservation. The split formula is: :math:`R_1 = X \cup Y` and
+      :math:`R_2 = R - (Y - X)` where :math:`X \to Y` is the violating FD.
+
 
 .. _t4-glossary-c:
 
@@ -60,6 +68,12 @@ C
 =
 
 .. glossary::
+
+   Candidate Key
+      A minimal superkey: a set of attributes whose closure equals the
+      entire relation, and from which no attribute can be removed while
+      preserving that property. A relation may have multiple candidate
+      keys. One is designated the primary key; the rest are alternate keys.
 
    Canonical Cover
       An equivalent, simplified version of an FD set :math:`F` with three
@@ -81,6 +95,13 @@ D
       relations to eliminate normalization violations. A good
       decomposition is lossless (no spurious tuples) and ideally
       dependency-preserving.
+
+   Decomposition Rule
+      A shortcut derived from Armstrong's axioms: if :math:`X \to YZ`,
+      then :math:`X \to Y` and :math:`X \to Z`. Allows splitting a
+      compound right-hand side into individual FDs. Used as the first
+      step of both the canonical cover algorithm and the formal normal
+      form test (which requires single-attribute right-hand sides).
 
    Deletion Anomaly
       An anomaly where removing a tuple causes the unintended loss of
@@ -135,12 +156,33 @@ F
 
 .. glossary::
 
+   First Normal Form (1NF)
+      A relation is in 1NF if every attribute contains only atomic
+      (indivisible) values. No repeating groups, no nested relations,
+      and no multi-valued attributes are permitted. The baseline
+      requirement for all higher normal forms.
+
    Functional Dependency (FD)
       A constraint :math:`X \to Y` stating that for any two tuples with
       the same values on all attributes in :math:`X`, their values on
       all attributes in :math:`Y` must also be the same. Derived from
       business rules, not from inspecting data. The foundation of all
       normalization decisions.
+
+
+.. _t4-glossary-i:
+
+I
+=
+
+.. glossary::
+
+   Insertion Anomaly
+      An anomaly where a new fact cannot be inserted into the database
+      without also supplying unrelated data. Example: a new course cannot
+      be added to an unnormalized enrollment table unless at least one
+      student is enrolled in it, because the student ID is part of the
+      primary key.
 
 
 .. _t4-glossary-l:
@@ -270,6 +312,31 @@ S
       partially dependent on any candidate key. Violations can only occur
       with composite candidate keys.
 
+   Snowflake Schema
+      A dimensional schema used in OLAP systems where dimension tables
+      are further normalized into sub-dimension tables, forming a
+      snowflake-like structure. More normalized than a star schema but
+      requires more joins for queries.
+
+   Spurious Tuple
+      A phantom row introduced when joining two decomposed relations
+      whose shared attributes do not form a superkey of either side. A
+      spurious tuple looks syntactically valid but represents data that
+      never existed in the original relation. The lossless join property
+      prevents spurious tuples.
+
+   Star Schema
+      A dimensional schema used in OLAP systems with a central fact
+      table surrounded by denormalized dimension tables. Minimizes joins
+      for read-heavy analytical queries at the cost of redundancy in the
+      dimension tables.
+
+   Superkey
+      A set of attributes whose closure equals the entire relation,
+      meaning it can uniquely identify every tuple. A superkey may
+      contain extra attributes beyond the minimum needed. Every candidate
+      key is a superkey, but not every superkey is a candidate key.
+
    Summary Table
       A denormalization technique where precomputed aggregates (SUM,
       COUNT, AVG) are stored in a dedicated table. Example: average GPA
@@ -289,6 +356,15 @@ T
       transitively dependent on any candidate key. Equivalently, for
       every non-trivial FD :math:`X \to Y`, either :math:`X` is a
       superkey or every attribute in :math:`Y` is prime.
+
+   3NF Synthesis
+      A bottom-up decomposition algorithm that constructs relations
+      directly from the canonical cover of :math:`F`, guaranteeing both
+      lossless join and dependency preservation. The four steps are:
+      (1) compute the canonical cover, (2) create one relation per FD
+      (grouping FDs with the same left side), (3) add a candidate key
+      relation if none of the resulting relations contains one, and
+      (4) remove any relation that is a subset of another.
 
    Transitive Dependency
       A dependency chain :math:`A \to B \to C` where :math:`B` is not a

@@ -250,3 +250,41 @@ This page contains exercises for Lecture 4. These exercises are designed to rein
     .. important::
 
        This exercise integrates attribute closure, normal form testing, and decomposition algorithms. It is designed to prepare you for GP1, which will involve normalizing your project domain's relational schema to 3NF.
+
+
+.. dropdown:: Exercise 7 -- Test Normal Forms
+    :icon: gear
+    :class-container: sd-border-primary
+    :class-title: sd-font-weight-bold
+
+    **Goal**
+
+    Practice the full normal form testing procedure: find candidate keys, classify attributes, test each FD against 2NF, 3NF, and BCNF, and propose a decomposition.
+
+
+
+    **Specification**
+
+    **Given**: :math:`R(A, B, C, D, E)` with :math:`F = \{AB \to C, \; C \to D, \; D \to B\}`
+
+    **Tasks**:
+
+    1. Find all candidate keys. (Hint: which attributes never appear on any RHS?)
+    2. Classify every attribute as prime or non-prime.
+    3. Test every FD against 2NF, 3NF, and BCNF.
+    4. State the highest normal form :math:`R` satisfies.
+    5. Propose a decomposition that fixes the violations.
+
+    .. tip::
+
+       Start by noting that A and E never appear on the right side of any FD. What does that tell you about every candidate key?
+
+
+
+    **Deliverables**
+
+    - All candidate keys with closure verification for each
+    - Complete attribute classification (prime vs. non-prime)
+    - FD-by-FD analysis against each normal form with verdict
+    - Final normal form determination with justification
+    - Proposed decomposition with lossless join verification

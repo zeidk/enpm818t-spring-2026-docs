@@ -32,6 +32,9 @@ Schedule
    * - L3
      - Logical Data Modeling
      - Relational model, Crow's Foot notation, 7-step ER-to-Relational mapping algorithm, foreign keys, referential integrity, lookup tables, ISA mapping strategies, categories
+   * - L4-L5
+     - Normalization and Denormalization
+     - Functional dependencies, Armstrong's axioms, attribute closure, canonical cover, normal forms (1NF, 2NF, 3NF, BCNF), 3NF synthesis algorithm, BCNF decomposition algorithm, lossless join, dependency preservation, denormalization patterns, OLTP vs. OLAP schema design
 
 
 Contents

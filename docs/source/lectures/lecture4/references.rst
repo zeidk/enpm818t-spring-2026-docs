@@ -2,14 +2,14 @@ References
 ==========
 
 
-.. dropdown:: 🏛️ Lecture 4
+.. dropdown:: 🏛️ Lecture 4-5
     :class-container: sd-border-secondary
     :open:
 
     .. card::
         :class-card: sd-border-secondary
 
-        **ENPM818T -- L4: Normalization & Denormalization**
+        **ENPM818T -- L4-L5: Normalization & Denormalization**
 
         Covers functional dependencies, Armstrong's axioms, attribute
         closures, canonical covers, normal forms (1NF, 2NF, 3NF, BCNF),
@@ -17,6 +17,10 @@ References
         lossless join and dependency preservation, denormalization
         techniques (materialized views, redundant columns, summary
         tables), and OLTP vs. OLAP schema design.
+
+        **Before next class**: Complete the normalization exercises from
+        today. Optional reading: Elmasri & Navathe Ch. 6-8 or
+        Silberschatz Ch. 3-6.
 
 
 .. dropdown:: 📚 Foundational Papers and Textbooks
@@ -92,12 +96,15 @@ References
             **Elmasri, Navathe -- "Fundamentals of Database Systems" (7th Ed.)**
 
             Chapters 10-11 cover functional dependencies, normal forms
-            (1NF through BCNF), and decomposition algorithms.
+            (1NF through BCNF), and decomposition algorithms. Chapters
+            6-8 (optional pre-reading for L6) cover relational algebra
+            and SQL.
 
             +++
 
             - Chapter 10: Functional dependencies and normalization
             - Chapter 11: Relational database design algorithms
+            - Chapters 6-8: Relational algebra and SQL (optional, before L6)
 
         .. grid-item-card:: 📗 Silberschatz, Korth and Sudarshan Ch. 7-8
             :class-card: sd-border-secondary
@@ -106,12 +113,14 @@ References
 
             Alternative textbook with strong coverage of normalization
             theory, decomposition algorithms, and BCNF vs. 3NF
-            trade-offs.
+            trade-offs. Chapters 3-6 (optional pre-reading for L6)
+            cover relational algebra, SQL, and advanced SQL.
 
             +++
 
             - Chapter 7: Relational database design
             - Chapter 8: Application design and development
+            - Chapters 3-6: Relational model and SQL (optional, before L6)
 
 
 .. dropdown:: 🛠️ Online Resources
@@ -214,15 +223,17 @@ References
             algorithm, Crow's Foot notation, and the relational
             schemas that normalization operates on.
 
-        .. grid-item-card:: 🧱 Relational Algebra & SQL (L5)
+        .. grid-item-card:: 🧱 Relational Algebra & SQL (L6)
             :class-card: sd-border-secondary
 
             **SQL and Query Optimization**
 
-            Covered in the next lecture. SQL queries, joins,
-            subqueries, CTEs, window functions, and execution plans.
-            Understanding SQL is essential for evaluating whether
-            denormalization is needed.
+            Covered in the next lecture. Relational algebra operators
+            (selection, projection, join, set operations), SQL syntax
+            (SELECT, FROM, WHERE, GROUP BY, HAVING, ORDER BY), all join
+            types (INNER, LEFT, RIGHT, FULL, CROSS), and execution plans.
+            Understanding normalized schemas is a prerequisite for writing
+            correct and efficient SQL.
 
         .. grid-item-card:: 📊 OLAP & Data Warehousing
             :class-card: sd-border-secondary

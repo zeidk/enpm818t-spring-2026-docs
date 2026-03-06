@@ -1,5 +1,5 @@
 ====================================================
-Lecture
+Lectures 4-5: Normalization and Denormalization
 ====================================================
 
 
@@ -193,6 +193,47 @@ Why Normalization Matters
        **Trade-off**: More tables means more joins. For read-heavy workloads with predictable queries, strategic denormalization may improve performance (covered later in this lecture).
 
 
+.. dropdown:: Normalization Workflow
+   :class-container: sd-border-secondary
+
+   .. rubric:: From Business Rules to a Verified Schema
+
+
+   The full normalization pipeline proceeds through these stages:
+
+   **Collect business rules** :math:`\to` **Translate rules to FDs** :math:`\to` **Compute canonical cover** :math:`\to` **Find candidate keys (closures)** :math:`\to` **Test normal forms** :math:`\to` **Decompose if needed** :math:`\to` **Verify lossless join and dependency preservation**.
+
+   .. card::
+       :class-card: sd-border-info
+
+       Each stage builds on the previous one. FDs encode the business rules. The canonical cover removes redundancy from the FD set. Closures test superkeys. Normal form tests identify violations. Decomposition eliminates them.
+
+
+.. dropdown:: Discussion: Spot the Anomaly
+   :class-container: sd-border-secondary
+
+   .. rubric:: Discussion (5 min)
+
+
+   Consider these two tables from the L3 schema:
+
+   - ``Course``\(**course_id**, title, credits, *dept_id*)
+   - ``Department``\(**dept_id**, dept_name, building, budget)
+
+   **Imagine merging them** into a single flat table: ``Course_Dept``\(**course_id**, title, credits, dept_id, dept_name, building, budget).
+
+   **With a partner, identify**:
+
+   - Which columns would be repeated across rows?
+   - Which of the three anomalies (insertion, deletion, update) would this merged table suffer from?
+   - Write a concrete example row that demonstrates each problem.
+
+   .. card::
+       :class-card: sd-border-info
+
+       **Goal**: Build intuition for why the L3 mapping algorithm already produces mostly-normalized schemas, and understand what normalization theory formalizes.
+
+
 
 Functional Dependencies
 ====================================================
@@ -286,6 +327,49 @@ Functional Dependencies
       **Caution**: FDs come from **business rules**, not from inspecting data. Even if 99% of pairs agree, a single violation means the FD does not hold. Conversely, even if all current rows agree, that does not prove the FD. Only the business rule can do that.
 
 
+.. dropdown:: Exercise: Business Rules to FDs
+   :class-container: sd-border-secondary
+
+   .. rubric:: Exercise (5 min)
+
+
+   A university library tracks book loans with this table:
+
+   .. list-table::
+      :widths: 15 20 20 20 25
+      :header-rows: 1
+      :class: compact-table
+
+      * - **loan_id** (PK)
+        - isbn
+        - book_title
+        - borrower_id
+        - borrower_name
+      * - 5001
+        - 978-0133970
+        - Databases
+        - 201
+        - Alice
+      * - 5002
+        - 978-0133970
+        - Databases
+        - 202
+        - Bob
+      * - 5003
+        - 978-0596517
+        - JavaScript
+        - 201
+        - Alice
+
+   **Business rules**: each loan is assigned a unique ID; each loan records exactly one book and one borrower; each ISBN corresponds to exactly one book title; each borrower has a unique borrower ID and exactly one name; a borrower may borrow multiple books, and a book may be borrowed by multiple borrowers.
+
+   **Tasks**:
+
+   1. Translate the business rules above into FDs.
+   2. Someone claims ``borrower_id`` :math:`\to` ``isbn``. Is that consistent with the business rules? Can the data confirm or disprove it?
+   3. What is the smallest set of columns you would need to know to uniquely identify a single row?
+
+
 .. dropdown:: Trivial and Non-Trivial FDs
    :class-container: sd-border-secondary
 
@@ -342,6 +426,43 @@ Functional Dependencies
        :class-card: sd-border-info
 
        **Why these matter**: Canonical covers (covered later) require every FD to have a single attribute on the right side. Decomposition lets us split compound right sides. Union lets us recombine them when needed.
+
+   .. rubric:: Putting the Axioms to Work
+
+
+   **Deriving a new FD using transitivity**:
+
+   - ``course_id`` :math:`\to` ``dept_id`` (given in :math:`F`)
+   - ``dept_id`` :math:`\to` ``dept_name`` (given in :math:`F`)
+   - By **transitivity**: ``course_id`` :math:`\to` ``dept_name``
+
+   We now know three FDs with ``course_id`` on the left: ``course_id`` :math:`\to` ``title``, ``course_id`` :math:`\to` ``dept_id``, ``course_id`` :math:`\to` ``dept_name``.
+
+   **Combining FDs using union**: ``course_id`` :math:`\to` ``title`` and ``course_id`` :math:`\to` ``dept_id`` gives by union: ``course_id`` :math:`\to` {``title``, ``dept_id``}. Adding ``course_id`` :math:`\to` ``dept_name`` gives: ``course_id`` :math:`\to` {``title``, ``dept_id``, ``dept_name``}.
+
+   .. note::
+
+      **To derive** an FD means to prove it holds using the axioms, starting from the given FDs. If you can build a chain of axiom applications that produces the FD, it is derived. If no chain can reach it, it does not follow from :math:`F`.
+
+
+.. dropdown:: Exercise: Applying Armstrong's Axioms
+   :class-container: sd-border-secondary
+
+   .. rubric:: Exercise (5 min)
+
+
+   **Given FDs**: :math:`F = \{A \to B, \; B \to C, \; C \to D\}`
+
+   **Tasks**:
+
+   1. Using **transitivity**, derive :math:`A \to D`. Write out each step.
+   2. Using **union**, combine your results to show :math:`A \to \{B, C, D\}`.
+   3. **Challenge**: Does :math:`C \to A` hold? Can you prove it or disprove it from :math:`F` alone?
+
+   .. card::
+       :class-card: sd-border-info
+
+       **Hint**: For the challenge question, think about what the axioms can and cannot derive. Soundness means we only derive true FDs, so if you cannot derive it, it does not follow from :math:`F`.
 
 
 .. dropdown:: Attribute Closure
@@ -417,6 +538,46 @@ Functional Dependencies
       ``course_id`` :math:`\to` ``dept_name`` is not in :math:`F` directly, but the closure discovered it automatically via the chain ``course_id`` :math:`\to` ``dept_id`` :math:`\to` ``dept_name``.
 
 
+   .. rubric:: A Larger Closure Example
+
+
+   **Given**: :math:`R(A, B, C, D, E)` with :math:`F = \{A \to B, \; BC \to D, \; D \to E, \; E \to A\}`
+
+   **Compute** :math:`\{A, C\}^{+}`:
+
+   .. list-table::
+      :widths: 8 30 30 32
+      :header-rows: 1
+      :class: compact-table
+
+      * - Step
+        - FD Applied
+        - Why?
+        - Closure After
+      * - 0
+        - (initialize)
+        - Start with :math:`X`
+        - {A, C}
+      * - 1
+        - :math:`A \to B`
+        - A in closure
+        - {A, B, C}
+      * - 2
+        - :math:`BC \to D`
+        - B and C both in closure
+        - {A, B, C, D}
+      * - 3
+        - :math:`D \to E`
+        - D in closure
+        - {A, B, C, D, E}
+      * - 4
+        - (none)
+        - No new attributes
+        - Done
+
+   **Result**: :math:`\{A, C\}^{+} = \{A, B, C, D, E\} = R`. This means :math:`\{A, C\}` is a superkey.
+
+
 .. dropdown:: Using Closures to Test Keys
    :class-container: sd-border-secondary
 
@@ -442,6 +603,27 @@ Functional Dependencies
        **This confirms L3**: In the 7-step mapping algorithm, we defined the PK of ``Course_Section`` as (``course_id``, ``section_no``). Attribute closure gives us a formal proof that this choice is correct: it is a minimal superkey.
 
 
+.. dropdown:: Exercise: Compute a Closure
+   :class-container: sd-border-secondary
+
+   .. rubric:: Exercise (7 min)
+
+
+   **Given**: :math:`R(A, B, C, D, E)` with :math:`F = \{A \to B, \; BC \to D, \; D \to E, \; E \to A\}`
+
+   **Tasks**:
+
+   1. Compute :math:`\{A, C\}^{+}`. Show each step in a table.
+   2. Is :math:`\{A, C\}` a superkey? Justify.
+   3. Is :math:`\{A, C\}` a candidate key? Test each proper subset.
+   4. Can you find a *different* candidate key? (Hint: look at what :math:`E` determines.)
+
+   .. card::
+       :class-card: sd-border-info
+
+       **After finishing**: Compare answers with a neighbor. If you found different candidate keys, verify both using closures.
+
+
 .. dropdown:: Canonical Cover (Minimal Cover)
    :class-container: sd-border-secondary
 
@@ -464,6 +646,42 @@ Functional Dependencies
    - **Step 1 (Decompose)**: Split all FDs so each right side is a single attribute.
    - **Step 2 (Reduce left sides)**: For each FD :math:`X \to A`, test if any attribute :math:`B \in X` is extraneous. :math:`B` is extraneous if :math:`A \in (X - \{B\})^{+}` under :math:`F`. If so, replace :math:`X` with :math:`X - \{B\}`.
    - **Step 3 (Remove redundant FDs)**: For each FD :math:`X \to A`, check if :math:`A \in X^{+}` using :math:`F - \{X \to A\}`. If yes, the FD is derivable from the others and can be removed.
+
+   .. rubric:: Worked Example: :math:`R(A, B, C)` with :math:`F = \{A \to BC, \; B \to C, \; A \to B, \; AB \to C\}`
+
+
+   **Step 1 -- Decompose compound right sides**: Split :math:`A \to BC` into :math:`A \to B` and :math:`A \to C`. Remove the duplicate :math:`A \to B`.
+
+   After Step 1: :math:`F = \{A \to B, \; A \to C, \; B \to C, \; AB \to C\}`
+
+   **Step 2 -- Reduce left sides**: Only :math:`AB \to C` has a composite left side. Test whether A is extraneous: compute :math:`\{B\}^{+} = \{B, C\}`. C is in the closure, so A is unnecessary. Test whether B is extraneous: compute :math:`\{A\}^{+} = \{A, B, C\}`. C is in the closure, so B is also unnecessary. Both are extraneous -- we remove one at a time. Dropping B from the left side turns :math:`AB \to C` into :math:`A \to C` (already in :math:`F`, so the duplicate is deleted).
+
+   After Step 2: :math:`F = \{A \to B, \; A \to C, \; B \to C\}`
+
+   **Step 3 -- Remove redundant FDs**: Test :math:`A \to C` by removing it and computing :math:`\{A\}^{+}` with :math:`\{A \to B, \; B \to C\}`: fires :math:`A \to B` then :math:`B \to C`, reaching C. So :math:`A \to C` is redundant -- remove it. The other two FDs are not redundant.
+
+   **Result**: :math:`F_c = \{A \to B, \; B \to C\}`. Four FDs reduced to two, equivalent sets.
+
+
+.. dropdown:: Exercise: Compute a Canonical Cover
+   :class-container: sd-border-secondary
+
+   .. rubric:: Exercise (7 min)
+
+
+   **Given**: :math:`R(A, B, C, D)` with :math:`F = \{A \to BD, \; B \to C, \; C \to B, \; AB \to D\}`
+
+   **Tasks**:
+
+   1. **Step 1**: Decompose compound right sides. How many FDs do you have now?
+   2. **Step 2**: Test for extraneous left-side attributes. In :math:`AB \to D`, is B extraneous? (Hint: compute :math:`\{A\}^{+}` under the current :math:`F`.)
+   3. **Step 3**: Test for redundant FDs. Can any remaining FD be derived from the others?
+   4. Write out the final :math:`F_c`.
+
+   .. card::
+       :class-card: sd-border-info
+
+       **Self-check**: Your canonical cover should have 4 FDs, each with a single attribute on both sides.
 
 
 
@@ -516,6 +734,11 @@ Normal Forms: 1NF to BCNF
 
    **Fix**: Create a separate ``Person_Phone`` table with one row per phone number.
 
+   .. rubric:: Fix: Decompose into Two Relations
+
+
+   **``Person``** (**person_id**, first_name) and **``Person_Phone``** (**person_id**, **phone_number**). The composite PK in ``Person_Phone`` ensures each (person, phone) pair is unique.
+
    .. card::
        :class-card: sd-border-info
 
@@ -536,14 +759,30 @@ Normal Forms: 1NF to BCNF
 
       2NF violations can only occur when the candidate key is **composite** (two or more attributes). If every candidate key is a single attribute, the relation is automatically in 2NF.
 
-   .. rubric:: Violation Example
+   .. rubric:: Step-by-Step 2NF Testing
 
 
-   ``Section_Detail``\ (\ **course_id**, **section_no**, title, professor_person_id, capacity)
+   Given ``Section_Detail``\(**course_id**, **section_no**, title, professor_person_id, capacity) with FDs:
+
+   - :math:`FD_1`: ``course_id`` :math:`\to` ``title`` (partial)
+   - :math:`FD_2`: {``course_id``, ``section_no``} :math:`\to` {``professor_person_id``, ``capacity``} (full)
+
+   **Step 1 -- Find candidate keys**: {``course_id``, ``section_no``}\ :sup:`+` = all attributes. Minimal? {``course_id``}\ :sup:`+` = {``course_id``, ``title``} :math:`\neq R`. {``section_no``}\ :sup:`+` = {``section_no``} :math:`\neq R`. So {``course_id``, ``section_no``} is the only candidate key.
+
+   **Step 2 -- Classify attributes**: Prime: ``course_id``, ``section_no``. Non-prime: ``title``, ``professor_person_id``, ``capacity``.
+
+   **Step 3 -- Test FDs**: :math:`FD_1`: ``course_id`` :math:`\to` ``title``. ``course_id`` is a proper subset of the CK. ``title`` is non-prime. **Partial dependency -- violates 2NF.** :math:`FD_2`: {``course_id``, ``section_no``} :math:`\to` {``professor_person_id``, ``capacity``}. Left side is the full CK. **Full dependency -- passes 2NF.**
+
+   **Fix**: Split into ``Course``\(**course_id**, title) and ``Course_Section``\(**course_id**, **section_no**, professor_person_id, capacity).
+
+   .. rubric:: Violation Example (Summary)
+
+
+   ``Section_Detail``\(**course_id**, **section_no**, title, professor_person_id, capacity)
 
    FDs: ``course_id`` :math:`\to` ``title`` (partial dependency on part of the PK); {``course_id``, ``section_no``} :math:`\to` {``professor_person_id``, ``capacity``} (full dependency on the entire PK).
 
-   **Fix**: Split into ``Course``\ (\ **course_id**, title) and ``Course_Section``\ (\ **course_id**, **section_no**, professor_person_id, capacity).
+   **Fix**: Split into ``Course``\(**course_id**, title) and ``Course_Section``\(**course_id**, **section_no**, professor_person_id, capacity).
 
 
 .. dropdown:: Third Normal Form (3NF)
@@ -563,14 +802,22 @@ Normal Forms: 1NF to BCNF
 
        **Intuition**: 3NF says non-key attributes must depend *directly* on the key, not through another non-key attribute. If ``course_id`` :math:`\to` ``dept_id`` :math:`\to` ``dept_name``, then ``dept_name`` reaches the key only via the middleman ``dept_id``. That middleman creates redundancy.
 
-   .. rubric:: Violation Example
+   .. rubric:: Step-by-Step 3NF Testing
 
 
-   ``Course``\ (\ **course_id**, title, dept_id, dept_name)
+   Given ``Course``\(**course_id**, title, dept_id, dept_name) with FDs:
 
-   The FD ``dept_id`` :math:`\to` ``dept_name`` violates 3NF because ``dept_id`` is not a superkey.
+   - :math:`FD_{1a}`: ``course_id`` :math:`\to` ``title``
+   - :math:`FD_{1b}`: ``course_id`` :math:`\to` ``dept_id``
+   - :math:`FD_2`: ``dept_id`` :math:`\to` ``dept_name``
 
-   **Fix**: Split into ``Course``\ (\ **course_id**, title, dept_id) and ``Department``\ (\ **dept_id**, dept_name).
+   **Step 1 -- Find candidate keys**: {``course_id``}\ :sup:`+` = all attributes (via the chain ``course_id`` :math:`\to` ``dept_id`` :math:`\to` ``dept_name``). The only CK is {``course_id``}.
+
+   **Step 2 -- Classify attributes**: Prime: ``course_id``. Non-prime: ``title``, ``dept_id``, ``dept_name``.
+
+   **Step 3 -- Test FDs**: :math:`FD_{1a}` and :math:`FD_{1b}`: left side is ``course_id``, which is a superkey. **Pass.** :math:`FD_2`: ``dept_id`` :math:`\to` ``dept_name``. ``dept_id``\ :sup:`+` = {``dept_id``, ``dept_name``} :math:`\neq R` -- not a superkey. ``dept_name`` is non-prime. **Violates 3NF.**
+
+   **Fix**: Split into ``Course``\(**course_id**, title, dept_id) and ``Department``\(**dept_id**, dept_name).
 
 
 .. dropdown:: Boyce-Codd Normal Form (BCNF)
@@ -609,6 +856,42 @@ Normal Forms: 1NF to BCNF
 
        **Trade-off**: BCNF eliminates all FD-based anomalies, but its decomposition may not preserve all FDs. 3NF always preserves FDs but may leave some anomalies.
 
+   .. rubric:: A Genuine 3NF-but-not-BCNF Example
+
+
+   **Relation**: ``Advisor``\(student_id, dept_id, advisor_id)
+
+   **FDs**: :math:`FD_1`: {student_id, dept_id} :math:`\to` advisor_id; :math:`FD_2`: advisor_id :math:`\to` dept_id.
+
+   **Step 1 -- Candidate keys**: {student_id, dept_id}\ :sup:`+` = R, so CK\ :math:`_1`. {student_id, advisor_id}\ :sup:`+` = R, so CK\ :math:`_2`.
+
+   **Step 2 -- Classify attributes**: All three attributes are prime (each appears in at least one CK). No non-prime attributes exist.
+
+   **Step 3 -- Test FDs**: :math:`FD_1`: LHS = {student_id, dept_id} is a superkey. Passes both 3NF and BCNF. :math:`FD_2`: {advisor_id}\ :sup:`+` = {advisor_id, dept_id} :math:`\neq R`. Not a superkey. 3NF: is dept_id prime? Yes -- escape clause fires, passes 3NF. BCNF: no escape clause -- fails BCNF.
+
+   .. card::
+       :class-card: sd-border-info
+
+       **This is the real difference**: 3NF allows :math:`advisor\_id \to dept\_id` because dept_id is prime. BCNF does not care whether the RHS is prime. It only asks: is the determinant a superkey? Since advisor_id is not, BCNF is violated.
+
+   .. warning::
+
+      **Remaining anomaly**: If the CS department is renamed, both rows for advisor 101 must be updated. Miss one, and the data is inconsistent. 3NF does not prevent this; BCNF would.
+
+   .. rubric:: When 3NF and BCNF Conflict
+
+
+   Given the ``Advisor`` relation above, two options exist:
+
+   **Option 1 -- Decompose to BCNF**: Split on :math:`advisor\_id \to dept\_id`. Creates ``Advisor_Dept``\(**advisor_id**, dept_id) and ``Student_Advisor``\(**student_id**, **advisor_id**). Lossless join is guaranteed. All FD-based anomalies are eliminated. However, :math:`FD_1`: {student_id, dept_id} :math:`\to` advisor_id is lost -- it can no longer be enforced within a single table.
+
+   **Option 2 -- Stay at 3NF**: Accept that ``Advisor`` is already in 3NF. All FDs are preserved and checkable without joins. The update anomaly remains.
+
+   .. card::
+       :class-card: sd-border-info
+
+       **Decision criterion**: Does :math:`FD_1` need to be enforced on every INSERT? If yes, stay at 3NF. If no, decompose to BCNF for cleaner anomaly elimination. When in doubt, normalize first: start with BCNF and fall back to 3NF only when a lost dependency has a proven operational cost.
+
 
 .. dropdown:: Normal Form Summary
    :class-container: sd-border-secondary
@@ -617,30 +900,81 @@ Normal Forms: 1NF to BCNF
 
 
    .. list-table::
-      :widths: 12 40 48
+      :widths: 12 40 28 20
       :header-rows: 1
       :class: compact-table
 
       * - NF
         - Requirement
         - Eliminates
+        - Guarantees
       * - **1NF**
         - Atomic values only
         - Multi-valued attributes, nested tables
+        - Flat structure
       * - **2NF**
         - 1NF + no partial dependencies
         - Redundancy from attributes depending on part of a composite key
+        - Full key dependence
       * - **3NF**
-        - 2NF + no transitive dependencies
-        - Redundancy from non-key attributes determining other non-key attributes
+        - 2NF + no transitive dependencies (or RHS all prime)
+        - Non-key to non-key chains
+        - Dependency preservation
       * - **BCNF**
         - Every determinant is a superkey
         - All anomalies caused by functional dependencies
+        - Lossless join
+
+   **Choose BCNF when**: transactional system with frequent writes; data integrity is the priority; lost dependencies can be enforced via application logic or triggers.
+
+   **Fall back to 3NF when**: BCNF decomposition loses a critical dependency; that dependency must be enforced efficiently (single-table constraint, no joins); the remaining redundancy is acceptable.
 
    .. card::
        :class-card: sd-border-info
 
        **Practical guideline**: Aim for BCNF in OLTP systems. Fall back to 3NF only when BCNF decomposition loses a dependency that must be enforced efficiently (without joins).
+
+
+.. dropdown:: Worked Example: Step-by-Step NF Testing
+   :class-container: sd-border-secondary
+
+   .. rubric:: End-to-End Normal Form Verification
+
+
+   **Given**: :math:`R(A, B, C, D)` with :math:`F = \{A \to B, \; BC \to D\}`
+
+   **Step 1 -- Find candidate keys**: A and C never appear on any RHS, so both must be in every CK. :math:`\{A, C\}^{+}`: apply :math:`A \to B`, gives {A, B, C}; apply :math:`BC \to D`, gives {A, B, C, D} = R. Superkey. Both proper subsets fail to reach R, so {A, C} is the only CK.
+
+   **Step 2 -- Classify attributes**: Prime: A, C. Non-prime: B, D.
+
+   **Step 3 -- Test each FD**:
+
+   - :math:`A \to B`: {A}\ :sup:`+` = {A, B} :math:`\neq R`, not a superkey. B is non-prime. A is a proper subset of CK {A, C} -- this is a **partial dependency**. **Violates 2NF.**
+   - :math:`BC \to D`: {B, C}\ :sup:`+` = {B, C, D} :math:`\neq R`, not a superkey. D is non-prime. {B, C} is not a subset of any CK (contains non-prime B). Not a partial dependency, but the determinant is not a superkey and the RHS is non-prime. **Violates 3NF.**
+
+   **Conclusion**: :math:`R` is in **1NF only**. :math:`A \to B` prevents 2NF (partial dependency), and :math:`BC \to D` prevents 3NF (non-superkey determinant, non-prime RHS).
+
+
+.. dropdown:: Exercise: Test Normal Forms
+   :class-container: sd-border-secondary
+
+   .. rubric:: Exercise (10 min)
+
+
+   **Given**: :math:`R(A, B, C, D, E)` with :math:`F = \{AB \to C, \; C \to D, \; D \to B\}`
+
+   **Tasks**:
+
+   1. Find all candidate keys (hint: which attributes never appear on any RHS?)
+   2. Classify every attribute as prime or non-prime
+   3. Test every FD against 2NF, 3NF, and BCNF
+   4. State the highest normal form :math:`R` satisfies
+   5. Propose a decomposition that fixes the violations
+
+   .. card::
+       :class-card: sd-border-info
+
+       **Hint**: Start by noting that A and E never appear on the right side of any FD. What does that tell you about every candidate key?
 
 
 
@@ -670,6 +1004,46 @@ Decomposition Algorithms
    A decomposition of :math:`R` into :math:`R_1` and :math:`R_2` is lossless if and only if :math:`R_1 \cap R_2 \to R_1` or :math:`R_1 \cap R_2 \to R_2`. The common attributes must be a superkey of at least one side.
 
 
+.. dropdown:: Lossless Join in Detail
+   :class-container: sd-border-secondary
+
+   .. rubric:: What Can Go Wrong Without Lossless Join?
+
+
+   When we decompose :math:`R` into :math:`R_1` and :math:`R_2` and later join them back, we expect to recover the original tuples exactly. If the common attributes (the join key) are not a superkey of at least one side, the join can produce **spurious tuples** -- rows that look valid but never existed in the original relation.
+
+   .. rubric:: Spurious Tuples: A Concrete Example
+
+
+   Suppose we decompose ``Course_Section``\(**course_id**, **section_no**, title, dept_id, professor_person_id) incorrectly into :math:`R_1`\(course_id, section_no, professor_person_id) and :math:`R_2`\(section_no, title, dept_id).
+
+   The join key is only ``section_no``. Multiple courses can have the same ``section_no`` (e.g., both ENPM818T and ENPM702 have a section 1). When we join on ``section_no`` alone, the result pairs every ENPM818T professor with every row sharing the same ``section_no``, including rows from ENPM702. These phantom rows never existed in the original data.
+
+   .. card::
+       :class-card: sd-border-info
+
+       **Why the test works**: The lossless join condition :math:`R_1 \cap R_2 \to R_1` (or :math:`R_2`) requires the shared attributes to be a superkey of one side. A superkey uniquely identifies rows in that relation, so the join cannot create ambiguous matches.
+
+
+.. dropdown:: Dependency Preservation in Detail
+   :class-container: sd-border-secondary
+
+   .. rubric:: What Is Dependency Preservation?
+
+
+   A decomposition **preserves dependencies** if every FD in the canonical cover :math:`F_c` can be checked within a single decomposed relation -- without performing any joins. This matters because checking a constraint across multiple tables requires a join on every INSERT or UPDATE, which is expensive.
+
+   .. rubric:: What Can Go Wrong Without Dependency Preservation?
+
+
+   Suppose we decompose ``Course``\(**course_id**, title, dept_id, dept_name) to remove the 3NF violation. If the resulting relations split the FD ``dept_id`` :math:`\to` ``dept_name`` across two tables so that no single table contains both ``dept_id`` and ``dept_name``, then enforcing that FD requires a join query on every write. In high-volume systems this becomes a serious performance problem.
+
+   .. rubric:: Harmless vs. Genuine Loss
+
+
+   Not all "lost" FDs matter equally. Trivial FDs or FDs that are implied by primary key constraints are lost without consequence. A genuine loss occurs when an FD that encodes a real business rule -- one that must be checked at write time -- ends up split across tables. This is the case where staying at 3NF (which always preserves all FDs) is preferable.
+
+
 .. dropdown:: 3NF Synthesis Algorithm
    :class-container: sd-border-secondary
 
@@ -691,6 +1065,24 @@ Decomposition Algorithms
        :class-card: sd-border-info
 
        **Guarantees**: This algorithm always produces a lossless-join, dependency-preserving decomposition into 3NF. Step 3 ensures lossless join; the fact that every FD in :math:`F_c` has its own relation ensures dependency preservation.
+
+   .. rubric:: Worked Example: :math:`R(A, B, C, D)` with :math:`F = \{AB \to C, \; C \to D, \; D \to B\}`
+
+
+   **Step 1 -- Canonical cover**: Check each condition. All RHS are single attributes. Only :math:`AB \to C` has a composite left side: :math:`\{A\}^{+} = \{A\}` and :math:`\{B\}^{+} = \{B\}`, so neither A nor B is extraneous. No FD is redundant (each closure test fails to reach the right side without its FD). Therefore :math:`F_c = \{AB \to C, \; C \to D, \; D \to B\}` (unchanged).
+
+   **Step 2 -- Create relations**: Each FD produces one relation (no two FDs share a left side). :math:`R_1`\(A, B, C) with key {A, B}; :math:`R_2`\(C, D) with key {C}; :math:`R_3`\(D, B) with key {D}.
+
+   **Step 3 -- Candidate key check**: The candidate keys of :math:`R` are {A, C} and {A, D}. :math:`R_1 = \{A, B, C\} \supseteq \{A, C\}`. A candidate key is already present. No extra relation needed.
+
+   **Step 4 -- Remove subset relations**: No :math:`R_i` is a subset of another.
+
+   **Final result**: :math:`R_1`\(A, B, C), :math:`R_2`\(C, D), :math:`R_3`\(D, B).
+
+   .. card::
+       :class-card: sd-border-info
+
+       **Verification**: Every FD in :math:`F_c` has all its attributes in exactly one :math:`R_i` (dependencies preserved). :math:`R_1` contains the candidate key {A, C} (lossless join guaranteed).
 
 
 .. dropdown:: BCNF Decomposition Algorithm
@@ -714,6 +1106,26 @@ Decomposition Algorithms
        :class-card: sd-border-info
 
        **Why is this lossless?** At each step, :math:`R_1 \cap R_2 = X`, and :math:`X \to Y` means :math:`X` is a superkey of :math:`R_1 = X \cup Y`. The lossless join condition is satisfied at every decomposition step.
+
+   .. rubric:: Worked Example: :math:`R(A, B, C)` with :math:`F = \{AB \to C, \; C \to B\}`
+
+
+   **Candidate keys**: A never appears on any RHS, so every CK must contain A. :math:`\{A, B\}^{+} = R` (CK\ :math:`_1`). :math:`\{A, C\}^{+} = R` (CK\ :math:`_2`).
+
+   **Test FDs**: :math:`AB \to C`: {A, B}\ :sup:`+` = R -- superkey. Passes BCNF. :math:`C \to B`: {C}\ :sup:`+` = {C, B} :math:`\neq R` -- not a superkey. **Violates BCNF.**
+
+   **Apply decomposition formula** on :math:`C \to B` (where :math:`X = \{C\}`, :math:`Y = \{B\}`):
+
+   - :math:`R_1 = X \cup Y = \{C, B\}`
+   - :math:`R_2 = R - (Y - X) = \{A, B, C\} - \{B\} = \{A, C\}`
+
+   **Verify BCNF**: :math:`R_1`\(C, B): only FD is :math:`C \to B`, and {C}\ :sup:`+` within :math:`R_1` = :math:`R_1`. C is a superkey. In BCNF. :math:`R_2`\(A, C): no non-trivial FDs project onto :math:`R_2` (the FD :math:`AB \to C` requires B, which is not in :math:`R_2`). In BCNF.
+
+   **Verify lossless join**: :math:`R_1 \cap R_2 = \{C\}`. Is C a superkey of :math:`R_1`? Yes. Lossless join confirmed.
+
+   .. warning::
+
+      **Lost dependency**: :math:`AB \to C` cannot be checked within :math:`R_1` or :math:`R_2` alone (no single relation contains A, B, and C together). Enforcing this constraint now requires joining :math:`R_1` and :math:`R_2`, or using application-level logic.
 
 
 .. dropdown:: BCNF vs. 3NF Trade-offs
@@ -747,6 +1159,29 @@ Decomposition Algorithms
        :class-card: sd-border-info
 
        **Practical guideline**: Start with BCNF. If the decomposition loses a critical dependency (one that must be checked on every INSERT), fall back to 3NF for those specific relations. Most real-world schemas reach BCNF without losing any dependencies.
+
+
+.. dropdown:: Exercise: End-to-End Normalization
+   :class-container: sd-border-secondary
+
+   .. rubric:: Exercise (20 min)
+
+
+   **Given**: ``Purchase_Order``\(**order_id**, customer_name, customer_city, product_id, product_name, quantity, unit_price, total_price)
+
+   **FDs**:
+
+   - ``order_id`` :math:`\to` {``customer_name``, ``customer_city``}
+   - ``product_id`` :math:`\to` {``product_name``, ``unit_price``}
+   - {``order_id``, ``product_id``} :math:`\to` {``quantity``, ``total_price``}
+
+   **Tasks**:
+
+   1. Identify the candidate key (use attribute closure)
+   2. Test for 2NF, 3NF, and BCNF violations
+   3. Decompose step by step to BCNF
+   4. Verify the lossless join property at each step
+   5. Are all original FDs preserved? If not, which one is lost?
 
 
 
@@ -787,6 +1222,23 @@ When to Denormalize
    3. **Anomalies return**: The insertion, deletion, and update anomalies come back, mitigated by triggers, application logic, or periodic reconciliation.
 
    4. **Schema rigidity**: Denormalized schemas are harder to evolve. Adding a new attribute may require updating multiple tables and their synchronization logic.
+
+
+.. dropdown:: Concrete Example: The Cost of Redundancy
+   :class-container: sd-border-secondary
+
+   .. rubric:: Normalized vs. Denormalized
+
+
+   **Normalized schema** -- three separate tables (Customers, Products, Orders). Each fact is stored exactly once. Renaming "Widget" to "SuperWidget" requires updating a single row in the Products table.
+
+   **Denormalized schema** -- the Orders table includes copies of ``cust_name`` and ``prod_name`` directly. This eliminates joins for read queries, but the product name "Widget" now appears in every order row that references product P1.
+
+   **The rename scenario**: when "Widget" is renamed to "SuperWidget", every order row where ``prod_name = 'Widget'`` must be updated. In a production system with millions of orders, this is an expensive UPDATE statement that locks many rows. If the update partially fails (timeout or crash), some rows say "Widget" and others say "SuperWidget" -- the exact update anomaly from the beginning of this lecture, reintroduced by denormalization.
+
+   .. warning::
+
+      **Design question**: Should historical orders reflect the *current* product name or the name *at the time of purchase*? Denormalization often forces this question to be resolved explicitly in application code.
 
 
 .. dropdown:: Denormalization Patterns

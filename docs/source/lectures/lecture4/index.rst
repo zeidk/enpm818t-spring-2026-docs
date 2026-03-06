@@ -1,5 +1,5 @@
 ====================================================
-L4: Normalization & Denormalization
+L4-L5: Normalization & Denormalization
 ====================================================
 
 Overview
@@ -14,7 +14,6 @@ decomposition algorithms (3NF synthesis, BCNF decomposition) that produce
 well-structured schemas. The lecture concludes with strategic denormalization:
 when and how to intentionally reintroduce redundancy for read-heavy workloads.
 
-
 Learning Objectives
 -------------------
 
@@ -28,7 +27,6 @@ By the end of this lecture, you will be able to:
 - Apply normalization algorithms to convert any relation to 3NF or BCNF.
 - Justify strategic denormalization decisions with performance trade-offs.
 - Design materialized views and redundant columns to optimize read-heavy workloads.
-
 
 Contents
 --------
@@ -46,14 +44,11 @@ Contents
 Next Steps
 ----------
 
-- In the next lecture, we will cover **Relational Algebra & SQL**:
+- In the next lecture (**L6: Physical Model**), we will cover:
 
   - Relational algebra operators: selection, projection, join, set operations.
   - SQL: SELECT, FROM, WHERE, GROUP BY, HAVING, ORDER BY.
   - Joins: INNER, LEFT, RIGHT, FULL, CROSS.
-  - Subqueries, CTEs, window functions.
-  - Query optimization and execution plans.
 
-- Complete the normalization exercise from today.
-- Review: SQL basics (SELECT, JOIN) if rusty.
+- Complete the normalization exercises from today.
 - Read (optional): Elmasri & Navathe Ch. 6 to 8 *or* Silberschatz Ch. 3 to 6.
