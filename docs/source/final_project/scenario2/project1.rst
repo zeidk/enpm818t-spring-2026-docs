@@ -33,7 +33,7 @@ Learning Objectives
 By completing this group project, you will be able to:
 
 - Extract healthcare entities from clinical and administrative requirements
-- Design Entity-Relationship Diagrams for healthcare data
+- Design Entity-Relationship Diagrams (ERDs) for healthcare data
 - Identify healthcare-specific identifiers (MRN, NPI, DEA numbers)
 - Model clinical workflows and temporal relationships
 - Apply normalization theory (1NF, 2NF, 3NF) to healthcare data
@@ -89,8 +89,6 @@ Your healthcare management system must track the following information:
    The system manages insurance claims submitted for services rendered. Each claim includes patient information, insurance policy details, service date, procedure codes (CPT), diagnosis codes (ICD-10), and charge amounts. Claims have statuses tracking their lifecycle (draft, submitted, pending, approved, denied, appealed). The system tracks payment amounts, patient responsibility, and denial reasons.
 
 
-
-
 Task 1: Entity-Relationship Diagrams
 -------------------------------------
 
@@ -125,7 +123,7 @@ Your models must include entities covering these **seven business areas**: patie
    - `Lucidchart <https://www.lucidchart.com/>`_
    - `Draw.io <https://app.diagrams.net/>`_
 
-   **File to create**: ``diagrams/chen_erd.pdf``
+   **File to create**: ``chen_erd.pdf``
 
 .. dropdown:: Part B: Logical Model -- Crow's Foot Notation
    :icon: gear
@@ -133,13 +131,13 @@ Your models must include entities covering these **seven business areas**: patie
 
    Create a **logical ER diagram** using **Crow's Foot notation**.
 
-   - Same entities as Chen diagram
+   - Same entities as the Chen diagram, plus junction tables for any many-to-many relationships
    - Attributes listed inside entity rectangles
    - Primary keys marked (PK), foreign keys marked (FK)
    - Healthcare identifiers (MRN, NPI, DEA) clearly shown
    - Standard Crow's Foot cardinality symbols (one, many, optional, mandatory)
 
-   **File to create**: ``diagrams/crows_foot_erd.pdf``
+   **File to create**: ``crows_foot_erd.pdf``
 
 
 Task 2: Design Report
@@ -148,6 +146,14 @@ Task 2: Design Report
 **Objective**: Write an 8-to-12-page design report (PDF) that documents your design decisions.
 
 The report should follow this structure. Approximate page counts are suggestions, not strict requirements.
+
+.. note::
+
+   The normalization concepts and algorithms used in this report are covered in
+   :doc:`../../lectures/lecture4/lecture` (L4-5: Normalization & Denormalization).
+   A compact reference is available as the
+   :doc:`../../lectures/lecture4/cheat_sheet` or as a
+   :download:`printable PDF </_static/images/l4/Normalization_Cheat_Sheet.pdf>`.
 
 .. dropdown:: Report Outline
    :icon: gear
@@ -223,7 +229,6 @@ The report should follow this structure. Approximate page counts are suggestions
    - **NPI**: How handled for providers who do not yet have one (students, interns)?
    - **DEA Number**: Required only for controlled substance prescriptions. How enforced?
 
-
    **Section 4: Normalization Analysis (2 to 3 pages)**
 
    For each entity, prove it is in Third Normal Form (3NF):
@@ -259,33 +264,9 @@ Folder Structure
 .. code-block:: text
 
    GP1_Healthcare_Team{X}/
-   ├── diagrams/
-   │   ├── chen_erd.pdf
-   │   └── crows_foot_erd.pdf
-   ├── design_report.pdf
-   ├── README.md
-   └── team_contributions.md
-
-
-Documentation Files
--------------------
-
-.. dropdown:: What goes in each file
-   :icon: gear
-   :class-container: sd-border-primary
-   :open:
-
-   **design_report.pdf**
-
-   An 8-to-12-page PDF containing all four sections described in Task 2: entity catalog, relationship analysis, healthcare identifiers, and normalization analysis.
-
-   **README.md**
-
-   Project overview including team name and number, team members with emails, a brief description of your design approach, key design decisions (MRN strategy, provider key choices, data protection approach), and a file guide.
-
-   **team_contributions.md**
-
-   List each team member's name, tasks completed, hours contributed, and contribution percentage. Percentages must sum to 100%.
+   ├── chen_erd.pdf
+   ├── crows_foot_erd.pdf
+   └── design_report.pdf
 
 
 Submission
@@ -316,11 +297,6 @@ Submission
    - [ ] Relationship analysis table
    - [ ] Healthcare identifiers section
    - [ ] Normalization analysis (3NF proof for each entity)
-
-   **Supporting Files**:
-
-   - [ ] README.md
-   - [ ] team_contributions.md (percentages sum to 100%)
 
 
 Grading Rubric

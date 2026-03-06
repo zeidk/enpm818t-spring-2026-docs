@@ -34,7 +34,7 @@ Learning Objectives
 By completing this group project, you will be able to:
 
 - Extract entities and attributes from narrative business requirements
-- Design Entity-Relationship Diagrams using Chen and Crow's Foot notations
+- Design Entity-Relationship Diagrams (ERDs) using Chen and Crow's Foot notations
 - Use (min,max) notation to express participation and cardinality constraints
 - Identify and justify primary keys, candidate keys, and foreign keys
 - Apply normalization theory (1NF, 2NF, 3NF) to relational schemas
@@ -153,7 +153,7 @@ Create a **logical ER diagram** using **Crow's Foot notation** that shows how en
 
    **Requirements**:
 
-   - Same entities as the Chen diagram
+   - Same entities as the Chen diagram, plus junction tables for any many-to-many relationships
    - Attributes listed inside entity rectangles with data types
    - Primary keys marked (PK) and foreign keys indicated (FK)
 
@@ -180,6 +180,14 @@ Deliverable 3: Design Report
 -----------------------------
 
 Write a single PDF report (8 to 12 pages) documenting your complete database design. The report consolidates all analysis into one organized document.
+
+.. note::
+
+   The normalization concepts and algorithms used in this report are covered in
+   :doc:`../../lectures/lecture4/lecture` (L4-5: Normalization & Denormalization).
+   A compact reference is available as the
+   :doc:`../../lectures/lecture4/cheat_sheet` or as a
+   :download:`printable PDF </_static/images/l4/Normalization_Cheat_Sheet.pdf>`.
 
 .. dropdown:: Report Outline
    :icon: gear

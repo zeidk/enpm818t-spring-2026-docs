@@ -4,6 +4,26 @@ Changelog
 
 All notable changes to the ENPM818T Spring 2026 course documentation are recorded here.
 
+.. dropdown:: v2.3.0 -- GP1 Updates (2026-03-06)
+   :icon: tag
+   :class-container: sd-border-success
+
+   .. rubric:: scenario1/project1.rst
+
+   - **Learning Objectives**: added "(ERDs)" acronym expansion to "Design Entity-Relationship Diagrams using Chen and Crow's Foot notations"
+   - **Deliverable 2 (Crow's Foot)**: added "plus junction tables for any many-to-many relationships" to the entity requirements bullet
+   - **Deliverable 3 (Design Report)**: added ``.. note::`` before the Report Outline dropdown linking to the L4-5 lecture (``../../lectures/lecture4/lecture``), the cheat sheet (``../../lectures/lecture4/cheat_sheet``), and a ``:download:`` link to the printable ``Normalization-Cheat-Sheet.pdf`` at ``/_static/images/l4/``
+
+   .. rubric:: scenario2/project1.rst
+
+   - **Learning Objectives**: added "(ERDs)" acronym expansion to "Design Entity-Relationship Diagrams for healthcare data"
+   - **Part A (Chen)**: updated file path from ``diagrams/chen_erd.pdf`` to ``chen_erd.pdf``
+   - **Part B (Crow's Foot)**: added "plus junction tables for any many-to-many relationships"; updated file path from ``diagrams/crows_foot_erd.pdf`` to ``crows_foot_erd.pdf``
+   - **Task 2 (Design Report)**: added ``.. note::`` before the Report Outline dropdown linking to the L4-5 lecture, the cheat sheet, and the printable PDF (identical cross-references as scenario1)
+   - **Folder Structure**: replaced nested ``diagrams/`` subfolder with flat structure matching scenario1; removed ``README.md`` and ``team_contributions.md``
+   - **Documentation Files**: removed section entirely (no longer applicable)
+   - **Submission Checklist**: removed "Supporting Files" block (README.md, team_contributions.md)
+
 
 .. dropdown:: v2.2.0 -- Cheat Sheet Fixes (2026-03-06)
    :icon: tag
