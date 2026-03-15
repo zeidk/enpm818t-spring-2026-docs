@@ -37,7 +37,6 @@ Contents
    lecture
    quiz
    exercises
-   ../../glossary/glossary
    references
 
 Next Steps

@@ -55,3 +55,4 @@ After successfully completing this course, you will be able to:
    syllabus/index
    lectures/index
    final_project/index
+   glossary/glossary
