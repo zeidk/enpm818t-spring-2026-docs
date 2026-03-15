@@ -10,7 +10,7 @@ From Logical to Physical
 
 .. dropdown:: The Logical-to-Physical Gap
    :class-container: sd-border-secondary
-   :open:
+   
 
    .. rubric:: What the Logical Schema Leaves Open
 
@@ -153,7 +153,7 @@ PostgreSQL Data Types
 
 .. dropdown:: Choosing the Right Type
    :class-container: sd-border-secondary
-   :open:
+   
 
    .. rubric:: Type Selection Reference
 
@@ -204,7 +204,7 @@ PostgreSQL Data Types
 
 .. dropdown:: Why Never FLOAT for GPA or Money
    :class-container: sd-border-secondary
-   :open:
+   
 
    .. rubric:: Binary Floating-Point Cannot Represent Most Decimal Fractions Exactly
 
@@ -312,7 +312,7 @@ Constraints
 
 .. dropdown:: PRIMARY KEY
    :class-container: sd-border-secondary
-   :open:
+   
 
    .. rubric:: Declaring Primary Keys: Simple and Composite
 
@@ -420,7 +420,7 @@ Constraints
 
 .. dropdown:: SERIAL vs. GENERATED ALWAYS AS IDENTITY
    :class-container: sd-border-secondary
-   :open:
+   
 
    .. rubric:: Auto-Incrementing Primary Keys: The Old Way and the Right Way
 
@@ -541,7 +541,7 @@ Constraints
 
 .. dropdown:: ISA as a Shared-PK Pattern
    :class-container: sd-border-secondary
-   :open:
+   
 
    .. rubric:: Implementing ISA Hierarchies in SQL
 
@@ -634,7 +634,7 @@ Constraints
 
 .. dropdown:: FOREIGN KEY: Syntax and Options
    :class-container: sd-border-secondary
-   :open:
+   
 
    .. rubric:: Referential Integrity Between Tables
 
@@ -930,7 +930,7 @@ Constraints
 
 .. dropdown:: Deferrable Foreign Keys
    :class-container: sd-border-secondary
-   :open:
+   
 
    .. rubric:: Resolving Circular FK Dependencies
 
@@ -1088,7 +1088,7 @@ Constraints
 
 .. dropdown:: NOT NULL and UNIQUE
    :class-container: sd-border-secondary
-   :open:
+   
 
    .. rubric:: Two Independent Questions for Every Column
 
@@ -1205,7 +1205,7 @@ Constraints
 
 .. dropdown:: CHECK Constraints
    :class-container: sd-border-secondary
-   :open:
+   
 
    .. rubric:: Row-Level Business Rule Enforcement
 
@@ -1472,7 +1472,7 @@ Building the University Schema
 
 .. dropdown:: Creation Order: Parents Before Children
    :class-container: sd-border-secondary
-   :open:
+   
 
    .. rubric:: Every FK Must Reference a Table That Already Exists
 
@@ -1658,7 +1658,7 @@ ALTER TABLE and Schema Evolution
 
 .. dropdown:: Common ALTER TABLE Operations
    :class-container: sd-border-secondary
-   :open:
+   
 
    .. rubric:: Evolving a Live Schema Safely
 
@@ -1897,7 +1897,7 @@ DELETE, TRUNCATE, and DROP
 
 .. dropdown:: Choosing the Right Removal Command
    :class-container: sd-border-secondary
-   :open:
+   
 
    .. rubric:: Three Commands, Three Different Scopes
 
@@ -2089,7 +2089,7 @@ Best Practices and Mistakes to Avoid
 
 .. dropdown:: The Six Most Common DDL Mistakes
    :class-container: sd-border-secondary
-   :open:
+   
 
    .. rubric:: Mistakes That Cost the Most to Fix Later
 
