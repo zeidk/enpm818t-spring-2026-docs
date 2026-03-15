@@ -4,6 +4,72 @@ Changelog
 
 All notable changes to the ENPM818T Spring 2026 course documentation are recorded here.
 
+.. dropdown:: v2.4.0 -- Lecture 6 Documentation (2026-03-15)
+   :icon: tag
+   :class-container: sd-border-success
+
+   .. rubric:: lecture6/index.rst
+
+   - Created top-level index for Lecture 6 with overview, learning objectives, toctree (lecture, exercises, quiz, glossary, references, cheat_sheet), and next-steps pointer to L7 (DML, transactions, psycopg3)
+   - Added L6 row to the course-wide ``lectures/index.rst`` schedule table: topic "From Logical to Physical: Implementing Your Database in PostgreSQL" with full key-concepts list
+
+   .. rubric:: lecture6/lecture.rst
+
+   - Created full lecture document organized into six thematic sections: From Logical to Physical, PostgreSQL Data Types, Constraints, Building the University Schema, ALTER TABLE and Schema Evolution, DELETE / TRUNCATE / DROP, and Best Practices and Mistakes to Avoid
+   - All 21 demos formatted as named ``.. admonition::`` boxes (``Demo 1`` through ``Demo 21``), each containing the instruction text and the complete SQL from ``lecture6_schema.sql``
+   - **Demo 1**: FLOAT vs. NUMERIC -- ``grade_wrong`` (FLOAT) and ``grade_correct`` (NUMERIC) comparison; ``gpa = 3.9 AS exact_match`` behavior
+   - **Demo 2**: PRIMARY KEY simple and composite -- column-level unnamed, table-level named, composite ``pk_enrollment``; duplicate insert error message comparison
+   - **Demo 3**: Named vs. unnamed PK constraints -- ``department_pkey`` vs. ``pk_course`` in error output
+   - **Demo 4**: SERIAL silent bypass -- sequence counter frozen at 1; duplicate key error surfaces two inserts later
+   - **Demo 5**: GENERATED ALWAYS AS IDENTITY -- bypass rejected immediately; ``OVERRIDING SYSTEM VALUE``; ``START WITH 1000`` custom sequence
+   - **Demo 6**: ISA shared-PK pattern -- ``person`` / ``student`` tables; FK violation on non-existent ``person_id``; two-hop CASCADE on delete
+   - **Demo 7**: NO ACTION vs. RESTRICT vs. deferred -- three ``professor`` variants; timing of FK error
+   - **Demo 8**: ON DELETE CASCADE -- Alice's enrollment rows disappear on student delete
+   - **Demo 9**: ON DELETE SET NULL -- professors survive department deletion with ``dept_id = NULL``; ``SET NOT NULL`` blocked by existing nulls
+   - **Demo 10**: ON DELETE SET DEFAULT -- fallback to ``dept_id = 0`` sentinel; fails when sentinel row is absent
+   - **Demo 11**: Deferrable FKs -- circular ``department`` / ``professor`` insert succeeds inside ``BEGIN``/``COMMIT``
+   - **Demo 12**: Mode 1 vs. Mode 2 deferral -- ``INITIALLY DEFERRED`` (automatic) vs. ``INITIALLY IMMEDIATE`` with ``SET CONSTRAINTS``
+   - **Demo 13**: UNIQUE and the NULL trap -- two NULL plates coexist; ``plate = plate`` returns NULL; ``ALTER TABLE SET NOT NULL`` blocked
+   - **Demo 14**: UNIQUE NULLS NOT DISTINCT -- fourth NULL insert fails; plain UNIQUE allows all four
+   - **Demo 15**: CHECK constraints -- cross-column date check; IN-list vocabulary; NULL trap exposed by dropping ``NOT NULL``
+   - **Demo 16**: Category exclusive-arc CHECK pattern -- ``vehicle_owner`` with three supertypes; arc sum = 2 rejected; arc sum = 0 rejected
+   - **Demo 17**: EXCLUDE with GIST and INT4RANGE -- ``exam_schedule``; ``[40,80)`` rejected; adjacent ``[50,80)`` accepted; ``&&`` vs. ``=`` proof
+   - **Demo 18**: Verifying the schema with catalog views -- ``information_schema.table_constraints``, ``referential_constraints``, ``pg_sequences``; FK-to-``student`` query
+   - **Demo 19**: Common ALTER TABLE operations -- nullable add (instant); NOT NULL no default (error); NOT NULL with DEFAULT FALSE (instant); rename; drop column
+   - **Demo 20**: Safe migration pattern -- four-step NOT VALID / VALIDATE CONSTRAINT; new writes blocked immediately at Step 3; ``convalidated`` verification
+   - **Demo 21**: DELETE, TRUNCATE, and DROP -- five enrollment rows; DELETE two; TRUNCATE; RESTART IDENTITY; DROP; IF EXISTS safe drop
+   - Added Think Prompt / Answer dropdowns for ISA shared-PK, CHECK NULL trap, EXCLUDE vs. UNIQUE, deferrable FKs (ON DELETE action selection), and DELETE / TRUNCATE / DROP semester-reload scenario
+   - Added ``\d`` / ``\d+`` psql meta-command reference table and catalog view (``information_schema`` vs. ``pg_catalog``) comparison
+
+   .. rubric:: lecture6/exercises.rst
+
+   - Created four exercises covering all major L6 topics
+   - **Exercise 1 -- Type Auditor**: audit a nine-column poorly typed ``grant_proposal`` table; identify seven or more mistakes; rewrite with correct types and named constraints; add ``submitted_at TIMESTAMPTZ`` via two ``ALTER TABLE`` statements
+   - **Exercise 2 -- Constraint Detective**: predict SUCCEED / FAIL for a seven-statement sequence on ``person`` / ``student`` tables; explain the UNIQUE NULL behavior for two NULL emails; explain CASCADE result after ``DELETE FROM person``; write a ``NULLS NOT DISTINCT`` fix
+   - **Exercise 3 -- ISA Hierarchy Builder**: design a three-level hierarchy (``person`` > ``researcher`` > ``graduate_researcher``) with ORCID ``UNIQUE NULLS NOT DISTINCT`` and grad-year ``CHECK``; verify two-hop CASCADE; add a fourth subtype ``postdoc_researcher``
+   - **Exercise 4 -- Schema Migration Challenge**: apply four independent requirements changes to a live ``course_section`` table -- R1: safe NOT VALID / VALIDATE pattern for capacity NOT NULL; R2: regex CHECK for ``meeting_room`` using ``~`` operator; R3: rename ``section_no`` to ``section_code`` and retype to ``CHAR(4)``; R4: rename system-generated PK constraint to ``pk_course_section`` via ``ALTER TABLE ... RENAME CONSTRAINT``
+
+   .. rubric:: lecture6/quiz.rst
+
+   - Created 32 questions: 18 multiple choice (Q1-Q18), 10 true/false (Q19-Q28), and 4 essay (Q29-Q32)
+   - Topics covered: NUMERIC vs. FLOAT, VARCHAR vs. TEXT, GENERATED ALWAYS vs. SERIAL, ``OVERRIDING SYSTEM VALUE`` and ``setval()``, ISA shared-PK, ON DELETE actions, deferrable constraints, CHECK NULL trap, UNIQUE NULL behavior, NULLS NOT DISTINCT, EXCLUDE vs. UNIQUE, ALTER TABLE rewrite cost, four-step migration pattern, TRUNCATE vs. DELETE, DROP CASCADE, anonymous vs. named constraints, deferrable constraint types, RESTART IDENTITY, FK naming convention
+   - Essay questions cover: SERIAL silent bypass and ``setval()`` fix; shared-PK ISA rationale; DELETE / TRUNCATE / DROP four-dimension comparison; four-step migration pattern with lock levels
+
+   .. rubric:: lecture6/glossary.rst
+
+   - Created alphabetical glossary with 40 entries from ACCESS EXCLUSIVE Lock through VARCHAR(n)
+   - Entries organized under letters A, B, C, D, E, F, G, I, L, N, O, P, R, S, T, U, V with RST ``.. _t6-glossary-x:`` anchor labels for in-page navigation links
+   - Key entries: GENERATED ALWAYS AS IDENTITY, GiST Index, btree_gist, ISA Hierarchy, Shared-PK Strategy, NULLS NOT DISTINCT, NOT VALID, VALIDATE CONSTRAINT, SHARE UPDATE EXCLUSIVE Lock, RESTART IDENTITY, Exclusive-Arc Pattern (via Category pattern entry)
+
+   .. rubric:: lecture6/references.rst
+
+   - Created four dropdown sections: Lecture 6 card, PostgreSQL Official Documentation (nine cards: CREATE TABLE, ALTER TABLE, Data Types, Constraints, DELETE, TRUNCATE, DROP TABLE, Range Types, GiST Indexes), Textbooks (Elmasri & Navathe Ch. 3-4, Silberschatz Ch. 4-5), Online Resources (psql reference, Use The Index Luke, pgpedia GENERATED ALWAYS, DataGrip docs), Related Topics (L3, L4-L5, L7, L8)
+
+   .. rubric:: lecture6/cheat_sheet.rst
+
+   - Created condensed reference with nine labeled sections: Data Types table, Constraint Quick Reference table, SERIAL vs. GENERATED ALWAYS table, ON DELETE / ON UPDATE Actions table, ISA Shared-PK Pattern code block, Category Exclusive-Arc Pattern code block, Deferrable Constraints table, Creation Order (university waves) table, ALTER TABLE Operations table plus Safe Migration Pattern four-step code block, DELETE / TRUNCATE / DROP comparison tables, Schema Verification Quick Reference table, Naming Conventions table, Six Most Common DDL Mistakes table
+
+
 .. dropdown:: v2.3.0 -- GP1 Updates (2026-03-06)
    :icon: tag
    :class-container: sd-border-success

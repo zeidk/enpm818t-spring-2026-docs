@@ -35,6 +35,9 @@ Schedule
    * - L4-L5
      - Normalization and Denormalization
      - Functional dependencies, Armstrong's axioms, attribute closure, canonical cover, normal forms (1NF, 2NF, 3NF, BCNF), 3NF synthesis algorithm, BCNF decomposition algorithm, lossless join, dependency preservation, denormalization patterns, OLTP vs. OLAP schema design
+   * - L6
+     - From Logical to Physical: Implementing Your Database in PostgreSQL
+     - SQL sublanguages (DDL/DML/DQL/DCL/TCL), PostgreSQL data types (NUMERIC vs. FLOAT, TEXT vs. VARCHAR, TIMESTAMPTZ), PRIMARY KEY (simple and composite), GENERATED ALWAYS AS IDENTITY vs. SERIAL, ISA shared-PK pattern, FOREIGN KEY referential actions (CASCADE, SET NULL, SET DEFAULT, RESTRICT, NO ACTION), deferrable constraints (INITIALLY DEFERRED, INITIALLY IMMEDIATE), NOT NULL, UNIQUE, NULLS NOT DISTINCT, CHECK, EXCLUDE, category exclusive-arc pattern, creation order, ALTER TABLE (safe migration pattern, NOT VALID, VALIDATE CONSTRAINT), DELETE vs. TRUNCATE vs. DROP, naming conventions, common DDL mistakes
 
 
 Contents
@@ -47,4 +50,5 @@ Contents
    lecture1/index
    lecture2/index
    lecture3/index
-   lecture4/index
+   lecture4-5/index
+   lecture6/index

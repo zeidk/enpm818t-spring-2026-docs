@@ -150,9 +150,9 @@ The report should follow this structure. Approximate page counts are suggestions
 .. note::
 
    The normalization concepts and algorithms used in this report are covered in
-   :doc:`../../lectures/lecture4/lecture` (L4-5: Normalization & Denormalization).
+   :doc:`../../lectures/lecture4-5/lecture` (L4-5: Normalization & Denormalization).
    A compact reference is available as the
-   :doc:`../../lectures/lecture4/cheat_sheet` or as a
+   :doc:`../../lectures/lecture4-5/cheat_sheet` or as a
    :download:`printable PDF </_static/images/l4/Normalization_Cheat_Sheet.pdf>`.
 
 .. dropdown:: Report Outline

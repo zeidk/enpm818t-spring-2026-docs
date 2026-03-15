@@ -38,7 +38,7 @@ Contents
    lecture
    quiz
    exercises
-   glossary
+   ../../glossary/glossary
    references
    cheat_sheet
 

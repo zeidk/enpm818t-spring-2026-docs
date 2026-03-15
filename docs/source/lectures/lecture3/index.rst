@@ -40,7 +40,7 @@ Contents
    lecture
    quiz
    exercises
-   glossary
+   ../../glossary/glossary
    references
 
 Next Steps
