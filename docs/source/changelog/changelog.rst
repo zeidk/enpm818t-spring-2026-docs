@@ -4,6 +4,53 @@ Changelog
 
 All notable changes to the ENPM818T Spring 2026 course documentation are recorded here.
 
+.. dropdown:: v2.5.0 -- GP1 and GP2 Scope Reduction (2026-03-22)
+   :icon: tag
+   :class-container: sd-border-success
+
+   .. rubric:: scenario1/project1.rst and scenario2/project1.rst
+
+   - Added ``.. important::`` block titled **Revised Scope for the Design Report** in the Deliverable 3 / Task 2 section of both scenario files
+   - Report scope for Entity Catalog, Relationship Documentation/Analysis, and Normalization Proofs reduced from all entities to **five named tables per scenario**
+   - Scenario 1 focus tables: ``INTERSECTION``, ``TRAFFIC_SIGNAL``, ``SENSOR``, ``ROAD_SEGMENT``, ``INCIDENT``
+   - Scenario 2 focus tables: ``PATIENT``, ``PROVIDER``, ``PATIENT_INSURANCE``, ``APPOINTMENT``, ``PRESCRIPTION``
+   - ER diagram scope unchanged: both diagrams must still cover all eight (Scenario 1) and seven (Scenario 2) business areas
+   - Submission checklists updated to reference "five required tables" in place of "all entities"
+   - Grading rubric wording updated accordingly in both files (Entity Catalog and Normalization rows)
+   - Relationship Documentation/Analysis tables updated: starter rows now illustrate only relationships among the five required tables; open-ended continuation row retained
+
+   .. rubric:: scenario1/project2.rst
+
+   - Added ``.. important::`` block titled **Revised Scope for GP2** immediately after the Learning Objectives section
+   - ``schema.sql`` and ``data.sql`` scope unchanged: all GP1 tables must be implemented (FK integrity requires it)
+   - Full Python repository pattern (CRUD + custom queries) and CLI menu coverage required only for the five core tables: ``INTERSECTION``, ``TRAFFIC_SIGNAL``, ``SENSOR``, ``ROAD_SEGMENT``, ``INCIDENT``
+   - Two supporting tables added as explicit requirements because queries and CLI features depend on them: ``MAINTENANCE_TASK`` and ``MAINTENANCE_CREW``
+   - All remaining GP1 tables (``EMERGENCY_ROUTE``, ``PARKING_FACILITY``, ``WEATHER_STATION``, ``TRAFFIC_CONTROL_ZONE``) must appear in SQL files but do not require Python repositories or CLI menu options
+   - Minimum data volumes revised: core table minimums retained; removed volumes for tables outside the revised scope; added note that remaining tables need representative rows for FK validity
+   - SQL query examples revised: geospatial example updated from "5 nearest emergency facilities" to "5 nearest intersections" to stay within scope
+   - models/ and repositories/ layer descriptions updated to name the five core tables and note that MAINTENANCE_TASK / MAINTENANCE_CREW need only partial or read-only repositories
+   - CLI analytics menu option expanded to mention open maintenance tasks as a metric
+   - Folder structure comments updated: ``schema.sql`` and ``data.sql`` annotated as covering all tables; models and repositories annotated as covering core tables
+   - Submission checklist updated: "Repository pattern with CRUD for the five core tables" replaces "Repository pattern with CRUD for major entities"
+   - Grading rubric updated: "Complete DDL for all tables" and "CRUD for core tables" wording clarified
+
+   .. rubric:: scenario2/project2.rst
+
+   - Added ``.. important::`` block titled **Revised Scope for GP2** immediately after the Learning Objectives section
+   - ``schema.sql`` and ``data.sql`` scope unchanged: all GP1 tables must be implemented
+   - Full Python repository pattern and CLI menu coverage required only for the five core tables: ``PATIENT``, ``PROVIDER``, ``PATIENT_INSURANCE``, ``APPOINTMENT``, ``PRESCRIPTION``
+   - Two supporting tables added as explicit requirements because of FK dependencies and query coverage: ``MEDICATION`` (referenced by ``PRESCRIPTION``) and ``FACILITY`` / ``LOCATION`` (referenced by ``APPOINTMENT``)
+   - All remaining GP1 tables (``LAB_ORDER``, ``LAB_RESULT``, ``ADMISSION``, ``INSURANCE_CLAIM``) must appear in SQL files but do not require Python repositories or CLI menu options
+   - Minimum data volumes revised: core table minimums retained (100+ patients, 30+ providers, 100+ insurance records, 200+ appointments, 150+ prescriptions, 30+ medications, 5 hospitals + 10+ locations); removed separate volumes for lab orders, admissions, claims
+   - Clinical queries revised: "patient care coordination" query simplified from "demographics + active medications + recent lab results" to "demographics + insurance coverage + active prescriptions"; readmission and claim denial queries replaced with queries drawable from core tables (provider workload, insurance coverage summary, prescription costs, appointment status breakdown)
+   - Financial queries revised: "claim denial analytics" and "aging report" replaced with "insurance coverage summary" and "prescription costs by patient" to avoid requiring ``INSURANCE_CLAIM``
+   - models/ and repositories/ layer descriptions updated to name the five core tables and note that MEDICATION / FACILITY need only partial or read-only repositories
+   - CLI menu revised: "claim denial analytics" and "accounts receivable aging" replaced with "look up provider by NPI" and "show provider appointments"; financial menu category replaced with provider category to align with reduced scope
+   - Example CLI interaction updated to reflect new menu options
+   - Folder structure comments updated to match scenario1 pattern
+   - Submission checklist and grading rubric updated with "core tables" wording
+
+
 .. dropdown:: v2.4.0 -- Lecture 6 Documentation (2026-03-15)
    :icon: tag
    :class-container: sd-border-success

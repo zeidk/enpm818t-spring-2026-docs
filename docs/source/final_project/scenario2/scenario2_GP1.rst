@@ -155,14 +155,28 @@ The report should follow this structure. Approximate page counts are suggestions
    :doc:`../../lectures/lecture4-5/cheat_sheet` or as a
    :download:`printable PDF </_static/images/l4/Normalization_Cheat_Sheet.pdf>`.
 
+.. important::
+
+   **Revised Scope for the Design Report**
+
+   To make the workload manageable, the Entity Catalog, Relationship Analysis, and Normalization Analysis sections of your report should focus on the following **five tables**:
+
+   - ``PATIENT``
+   - ``PROVIDER``
+   - ``PATIENT_INSURANCE``
+   - ``APPOINTMENT``
+   - ``PRESCRIPTION``
+
+   Your ER diagrams must still cover all seven business areas. The report sections below are scoped to these five tables only.
+
 .. dropdown:: Report Outline
    :icon: gear
    :class-container: sd-border-primary
    :open:
 
-   **Section 1: Entity Catalog (3 to 4 pages)**
+   **Section 1: Entity Catalog (2 to 3 pages)**
 
-   For each entity in your design, provide:
+   For each of the five required tables (PATIENT, PROVIDER, PATIENT_INSURANCE, APPOINTMENT, PRESCRIPTION), provide:
 
    - Entity name and purpose (one sentence)
    - Primary key and justification (why this key, surrogate vs. natural)
@@ -194,7 +208,7 @@ The report should follow this structure. Approximate page counts are suggestions
 
    **Section 2: Relationship Analysis (1 to 2 pages)**
 
-   Document key relationships between entities using a table format:
+   Document the relationships **among** the five required tables and their immediate neighbors using a table format. At minimum, include:
 
    .. list-table::
       :header-rows: 1
@@ -206,20 +220,35 @@ The report should follow this structure. Approximate page counts are suggestions
         - Cardinality
         - Business Rule
       * - PATIENT
+        - PATIENT_INSURANCE
+        - covered by
+        - 1:N
+        - A patient may have one or more insurance policies on record
+      * - PATIENT
         - APPOINTMENT
         - schedules
         - 1:N
         - Each patient has 0 to many appointments
       * - PROVIDER
+        - APPOINTMENT
+        - conducts
+        - 1:N
+        - Each provider conducts 0 to many appointments
+      * - PROVIDER
         - PRESCRIPTION
         - writes
         - 1:N
         - Each provider writes 0 to many prescriptions
-      * - LAB_ORDER
-        - LAB_RESULT
-        - produces
+      * - PATIENT
+        - PRESCRIPTION
+        - receives
         - 1:N
-        - Each order produces 1 to many results
+        - Each patient receives 0 to many prescriptions
+      * - ...
+        - ...
+        - ...
+        - ...
+        - Continue for any additional relationships involving these five tables
 
    **Section 3: Healthcare Identifiers (1 to 2 pages)**
 
@@ -231,7 +260,7 @@ The report should follow this structure. Approximate page counts are suggestions
 
    **Section 4: Normalization Analysis (2 to 3 pages)**
 
-   For each entity, prove it is in Third Normal Form (3NF):
+   For each of the five required tables, prove it is in Third Normal Form (3NF):
 
    - List functional dependencies
    - Verify 1NF (atomic attributes, no repeating groups)
@@ -293,10 +322,10 @@ Submission
    **Design Report**:
 
    - [ ] 8 to 12 pages, submitted as PDF
-   - [ ] Entity catalog with PK justification, candidate keys, business rules
-   - [ ] Relationship analysis table
+   - [ ] Entity catalog covering the five required tables with PK justification, candidate keys, business rules
+   - [ ] Relationship analysis table for the five required tables
    - [ ] Healthcare identifiers section
-   - [ ] Normalization analysis (3NF proof for each entity)
+   - [ ] Normalization analysis (3NF proof for each of the five required tables)
 
 
 Grading Rubric
@@ -315,13 +344,13 @@ Grading Rubric
      - Entities cover all seven business areas (1pt); relationships correct with (min,max) notation and healthcare identifiers visible (1.5pts); proper notation in both diagrams (1pt); healthcare identifiers visible (0.5pt)
    * - **Task 2: Entity Catalog and Relationships**
      - 2
-     - Each entity has PK justification, candidate keys, business rules (1pt); relationship analysis complete with cardinality and business rules (1pt)
+     - Each of the five required tables has PK justification, candidate keys, business rules (1pt); relationship analysis complete with cardinality and business rules (1pt)
    * - **Task 2: Healthcare Identifiers**
      - 1
      - MRN/NPI/DEA strategy documented with justification
    * - **Task 2: Normalization**
      - 3
-     - Correct functional dependencies identified (1pt); 3NF proofs for all entities (1pt); clear presentation (1pt)
+     - Correct functional dependencies identified (1pt); 3NF proofs for all five required tables (1pt); clear presentation (1pt)
    * - **Total**
      - **10**
      -

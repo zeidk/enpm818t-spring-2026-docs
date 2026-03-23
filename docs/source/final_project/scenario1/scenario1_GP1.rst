@@ -189,6 +189,20 @@ Write a single PDF report (8 to 12 pages) documenting your complete database des
    :doc:`../../lectures/lecture4-5/cheat_sheet` or as a
    :download:`printable PDF </_static/images/l4/Normalization_Cheat_Sheet.pdf>`.
 
+.. important::
+
+   **Revised Scope for the Design Report**
+
+   To make the workload manageable, the Entity Catalog, Relationship Documentation, and Normalization Proofs sections of your report should focus on the following **five tables**:
+
+   - ``INTERSECTION``
+   - ``TRAFFIC_SIGNAL``
+   - ``SENSOR``
+   - ``ROAD_SEGMENT``
+   - ``INCIDENT``
+
+   Your ER diagrams must still cover all eight business areas. The report sections below are scoped to these five tables only.
+
 .. dropdown:: Report Outline
    :icon: gear
    :class-container: sd-border-primary
@@ -202,7 +216,7 @@ Write a single PDF report (8 to 12 pages) documenting your complete database des
 
    **2. Entity Catalog** (2 to 3 pages)
 
-   For each entity, document:
+   For each of the five required tables (INTERSECTION, TRAFFIC_SIGNAL, SENSOR, ROAD_SEGMENT, INCIDENT), document:
 
    - Entity name and purpose (one sentence)
    - Primary key and justification (why this key was chosen)
@@ -211,7 +225,7 @@ Write a single PDF report (8 to 12 pages) documenting your complete database des
 
    **3. Relationship Documentation** (1 to 2 pages)
 
-   A table listing all relationships:
+   A table documenting the relationships **among** the five required tables and their immediate neighbors. At minimum, include:
 
    .. list-table::
       :header-rows: 1
@@ -233,15 +247,30 @@ Write a single PDF report (8 to 12 pages) documenting your complete database des
         - monitors
         - (1,1) and (0,N)
         - Each intersection monitored by 0 to many sensors
+      * - INTERSECTION
+        - ROAD_SEGMENT
+        - connects
+        - (1,1) and (0,N)
+        - Each road segment connects two intersections
+      * - INTERSECTION
+        - INCIDENT
+        - located at
+        - (0,1) and (0,N)
+        - An incident may be located at an intersection or a road segment
+      * - ROAD_SEGMENT
+        - INCIDENT
+        - located on
+        - (0,1) and (0,N)
+        - An incident may be located on a road segment or at an intersection
       * - ...
         - ...
         - ...
         - ...
-        - Continue for all relationships
+        - Continue for any additional relationships involving these five tables
 
    **4. Normalization Proofs** (2 to 3 pages)
 
-   For each entity, prove it is in 3NF by showing:
+   For each of the five required tables, prove it is in 3NF by showing:
 
    - Functional dependencies identified
    - 1NF: All attributes atomic, no repeating groups
@@ -312,9 +341,9 @@ Submission
 
    - [ ] Follows the report outline (sections 1 through 6)
    - [ ] 8 to 12 pages, submitted as PDF
-   - [ ] Entity catalog covers all entities with keys and business rules
-   - [ ] All relationships documented with (min,max) cardinality
-   - [ ] 3NF proofs for all entities
+   - [ ] Entity catalog covers the five required tables with keys and business rules
+   - [ ] Relationships among the five required tables documented with (min,max) cardinality
+   - [ ] 3NF proofs for the five required tables
    - [ ] 2 to 3 denormalization scenarios analyzed
    - [ ] Team contributions section included
 
@@ -338,10 +367,10 @@ Grading Rubric
      - Consistent with Chen diagram (0.5pt); attributes with data types, PKs, and FKs shown (1pt); correct Crow's Foot cardinality (1pt)
    * - **Report: Entity Catalog**
      - 2
-     - All entities documented with purpose and business rules (1pt); well-chosen primary keys with candidate key analysis (1pt)
+     - All five required tables documented with purpose and business rules (1pt); well-chosen primary keys with candidate key analysis (1pt)
    * - **Report: Normalization**
      - 2
-     - Complete 3NF proofs with functional dependencies for all entities (1.5pt); denormalization analysis with trade-offs (0.5pt)
+     - Complete 3NF proofs with functional dependencies for all five required tables (1.5pt); denormalization analysis with trade-offs (0.5pt)
    * - **Report: Quality**
      - 1
      - Relationship documentation complete (0.5pt); report is well-organized and professionally written (0.5pt)
@@ -358,9 +387,9 @@ Common Mistakes to Avoid
    **Frequent Errors**
 
    - Illegible diagrams with tiny text or poor layout
-   - Not covering all eight business areas
+   - Not covering all eight business areas in the ER diagrams
    - Using cardinality ratios (1:N) instead of (min,max) notation in the Chen diagram
-   - Proving 3NF for only some entities
+   - Missing 3NF proofs for any of the five required tables
    - Denormalization section that only lists scenarios without analyzing trade-offs
    - Team contributions that do not sum to 100%
 

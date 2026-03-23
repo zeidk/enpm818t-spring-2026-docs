@@ -5,7 +5,7 @@ Group Project 2: PostgreSQL + Python Integration
 Overview
 --------
 
-Implement your GP1 design in PostgreSQL, generate realistic sample data, write SQL queries supporting traffic operations, and build a Python command-line application with a menu-driven interface.
+Implement your GP1 design in PostgreSQL, generate realistic synthetic data, write SQL queries supporting clinical and administrative operations, and build a Python command-line application with a menu-driven interface.
 
 .. card::
    :class-card: sd-bg-warning sd-bg-text-dark
@@ -22,13 +22,33 @@ Learning Objectives
 
 By completing this group project, you will be able to:
 
-- Translate conceptual designs into physical PostgreSQL schemas
+- Translate healthcare designs into physical PostgreSQL schemas
 - Write DDL with tables, constraints, indexes, and triggers
-- Generate and validate sample data respecting all constraints
-- Write multi-table JOINs, aggregate queries, subqueries, and geospatial queries
+- Generate and validate synthetic healthcare data
+- Write clinical, financial, and operational SQL queries
 - Integrate PostgreSQL with Python using psycopg2
 - Design repository and service layer architecture
 - Build a menu-driven CLI application
+
+
+.. important::
+
+   **Revised Scope for GP2**
+
+   The schema (``schema.sql``) must implement **all tables** from your GP1 design so that foreign key relationships are valid and queries can span the full database. However, the repository layer and CLI menu only need to provide full CRUD and business logic for the following **five core tables**:
+
+   - ``PATIENT``
+   - ``PROVIDER``
+   - ``PATIENT_INSURANCE``
+   - ``APPOINTMENT``
+   - ``PRESCRIPTION``
+
+   Two additional tables are also required in the schema and must contain sample data because the SQL queries and CLI features below depend on them:
+
+   - ``MEDICATION`` (needed because PRESCRIPTION references it by medication name or ID)
+   - ``FACILITY`` or ``LOCATION`` (needed because APPOINTMENT references a facility or clinic location)
+
+   All remaining tables from your GP1 design (e.g., LAB_ORDER, LAB_RESULT, ADMISSION, INSURANCE_CLAIM) must appear in ``schema.sql`` and ``data.sql`` but do not require Python repositories or CLI menu options.
 
 
 Part 1: Physical Database Implementation
@@ -43,57 +63,64 @@ Part 1: Physical Database Implementation
 
    Create ``schema.sql`` with:
 
-   - **Database setup**: Extensions (PostGIS for geospatial)
-   - **Custom types**: ENUMs for constrained values
+   - **Database setup**: Extensions
+   - **Custom types**: ENUMs for constrained healthcare values (appointment status, claim status, priority levels, etc.)
    - **All tables**: Complete with all columns from GP1
    - **Primary keys**: All defined correctly
    - **Foreign keys**: With ON DELETE/UPDATE rules
    - **Check constraints**: Business rules from your GP1 entity catalog
    - **NOT NULL constraints**: All mandatory fields
-   - **UNIQUE constraints**: All candidate keys
-   - **Indexes**: Strategic indexes for query performance
+   - **UNIQUE constraints**: All candidate keys (MRN, NPI, etc.)
+   - **Indexes**: Strategic indexes for clinical query patterns
    - **Triggers**: Automatic ``updated_at`` timestamps
 
-   **PostGIS Integration**:
+   **Healthcare Identifier Constraints**:
 
    .. code-block:: sql
 
-      CREATE EXTENSION IF NOT EXISTS postgis;
+      -- MRN format: 10-digit zero-padded
+      ALTER TABLE patient
+      ADD CONSTRAINT chk_mrn_format
+      CHECK (mrn ~ '^\d{10}$');
 
-      ALTER TABLE intersection
-      ADD COLUMN location GEOGRAPHY(POINT, 4326);
+      -- NPI format: 10-digit
+      ALTER TABLE provider
+      ADD CONSTRAINT chk_npi_format
+      CHECK (npi ~ '^\d{10}$');
 
-      CREATE INDEX idx_intersection_location
-      ON intersection USING GIST (location);
+      -- DEA required for controlled substance prescriptions
+      ALTER TABLE prescription
+      ADD CONSTRAINT chk_dea_for_controlled
+      CHECK (
+          controlled_substance_schedule IS NULL
+          OR prescriber_dea_number IS NOT NULL
+      );
 
    **File to create**: ``postgresql/schema.sql``
 
-.. dropdown:: Task 1.2: Sample Data Generation (2 points)
+.. dropdown:: Task 1.2: Synthetic Data Generation (2 points)
    :icon: gear
    :class-container: sd-border-primary
 
-   Generate realistic sample data that fits your schema. We provide a :doc:`Data Generation Guide <data_generation_guide>` containing a ready-to-use prompt. The workflow is:
+   Create ``data.sql`` with **synthetic data only** (NEVER real patient data!).
 
-   1. Export your schema definition with ``pg_dump`` or ``\d+`` commands
-   2. Paste the provided prompt and your schema into an LLM (e.g., Claude, ChatGPT)
-   3. Review the generated INSERT statements for correctness
-   4. Save as ``data.sql`` and load into your database
-   5. Fix any constraint violations and verify data quality
+   **Minimum data volumes**:
 
-   **Minimum Data Volumes**:
+   The following minimums apply to the core and supporting tables. Other tables from your design should contain at least a few representative rows so foreign key references resolve.
 
-   - 50+ intersections in a realistic city grid
-   - 100+ traffic signals across intersections
-   - 150+ sensors (multiple per intersection)
-   - 50+ road segments connecting intersections
-   - 100+ maintenance records (various dates)
-   - 10+ maintenance crews
-   - 75+ incidents (last 90 days)
-   - 20+ emergency routes
-   - 10+ emergency facilities
-   - 5+ weather stations
-   - 10+ parking facilities
-   - 5+ traffic control zones
+   - 100+ patients across the network
+   - 30+ providers (physicians, nurses, specialists)
+   - 100+ patient insurance records
+   - 200+ appointments (various statuses and types)
+   - 150+ prescriptions (including controlled substances)
+   - 30+ medications in formulary
+   - 5 hospitals and 10+ clinic locations (FACILITY or LOCATION table)
+
+   .. note::
+
+      **Data Generation with LLMs**
+
+      You may use an LLM (such as ChatGPT or Claude) to generate your INSERT statements. Provide your ``schema.sql`` to the LLM and ask it to generate realistic synthetic data that respects all constraints. See the :doc:`data_generation_guide` for a ready-to-use prompt.
 
    **Data Quality Checks** (run after loading):
 
@@ -103,62 +130,63 @@ Part 1: Physical Database Implementation
 
       1. All FK references resolve (no orphan records)
       2. All CHECK constraints pass
-      3. Geographic coordinates form a realistic grid
-      4. Temporal data spans at least 90 days
-      5. Every intersection has at least one signal
-      6. Every zone contains multiple intersections
+      3. MRN, NPI, DEA formats are consistent
+      4. Temporal data spans at least 6 months
+      5. Controlled substance prescriptions have DEA numbers
+      6. No appointment double-books a provider at the same date and time
 
    **File to create**: ``postgresql/data.sql``
 
 
-Part 2: SQL Queries
---------------------
+Part 2: Clinical SQL Queries
+-----------------------------
 
-**Objective**: Write 8+ queries demonstrating your ability to extract meaningful information from the database.
+**Objective**: Write 8+ queries demonstrating clinical, financial, and operational mastery.
 
-.. dropdown:: Query Categories (5 points total)
+.. dropdown:: Clinical Queries (3 minimum)
    :icon: gear
    :class-container: sd-border-primary
    :open:
 
-   Write at least **8 queries** covering all of the following categories:
+   **Patient Care Coordination**:
 
-   **Multi-Table JOINs (3 queries minimum)**
+   *"For a patient arriving for an appointment, show demographics, insurance coverage, and active prescriptions."*
 
-   Combine 3 or more tables to answer business questions.
+   **Medication Safety**:
 
-   Examples:
+   *"Find all patients with 5+ active prescriptions (polypharmacy risk) along with their prescribing providers."*
 
-   - *"Which intersections have the most incidents, and what sensors are installed there?"*
-   - *"List all maintenance tasks with crew details and intersection information."*
-   - *"Find signals at intersections that have had critical incidents in the last 30 days."*
+   **Provider Workload**:
 
-   **Aggregate Functions (2 queries minimum)**
+   *"Show each provider's upcoming appointments with patient name, appointment type, and reason for visit."*
 
-   Use COUNT, SUM, AVG, MIN, MAX with GROUP BY and HAVING.
+.. dropdown:: Financial Queries (2 minimum)
+   :icon: gear
+   :class-container: sd-border-primary
 
-   Examples:
+   **Insurance Coverage Summary**:
 
-   - *"Calculate average incident resolution time by severity level."*
-   - *"Count sensors per intersection and find intersections with fewer than 2 sensors."*
+   *"For each insurance provider, show the number of covered patients and their average copay amounts."*
 
-   **Subqueries (1 query minimum)**
+   **Prescription Costs**:
 
-   Use subqueries in WHERE, FROM, or SELECT clauses to solve multi-step problems.
+   *"List all active prescriptions with patient name, medication, and insurance policy, ordered by patient."*
 
-   Examples:
+.. dropdown:: Operational Queries (3 minimum)
+   :icon: gear
+   :class-container: sd-border-primary
 
-   - *"Find intersections with more incidents than the citywide average."*
-   - *"List crews that have never been assigned to a critical-priority maintenance task."*
+   **Provider Productivity**:
 
-   **PostGIS Geospatial (2 queries minimum)**
+   *"Show appointment counts, no-show rates, and average patients per day by provider."*
 
-   Use PostGIS functions for location-based analysis.
+   **Controlled Substances**:
 
-   Examples:
+   *"Report all Schedule II controlled substance prescriptions by provider, required for DEA reporting."*
 
-   - *"Find all sensors within 500 meters of a given incident location."*
-   - *"List the 5 nearest emergency facilities to a specific intersection."*
+   **Appointment Status Breakdown**:
+
+   *"Show counts of appointments by status (completed, no-show, cancelled) broken down by facility."*
 
 .. dropdown:: Query Documentation Format
    :icon: gear
@@ -169,14 +197,14 @@ Part 2: SQL Queries
    .. code-block:: sql
 
       -- Query #X: [Title]
-      -- Business Question: [Problem being solved]
-      -- Complexity Features: [JOINs, aggregates, subqueries, geospatial]
+      -- Clinical/Financial/Operational Context: [Why this matters]
       -- Tables Used: [List all tables]
+      -- Complexity Features: [JOINs, aggregates, subqueries used]
 
       [YOUR SQL QUERY]
 
       -- Expected Output: [Description of result columns]
-      -- Sample Results: [First 3 rows with representative data]
+      -- Sample Results: [First 3 rows with synthetic data]
 
    **File to create**: ``postgresql/queries.sql``
 
@@ -195,30 +223,30 @@ Part 3: Python CLI Application
 
    .. code-block:: text
 
-      traffic-management/
+      healthcare-management/
       ├── requirements.txt
       ├── .env.example
       ├── config/
       │   └── database.py          # Connection pooling
       ├── models/
-      │   ├── intersection.py      # Dataclasses
+      │   ├── patient.py           # Dataclasses
       │   └── [other models].py
       ├── repositories/
       │   ├── base_repository.py
-      │   ├── intersection_repo.py # CRUD operations
+      │   ├── patient_repo.py      # CRUD operations
       │   └── [other repos].py
       ├── services/
-      │   └── traffic_service.py   # Business logic
-      ├── cli/
-      │   └── main.py              # Menu-driven interface
-      └── tests/
+      │   ├── patient_service.py   # Business logic
+      │   └── [other services].py
+      └── cli/
+          └── main.py              # Menu-driven interface
 
    **Layer Responsibilities**:
 
    - **config/**: Database connection pooling with psycopg2. Configuration loaded from environment variables.
-   - **models/**: Python dataclasses representing each entity. Each dataclass mirrors a database table and includes a ``from_row()`` class method to convert query results into objects.
-   - **repositories/**: CRUD operations and custom queries for each entity. Each repository handles its own SQL and returns model objects. Repositories do not contain business logic.
-   - **services/**: Business logic combining multiple repositories. For example, a ``traffic_service.get_intersection_dashboard(id)`` method might call the intersection repository, incident repository, and sensor repository to assemble a complete view.
+   - **models/**: Python dataclasses representing each entity. Each dataclass mirrors a database table and includes a ``from_row()`` class method to convert query results into objects. Implement dataclasses for the five core tables; dataclasses for MEDICATION and FACILITY are also recommended.
+   - **repositories/**: CRUD operations and custom queries. Implement full repositories for the five core tables. A read-only or partial repository for MEDICATION and FACILITY is sufficient. Repositories do not contain business logic.
+   - **services/**: Business logic combining multiple repositories. For example, a ``patient_service.get_patient_dashboard(id)`` method might call the patient repository, prescription repository, and insurance repository to assemble a complete view.
    - **cli/**: Menu-driven interface that calls service methods and formats output for the terminal. The CLI contains no SQL and no direct database access.
 
 .. dropdown:: Task 3.2: Connection Management
@@ -255,7 +283,7 @@ Part 3: Python CLI Application
                       maxconn=10,
                       host=os.getenv("DB_HOST", "localhost"),
                       port=os.getenv("DB_PORT", "5432"),
-                      dbname=os.getenv("DB_NAME", "traffic_management"),
+                      dbname=os.getenv("DB_NAME", "healthcare_management"),
                       user=os.getenv("DB_USER", "postgres"),
                       password=os.getenv("DB_PASSWORD", "")
                   )
@@ -300,39 +328,39 @@ Part 3: Python CLI Application
    :icon: gear
    :class-container: sd-border-primary
 
-   Each major entity needs a repository with:
+   Each of the five core tables needs a repository with:
 
    - ``find_by_id(id)`` -- Single record lookup
    - ``find_all(limit, offset)`` -- Paginated list
    - ``create(entity)`` -- Insert new record
    - ``update(entity)`` -- Update existing
    - ``delete(id)`` -- Remove record
-   - Custom query methods (e.g., ``find_by_zone(zone_id)``)
+   - Custom query methods (e.g., ``find_active_prescriptions(patient_id)``)
 
    **Example**:
 
    .. code-block:: python
 
-      class IntersectionRepository:
-          def find_by_id(self, intersection_id):
+      class PatientRepository:
+          def find_by_id(self, patient_id):
               with DatabaseConfig.get_connection() as conn:
                   with conn.cursor() as cur:
                       cur.execute(
-                          "SELECT * FROM intersection WHERE intersection_id = %s",
-                          (intersection_id,)
+                          "SELECT * FROM patient WHERE patient_id = %s",
+                          (patient_id,)
                       )
                       row = cur.fetchone()
-                      return Intersection.from_row(row) if row else None
+                      return Patient.from_row(row) if row else None
 
           def find_all(self, limit=20, offset=0):
               with DatabaseConfig.get_connection() as conn:
                   with conn.cursor() as cur:
                       cur.execute(
-                          "SELECT * FROM intersection ORDER BY intersection_id "
+                          "SELECT * FROM patient ORDER BY patient_id "
                           "LIMIT %s OFFSET %s",
                           (limit, offset)
                       )
-                      return [Intersection.from_row(row) for row in cur.fetchall()]
+                      return [Patient.from_row(row) for row in cur.fetchall()]
 
 .. dropdown:: Task 3.4: Menu-Driven CLI (2 points)
    :icon: gear
@@ -342,54 +370,56 @@ Part 3: Python CLI Application
 
    **Minimum menu options (6 required)**:
 
-   Basic CRUD (2 minimum):
+   Clinical (2 minimum):
 
-   - Look up an intersection by ID
-   - List intersections with pagination
+   - Look up patient by MRN (shows demographics, insurance, active prescriptions)
+   - View active prescriptions for a patient
 
-   Complex queries (2 minimum):
+   Provider (2 minimum):
 
-   - Show high-incident intersections (multi-table JOIN)
-   - Display incident counts by severity (aggregation)
+   - Look up provider by ID or NPI
+   - Show upcoming appointments for a provider
 
-   Geospatial (1 minimum):
+   Operational (1 minimum):
 
-   - Find nearby intersections given coordinates and radius
+   - Show appointment counts and no-show rates by provider
 
    Analytics (1 minimum):
 
-   - Show system-wide performance metrics
+   - Show system-wide performance dashboard (total patients, prescriptions this month, appointments today)
 
    **Example interaction**:
 
    .. code-block:: text
 
-      === Traffic Management System ===
+      === Healthcare Management System ===
 
-      1. Look up intersection by ID
-      2. List all intersections (paginated)
-      3. Show high-incident intersections
-      4. Incident counts by severity
-      5. Nearby intersections (geospatial)
-      6. System performance metrics
+      1. Look up patient by MRN
+      2. View active prescriptions for a patient
+      3. Look up provider by NPI
+      4. Show provider appointments
+      5. Provider productivity metrics
+      6. System dashboard
       7. Exit
 
-      Select option: 3
+      Select option: 1
 
-      === High-Incident Intersections (Last 90 Days) ===
+      Enter MRN: 0000000042
 
-      Rank  Intersection            Zone        Incidents  Sensors
-      ----  ----------------------  ----------  ---------  -------
-      1     Main St & 1st Ave       Downtown    12         4
-      2     Oak Blvd & Highway 9    Industrial   9         3
-      3     School Rd & Park Ave    School Zone  7         2
+      === Patient Record ===
+
+      Name:       Jane Smith
+      MRN:        0000000042
+      DOB:        1985-03-15
+      Provider:   Dr. Robert Chen (Cardiology)
+      Insurance:  BlueCross PPO (Policy: BC-2024-1234)
       ...
 
    **File to create**: ``cli/main.py``
 
 
 Part 4: Testing (Optional)
---------------------------
+---------------------------
 
 .. note::
 
@@ -409,11 +439,11 @@ Part 4: Testing (Optional)
    - ``create()`` inserts a record that can then be retrieved
    - ``update()`` modifies a record and the changes persist
    - ``delete()`` removes a record so it can no longer be found
-   - Constraint violations (e.g., duplicate PK, invalid FK) raise appropriate exceptions
+   - Constraint violations (e.g., duplicate MRN, invalid FK) raise appropriate exceptions
 
    **What to test in services**:
 
-   - Business logic methods return correct results (e.g., ``get_high_incident_intersections()`` returns intersections sorted by incident count)
+   - Business logic methods return correct results (e.g., ``get_polypharmacy_patients()`` returns patients sorted by prescription count)
    - Methods that combine multiple repositories produce the expected combined output
    - Edge cases: empty results, boundary values
 
@@ -448,21 +478,21 @@ Folder Structure
 
 .. code-block:: text
 
-   GP2_Traffic_Team{X}/
+   GP2_Healthcare_Team{X}/
    ├── postgresql/
-   │   ├── schema.sql              # DDL with constraints, indexes, triggers
-   │   ├── data.sql                # Generated sample data
+   │   ├── schema.sql              # DDL with constraints, indexes, triggers (all tables)
+   │   ├── data.sql                # Generated synthetic data (all tables)
    │   └── queries.sql             # 8+ documented queries
    ├── src/
    │   ├── config/
    │   │   └── database.py         # Connection pooling
    │   ├── models/
-   │   │   └── [entity].py         # Dataclasses
+   │   │   └── [entity].py         # Dataclasses for core tables
    │   ├── repositories/
    │   │   ├── base_repository.py
-   │   │   └── [entity]_repo.py    # CRUD + custom queries
+   │   │   └── [entity]_repo.py    # CRUD for core tables
    │   ├── services/
-   │   │   └── traffic_service.py  # Business logic
+   │   │   └── patient_service.py  # Business logic
    │   └── cli/
    │       └── main.py             # Menu-driven interface
    ├── tests/                      # Optional
@@ -498,13 +528,13 @@ Documentation Files
 
       DB_HOST=localhost
       DB_PORT=5432
-      DB_NAME=traffic_management
+      DB_NAME=healthcare_management
       DB_USER=postgres
       DB_PASSWORD=your_password_here
 
    **README.md**
 
-   Setup and usage instructions. Include: prerequisites (Python 3, PostgreSQL with PostGIS), how to create the database and load the schema/data, how to configure ``.env``, how to install dependencies (``pip install -r requirements.txt``), how to run the application, and how to run tests (if applicable).
+   Setup and usage instructions. Include: prerequisites (Python 3, PostgreSQL), how to create the database and load the schema/data, how to configure ``.env``, how to install dependencies (``pip install -r requirements.txt``), how to run the application, and how to run tests (if applicable).
 
    **team_contributions.md**
 
@@ -516,9 +546,9 @@ Submission
 
 .. important::
 
-   Submit **one** ZIP file to Canvas: ``GP2_Traffic_Team{X}.zip``
+   Submit **one** ZIP file to Canvas: ``GP2_Healthcare_Team{X}.zip``
 
-   Replace ``{X}`` with your team number (e.g., ``GP2_Traffic_Team03.zip``).
+   Replace ``{X}`` with your team number (e.g., ``GP2_Healthcare_Team03.zip``).
 
 
 .. admonition:: Submission Checklist
@@ -527,15 +557,16 @@ Submission
    **SQL Files**:
 
    - [ ] ``schema.sql`` creates all tables, constraints, indexes, triggers
-   - [ ] ``schema.sql`` includes PostGIS extension and geography columns
-   - [ ] ``data.sql`` meets minimum volume requirements and loads without constraint violations
+   - [ ] ``schema.sql`` includes healthcare identifier constraints (MRN, NPI, DEA)
+   - [ ] ``data.sql`` contains ONLY synthetic data (no real patient data!)
+   - [ ] ``data.sql`` meets minimum volume requirements for core tables and loads without constraint violations
    - [ ] ``queries.sql`` contains 8+ queries with documentation headers
 
    **Python Application**:
 
    - [ ] Application runs from command line without errors
    - [ ] Connection pooling implemented with context manager
-   - [ ] Repository pattern with CRUD for major entities
+   - [ ] Repository pattern with full CRUD for the five core tables
    - [ ] Service layer with business logic
    - [ ] 6+ menu options working in CLI
 
@@ -560,22 +591,36 @@ Grading Rubric
      - Criteria
    * - **Part 1: Schema**
      - 3
-     - Complete DDL (1pt); proper constraints and indexes (1pt); PostGIS integration with triggers and ENUMs (1pt)
-   * - **Part 1: Sample Data**
+     - Complete DDL for all tables (1pt); proper constraints and indexes (1pt); healthcare identifier constraints with triggers and ENUMs (1pt)
+   * - **Part 1: Synthetic Data**
      - 2
-     - Meets volume requirements (1pt); realistic patterns, constraint-clean, and verified (1pt)
+     - Meets volume requirements for core tables (1pt); realistic clinical patterns, constraint-clean, and verified (1pt)
    * - **Part 2: SQL Queries**
      - 5
-     - 8+ queries covering all categories (2pts); correct results (1.5pts); query documentation (1.5pts)
+     - 8+ queries across clinical/financial/operational (2pts); correct results (1.5pts); query documentation (1.5pts)
    * - **Part 3: Python Application**
      - 3
-     - Clean layered architecture (1pt); repository pattern with CRUD (1pt); error handling and connection pooling (1pt)
+     - Clean layered architecture (1pt); repository pattern with CRUD for core tables (1pt); error handling and connection pooling (1pt)
    * - **Part 3: CLI Interface**
      - 2
      - 6+ working menu options (1pt); clear output formatting and input validation (1pt)
    * - **Total**
      - **15**
      -
+
+
+Common Mistakes to Avoid
+-------------------------
+
+.. danger::
+
+   **Frequent Errors**
+
+   - Using real patient data (NEVER; always use synthetic data)
+   - Hardcoded credentials (use .env files, never commit passwords)
+   - Missing healthcare identifier constraints (MRN uniqueness, DEA for controlled substances)
+   - Clinical queries without context (each query needs clinical/business justification)
+   - Forgetting triggers (``updated_at`` timestamps should be automatic)
 
 
 Tips for Success
@@ -585,5 +630,6 @@ Tips for Success
 
    - **Start with the schema**: Get your database working and data loaded before touching Python. A solid schema prevents headaches later.
    - **Test queries in psql first**: Write and debug SQL interactively before embedding in Python code.
+   - **Think like a clinician**: For each query, ask "Why would a doctor or billing staff need this?"
    - **Layer your application**: Keep database logic in repositories, business logic in services, and user interaction in the CLI. This separation makes testing much easier.
    - **Use office hours**: Bring your schema for review. Ask about query optimization strategies.

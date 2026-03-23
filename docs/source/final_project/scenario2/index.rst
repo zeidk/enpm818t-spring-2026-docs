@@ -294,8 +294,8 @@ Project Details
    :maxdepth: 1
    :caption: Group Projects
 
-   project1
-   project2
-   project3
-   project4
+   scenario2_GP1
+   scenario2_GP2
+   scenario2_GP3
+   scenario2_GP4
    data_generation_guide
