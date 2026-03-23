@@ -25,8 +25,8 @@ By completing this group project, you will be able to:
 - Translate conceptual designs into physical PostgreSQL schemas
 - Write DDL with tables, constraints, indexes, and triggers
 - Generate and validate sample data respecting all constraints
-- Write multi-table JOINs, aggregate queries, subqueries, and geospatial queries
-- Integrate PostgreSQL with Python using psycopg2
+- Write multi-table JOINs, aggregate queries, and subqueries
+- Integrate PostgreSQL with Python using psycopg3
 - Design repository and service layer architecture
 - Build a menu-driven CLI application
 
@@ -35,15 +35,20 @@ By completing this group project, you will be able to:
 
    **Revised Scope for GP2**
 
-   The schema (``schema.sql``) must implement **all tables** from your GP1 design so that foreign key relationships are valid and queries can span the full database. However, the repository layer and CLI menu only need to provide full CRUD and business logic for the following **five core tables**:
+   The schema (``schema.sql``) must implement **all tables** from your GP1 design so that foreign key relationships are valid and queries can span the full database. However, the repository layer and CLI menu only need to cover the following tables:
+
+   **Full CRUD repositories + CLI** (3 tables):
 
    - ``INTERSECTION``
-   - ``TRAFFIC_SIGNAL``
-   - ``SENSOR``
-   - ``ROAD_SEGMENT``
    - ``INCIDENT``
+   - ``SENSOR``
 
-   Two additional tables are also required in the schema and must contain sample data because the SQL queries and CLI features below depend on them:
+   **Read-only repositories** (``find_by_id`` and ``find_all`` only; 2 tables):
+
+   - ``TRAFFIC_SIGNAL``
+   - ``ROAD_SEGMENT``
+
+   Two additional supporting tables are also required in the schema and must contain sample data because the SQL queries and CLI features below depend on them:
 
    - ``MAINTENANCE_TASK`` (needed for multi-table JOIN queries and maintenance-related menu options)
    - ``MAINTENANCE_CREW`` (needed as the assigned crew for maintenance tasks)
@@ -63,7 +68,6 @@ Part 1: Physical Database Implementation
 
    Create ``schema.sql`` with:
 
-   - **Database setup**: Extensions (PostGIS for geospatial)
    - **Custom types**: ENUMs for constrained values
    - **All tables**: Complete with all columns from GP1
    - **Primary keys**: All defined correctly
@@ -73,18 +77,6 @@ Part 1: Physical Database Implementation
    - **UNIQUE constraints**: All candidate keys
    - **Indexes**: Strategic indexes for query performance
    - **Triggers**: Automatic ``updated_at`` timestamps
-
-   **PostGIS Integration**:
-
-   .. code-block:: sql
-
-      CREATE EXTENSION IF NOT EXISTS postgis;
-
-      ALTER TABLE intersection
-      ADD COLUMN location GEOGRAPHY(POINT, 4326);
-
-      CREATE INDEX idx_intersection_location
-      ON intersection USING GIST (location);
 
    **File to create**: ``postgresql/schema.sql``
 
@@ -120,10 +112,9 @@ Part 1: Physical Database Implementation
 
       1. All FK references resolve (no orphan records)
       2. All CHECK constraints pass
-      3. Geographic coordinates form a realistic grid
-      4. Temporal data spans at least 90 days
-      5. Every intersection has at least one signal
-      6. Every incident is linked to an intersection or road segment
+      3. Temporal data spans at least 90 days
+      4. Every intersection has at least one signal
+      5. Every incident is linked to an intersection or road segment
 
    **File to create**: ``postgresql/data.sql``
 
@@ -131,14 +122,14 @@ Part 1: Physical Database Implementation
 Part 2: SQL Queries
 --------------------
 
-**Objective**: Write 8+ queries demonstrating your ability to extract meaningful information from the database.
+**Objective**: Write 6+ queries demonstrating your ability to extract meaningful information from the database.
 
 .. dropdown:: Query Categories (5 points total)
    :icon: gear
    :class-container: sd-border-primary
    :open:
 
-   Write at least **8 queries** covering all of the following categories. Queries should draw primarily from the five core tables and the two supporting tables (MAINTENANCE_TASK, MAINTENANCE_CREW).
+   Write at least **6 queries** covering all of the following categories. Queries should draw primarily from the five core tables and the two supporting tables (MAINTENANCE_TASK, MAINTENANCE_CREW).
 
    **Multi-Table JOINs (3 queries minimum)**
 
@@ -168,15 +159,6 @@ Part 2: SQL Queries
    - *"Find intersections with more incidents than the citywide average."*
    - *"List crews that have never been assigned to a critical-priority maintenance task."*
 
-   **PostGIS Geospatial (2 queries minimum)**
-
-   Use PostGIS functions for location-based analysis.
-
-   Examples:
-
-   - *"Find all sensors within 500 meters of a given incident location."*
-   - *"List the 5 nearest intersections to a given coordinate."*
-
 .. dropdown:: Query Documentation Format
    :icon: gear
    :class-container: sd-border-primary
@@ -187,7 +169,7 @@ Part 2: SQL Queries
 
       -- Query #X: [Title]
       -- Business Question: [Problem being solved]
-      -- Complexity Features: [JOINs, aggregates, subqueries, geospatial]
+      -- Complexity Features: [JOINs, aggregates, subqueries]
       -- Tables Used: [List all tables]
 
       [YOUR SQL QUERY]
@@ -232,9 +214,9 @@ Part 3: Python CLI Application
 
    **Layer Responsibilities**:
 
-   - **config/**: Database connection pooling with psycopg2. Configuration loaded from environment variables.
+   - **config/**: Database connection pooling with psycopg3. Configuration loaded from environment variables.
    - **models/**: Python dataclasses representing each entity. Each dataclass mirrors a database table and includes a ``from_row()`` class method to convert query results into objects. Implement dataclasses for the five core tables; dataclasses for MAINTENANCE_TASK and MAINTENANCE_CREW are also recommended.
-   - **repositories/**: CRUD operations and custom queries. Implement full repositories for the five core tables. A read-only or partial repository for MAINTENANCE_TASK and MAINTENANCE_CREW is sufficient. Repositories do not contain business logic.
+   - **repositories/**: CRUD operations and custom queries. Implement full CRUD repositories for the three core tables (INTERSECTION, INCIDENT, SENSOR). Implement read-only repositories (``find_by_id`` and ``find_all``) for TRAFFIC_SIGNAL and ROAD_SEGMENT. A read-only or partial repository for MAINTENANCE_TASK and MAINTENANCE_CREW is sufficient. Repositories do not contain business logic.
    - **services/**: Business logic combining multiple repositories. For example, a ``traffic_service.get_intersection_dashboard(id)`` method might call the intersection repository, incident repository, and sensor repository to assemble a complete view.
    - **cli/**: Menu-driven interface that calls service methods and formats output for the terminal. The CLI contains no SQL and no direct database access.
 
@@ -242,13 +224,13 @@ Part 3: Python CLI Application
    :icon: gear
    :class-container: sd-border-primary
 
-   Implement connection pooling with psycopg2. Your connection management should handle four concerns:
+   Implement connection pooling with psycopg3. Your connection management should handle four concerns:
 
-   **Pool size**: Use ``psycopg2.pool.SimpleConnectionPool`` with ``minconn=2`` and ``maxconn=10``. The pool pre-creates 2 connections at startup and can grow up to 10 under load. This avoids the overhead of creating a new connection for every query.
+   **Pool size**: Use ``psycopg_pool.ConnectionPool`` with ``min_size=2`` and ``max_size=10``. The pool pre-creates 2 connections at startup and can grow up to 10 under load. This avoids the overhead of creating a new connection for every query.
 
-   **Context manager for automatic cleanup**: Wrap pool access in a context manager so that connections are always returned to the pool, even if an exception occurs. This prevents connection leaks where a borrowed connection is never returned.
+   **Context manager for automatic cleanup**: ``pool.connection()`` is already a context manager -- the connection is automatically returned to the pool when the ``with`` block exits, even if an exception occurs. This prevents connection leaks.
 
-   **Error handling for connection failures**: Catch ``psycopg2.OperationalError`` when creating the pool or borrowing connections. Print a clear error message (e.g., "Cannot connect to database. Check your .env settings.") instead of crashing with a raw stack trace.
+   **Error handling for connection failures**: Catch ``psycopg.OperationalError`` when creating the pool or borrowing connections. Print a clear error message (e.g., "Cannot connect to database. Check your .env settings.") instead of crashing with a raw stack trace.
 
    **Configuration from environment variables**: Read database host, port, name, user, and password from environment variables (using ``os.getenv()`` with sensible defaults). Provide a ``.env.example`` file so teammates can set up their own environment without sharing credentials in version control.
 
@@ -256,68 +238,74 @@ Part 3: Python CLI Application
 
    .. code-block:: python
 
-      from psycopg2 import pool, OperationalError
-      from contextlib import contextmanager
       import os
+      import psycopg
+      import psycopg_pool
+      from dotenv import load_dotenv
+
+      load_dotenv()
 
       class DatabaseConfig:
           _pool = None
 
           @classmethod
+          def _conninfo(cls):
+              """Build a libpq connection string from environment variables."""
+              return (
+                  f"host={os.getenv('DB_HOST', 'localhost')} "
+                  f"port={os.getenv('DB_PORT', '5432')} "
+                  f"dbname={os.getenv('DB_NAME', 'traffic_management')} "
+                  f"user={os.getenv('DB_USER', 'postgres')} "
+                  f"password={os.getenv('DB_PASSWORD', '')}"
+              )
+
+          @classmethod
           def initialize(cls):
               """Create the connection pool. Call once at application startup."""
               try:
-                  cls._pool = pool.SimpleConnectionPool(
-                      minconn=2,
-                      maxconn=10,
-                      host=os.getenv("DB_HOST", "localhost"),
-                      port=os.getenv("DB_PORT", "5432"),
-                      dbname=os.getenv("DB_NAME", "traffic_management"),
-                      user=os.getenv("DB_USER", "postgres"),
-                      password=os.getenv("DB_PASSWORD", "")
+                  cls._pool = psycopg_pool.ConnectionPool(
+                      conninfo=cls._conninfo(),
+                      min_size=2,
+                      max_size=10,
+                      open=True,
                   )
-              except OperationalError as e:
+              except psycopg.OperationalError as e:
                   print(f"Error: Cannot connect to database. Check .env settings.")
                   print(f"Details: {e}")
                   raise SystemExit(1)
 
           @classmethod
-          @contextmanager
           def get_connection(cls):
               """
               Borrow a connection from the pool.
 
               Usage:
                   with DatabaseConfig.get_connection() as conn:
-                      with conn.cursor() as cur:
+                      with conn.cursor(row_factory=dict_row) as cur:
                           cur.execute("SELECT ...")
 
               The connection is automatically returned to the pool
               when the with-block exits, even if an exception occurs.
+              psycopg3 auto-commits on clean exit and auto-rolls back
+              on exception. For explicit transaction control, use
+              conn.transaction().
               """
               if cls._pool is None:
                   cls.initialize()
-              conn = cls._pool.getconn()
-              try:
-                  yield conn
-                  conn.commit()
-              except Exception:
-                  conn.rollback()
-                  raise
-              finally:
-                  cls._pool.putconn(conn)
+              return cls._pool.connection()
 
           @classmethod
           def close_all(cls):
               """Close all connections. Call at application shutdown."""
               if cls._pool is not None:
-                  cls._pool.closeall()
+                  cls._pool.close()
+                  cls._pool = None
 
 .. dropdown:: Task 3.3: Repository Pattern
    :icon: gear
    :class-container: sd-border-primary
 
-   Each of the five core tables needs a repository with:
+   The 3 core tables (INTERSECTION, INCIDENT, SENSOR) need full CRUD repositories with:
 
    - ``find_by_id(id)`` -- Single record lookup
    - ``find_all(limit, offset)`` -- Paginated list
@@ -326,14 +314,22 @@ Part 3: Python CLI Application
    - ``delete(id)`` -- Remove record
    - Custom query methods (e.g., ``find_by_zone(zone_id)``)
 
+   The 2 additional tables (TRAFFIC_SIGNAL, ROAD_SEGMENT) need read-only repositories with:
+
+   - ``find_by_id(id)`` -- Single record lookup
+   - ``find_all(limit, offset)`` -- Paginated list
+
    **Example**:
 
    .. code-block:: python
 
+      from psycopg.rows import dict_row
+      from config.database import DatabaseConfig
+
       class IntersectionRepository:
           def find_by_id(self, intersection_id):
               with DatabaseConfig.get_connection() as conn:
-                  with conn.cursor() as cur:
+                  with conn.cursor(row_factory=dict_row) as cur:
                       cur.execute(
                           "SELECT * FROM intersection WHERE intersection_id = %s",
                           (intersection_id,)
@@ -343,7 +339,7 @@ Part 3: Python CLI Application
 
           def find_all(self, limit=20, offset=0):
               with DatabaseConfig.get_connection() as conn:
-                  with conn.cursor() as cur:
+                  with conn.cursor(row_factory=dict_row) as cur:
                       cur.execute(
                           "SELECT * FROM intersection ORDER BY intersection_id "
                           "LIMIT %s OFFSET %s",
@@ -357,25 +353,21 @@ Part 3: Python CLI Application
 
    Build an interactive command-line interface that lets users explore the database through a menu system. The CLI should demonstrate your repository and service layer in action.
 
-   **Minimum menu options (6 required)**:
+   **Minimum menu options (4 required)**:
 
-   Basic CRUD (2 minimum):
+   CRUD (1 minimum):
 
    - Look up an intersection by ID
-   - List intersections with pagination
 
-   Complex queries (2 minimum):
+   Complex queries (1 minimum):
 
    - Show high-incident intersections (multi-table JOIN across INTERSECTION, INCIDENT, SENSOR)
-   - Display incident counts by severity (aggregation on INCIDENT)
-
-   Geospatial (1 minimum):
-
-   - Find nearby intersections given coordinates and radius
 
    Analytics (1 minimum):
 
    - Show system-wide performance metrics (e.g., total incidents, average sensors per intersection, open maintenance tasks)
+
+   One additional option of the team's choice.
 
    **Example interaction**:
 
@@ -384,14 +376,12 @@ Part 3: Python CLI Application
       === Traffic Management System ===
 
       1. Look up intersection by ID
-      2. List all intersections (paginated)
-      3. Show high-incident intersections
+      2. Show high-incident intersections
+      3. System performance metrics
       4. Incident counts by severity
-      5. Nearby intersections (geospatial)
-      6. System performance metrics
-      7. Exit
+      5. Exit
 
-      Select option: 3
+      Select option: 2
 
       === High-Incident Intersections (Last 90 Days) ===
 
@@ -469,7 +459,7 @@ Folder Structure
    ├── postgresql/
    │   ├── schema.sql              # DDL with constraints, indexes, triggers (all tables)
    │   ├── data.sql                # Generated sample data (all tables)
-   │   └── queries.sql             # 8+ documented queries
+   │   └── queries.sql             # 6+ documented queries
    ├── src/
    │   ├── config/
    │   │   └── database.py         # Connection pooling
@@ -501,7 +491,7 @@ Documentation Files
 
    **requirements.txt**
 
-   List all Python packages needed to run your application. At minimum this includes ``psycopg2-binary`` and ``python-dotenv``. Include ``pytest`` and ``pytest-cov`` if you are writing tests.
+   List all Python packages needed to run your application. At minimum this includes ``psycopg[binary]``, ``psycopg-pool``, and ``python-dotenv``. Include ``pytest`` and ``pytest-cov`` if you are writing tests.
 
    **.env.example**
 
@@ -521,7 +511,7 @@ Documentation Files
 
    **README.md**
 
-   Setup and usage instructions. Include: prerequisites (Python 3, PostgreSQL with PostGIS), how to create the database and load the schema/data, how to configure ``.env``, how to install dependencies (``pip install -r requirements.txt``), how to run the application, and how to run tests (if applicable).
+   Setup and usage instructions. Include: prerequisites (Python 3, PostgreSQL), how to create the database and load the schema/data, how to configure ``.env``, how to install dependencies (``pip install -r requirements.txt``), how to run the application, and how to run tests (if applicable).
 
    **team_contributions.md**
 
@@ -544,17 +534,16 @@ Submission
    **SQL Files**:
 
    - [ ] ``schema.sql`` creates all tables, constraints, indexes, triggers
-   - [ ] ``schema.sql`` includes PostGIS extension and geography columns
    - [ ] ``data.sql`` meets minimum volume requirements for core tables and loads without constraint violations
-   - [ ] ``queries.sql`` contains 8+ queries with documentation headers
+   - [ ] ``queries.sql`` contains 6+ queries with documentation headers
 
    **Python Application**:
 
    - [ ] Application runs from command line without errors
-   - [ ] Connection pooling implemented with context manager
-   - [ ] Repository pattern with full CRUD for the five core tables
+   - [ ] Connection pooling implemented with psycopg3 pool
+   - [ ] Repository pattern with full CRUD for three core tables and read-only for two additional tables
    - [ ] Service layer with business logic
-   - [ ] 6+ menu options working in CLI
+   - [ ] 4+ menu options working in CLI
 
    **Documentation**:
 
@@ -577,19 +566,19 @@ Grading Rubric
      - Criteria
    * - **Part 1: Schema**
      - 3
-     - Complete DDL for all tables (1pt); proper constraints and indexes (1pt); PostGIS integration with triggers and ENUMs (1pt)
+     - Complete DDL for all tables (1pt); proper constraints and indexes (1pt); triggers and ENUMs (1pt)
    * - **Part 1: Sample Data**
      - 2
      - Meets volume requirements for core tables (1pt); realistic patterns, constraint-clean, and verified (1pt)
    * - **Part 2: SQL Queries**
      - 5
-     - 8+ queries covering all categories (2pts); correct results (1.5pts); query documentation (1.5pts)
+     - 6+ queries covering all categories (2pts); correct results (1.5pts); query documentation (1.5pts)
    * - **Part 3: Python Application**
      - 3
-     - Clean layered architecture (1pt); repository pattern with CRUD for core tables (1pt); error handling and connection pooling (1pt)
+     - Clean layered architecture (1pt); repository pattern with CRUD for 3 core tables and read-only for 2 tables (1pt); error handling and connection pooling (1pt)
    * - **Part 3: CLI Interface**
      - 2
-     - 6+ working menu options (1pt); clear output formatting and input validation (1pt)
+     - 4+ working menu options (1pt); clear output formatting and input validation (1pt)
    * - **Total**
      - **15**
      -
