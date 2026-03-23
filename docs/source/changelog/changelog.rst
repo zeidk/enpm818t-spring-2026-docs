@@ -4,6 +4,72 @@ Changelog
 
 All notable changes to the ENPM818T Spring 2026 course documentation are recorded here.
 
+.. dropdown:: v2.6.0 -- GP2 psycopg3 Migration and Scope Adjustment (2026-03-23)
+   :icon: tag
+   :class-container: sd-border-success
+
+   .. rubric:: scenario1/project2.rst
+
+   **psycopg2 → psycopg3 migration**
+
+   - Replaced ``psycopg2-binary`` with ``psycopg[binary]`` and added ``psycopg-pool`` in all requirements references
+   - Replaced ``psycopg2.pool.SimpleConnectionPool`` with ``psycopg_pool.ConnectionPool`` throughout
+   - Connection management example rewritten: removed manual ``getconn()``/``putconn()``/``@contextmanager`` pattern; replaced with ``pool.connection()`` context manager (psycopg3 handles commit/rollback automatically)
+   - Pool parameters changed from ``minconn``/``maxconn`` to ``min_size``/``max_size`` with ``open=True``
+   - Error handling updated from ``psycopg2.OperationalError`` to ``psycopg.OperationalError``
+   - Shutdown method changed from ``cls._pool.closeall()`` to ``cls._pool.close()``
+   - Repository example updated: plain ``conn.cursor()`` replaced with ``conn.cursor(row_factory=dict_row)`` using ``from psycopg.rows import dict_row``
+   - All ``import psycopg2`` references changed to ``import psycopg``
+   - Added ``_conninfo()`` classmethod to ``DatabaseConfig`` that builds connection string from individual env vars (matches L7 lecture)
+   - Submission checklist updated: "Connection pooling implemented with context manager" → "Connection pooling implemented with psycopg3 pool"
+   - Learning objectives updated: "using psycopg2" → "using psycopg3"
+
+   **PostGIS removed**
+
+   - Removed PostGIS extension, geography columns, and GIST index from Task 1.1 schema requirements
+   - Removed "PostGIS Geospatial (2 queries minimum)" category from Part 2 SQL queries
+   - Total minimum query count reduced from 8+ to **6+** (3 JOINs + 2 aggregates + 1 subquery)
+   - Removed geospatial CLI menu option from Task 3.4
+   - Removed "Geographic coordinates form a realistic grid" from data quality checks
+   - Removed "PostGIS integration with triggers and ENUMs" from grading rubric; replaced with "triggers and ENUMs"
+   - Removed PostGIS from README prerequisites and submission checklist
+   - Learning objectives updated: removed "and geospatial queries"
+
+   **Scope reduction: 5 → 3 full CRUD tables**
+
+   - Full CRUD repositories + CLI required for **3 tables**: ``INTERSECTION``, ``INCIDENT``, ``SENSOR``
+   - Read-only repositories (``find_by_id`` and ``find_all`` only) required for **2 tables**: ``TRAFFIC_SIGNAL``, ``ROAD_SEGMENT``
+   - Supporting tables unchanged: ``MAINTENANCE_TASK``, ``MAINTENANCE_CREW``
+   - Task 3.3 Repository Pattern updated to distinguish full CRUD (3 tables) from read-only (2 tables)
+   - Submission checklist and grading rubric updated accordingly
+
+   **CLI minimum reduced from 6 to 4**
+
+   - Minimum menu options changed from 6 to **4**: CRUD (1), Complex queries (1), Analytics (1), team's choice (1)
+   - Example interaction updated to show 5 options (4 + Exit)
+   - Grading rubric updated: "6+ working menu options" → "4+ working menu options"
+
+   .. rubric:: scenario2/project2.rst
+
+   **psycopg2 → psycopg3 migration**
+
+   - Same psycopg3 migration changes as scenario1 (imports, pool class, connection management, repository cursors, requirements, checklist, learning objectives)
+
+   **Scope reduction: 5 → 3 full CRUD tables**
+
+   - Full CRUD repositories + CLI required for **3 tables**: ``PATIENT``, ``APPOINTMENT``, ``PRESCRIPTION``
+   - Read-only repositories (``find_by_id`` and ``find_all`` only) required for **2 tables**: ``PROVIDER``, ``PATIENT_INSURANCE``
+   - Supporting tables unchanged: ``MEDICATION``, ``FACILITY``/``LOCATION``
+   - Task 3.3 Repository Pattern updated to distinguish full CRUD (3 tables) from read-only (2 tables)
+   - Submission checklist and grading rubric updated accordingly
+
+   **CLI minimum reduced from 6 to 4**
+
+   - Minimum menu options changed from 6 to **4**: Clinical (1), Provider (1), Analytics (1), team's choice (1)
+   - Example interaction updated to show 5 options (4 + Exit)
+   - Grading rubric updated: "6+ working menu options" → "4+ working menu options"
+
+
 .. dropdown:: v2.5.0 -- GP1 and GP2 Scope Reduction (2026-03-22)
    :icon: tag
    :class-container: sd-border-success
