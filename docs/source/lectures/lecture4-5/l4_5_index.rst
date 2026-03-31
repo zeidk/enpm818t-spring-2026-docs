@@ -35,11 +35,11 @@ Contents
    :maxdepth: 2
    :titlesonly:
 
-   lecture
-   quiz
-   exercises
-   references
-   cheat_sheet
+   l4_5_lecture
+   l4_5_quiz
+   l4_5_exercises
+   l4_5_references
+   l4_5_cheat_sheet
 
 Next Steps
 ----------

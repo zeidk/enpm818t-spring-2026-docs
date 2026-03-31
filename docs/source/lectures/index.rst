@@ -38,6 +38,9 @@ Schedule
    * - L6
      - From Logical to Physical: Implementing Your Database in PostgreSQL
      - SQL sublanguages (DDL/DML/DQL/DCL/TCL), PostgreSQL data types (NUMERIC vs. FLOAT, TEXT vs. VARCHAR, TIMESTAMPTZ), PRIMARY KEY (simple and composite), GENERATED ALWAYS AS IDENTITY vs. SERIAL, ISA shared-PK pattern, FOREIGN KEY referential actions (CASCADE, SET NULL, SET DEFAULT, RESTRICT, NO ACTION), deferrable constraints (INITIALLY DEFERRED, INITIALLY IMMEDIATE), NOT NULL, UNIQUE, NULLS NOT DISTINCT, CHECK, EXCLUDE, category exclusive-arc pattern, creation order, ALTER TABLE (safe migration pattern, NOT VALID, VALIDATE CONSTRAINT), DELETE vs. TRUNCATE vs. DROP, naming conventions, common DDL mistakes
+   * - L7
+     - DML, Transactions, and Python
+     - ``INSERT``, ``UPDATE``, ``DELETE``, upsert with ``ON CONFLICT``, ACID properties, transaction lifecycle (``BEGIN`` / ``COMMIT`` / ``ROLLBACK``), savepoints, isolation levels, psycopg3 (connection management, parameterized queries, server-side cursors, connection pooling), loading data from CSV with Python
 
 
 Contents
@@ -47,8 +50,9 @@ Contents
    :maxdepth: 3
    :titlesonly:
 
-   lecture1/index
-   lecture2/index
-   lecture3/index
-   lecture4-5/index
-   lecture6/index
+   lecture1/l1_index
+   lecture2/l2_index
+   lecture3/l3_index
+   lecture4-5/l4_5_index
+   lecture6/l6_index
+   lecture7/l7_index

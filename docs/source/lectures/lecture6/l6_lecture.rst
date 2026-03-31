@@ -2,15 +2,59 @@
 Lecture
 ====================================================
 
+.. raw:: latex
+
+   \setcounter{figure}{0}
+
+
+Prerequisites
+====================================================
+
+Before writing any DDL, complete these four setup steps in DataGrip.
+
+
+.. dropdown:: Four Steps Before Writing Any DDL
+   :class-container: sd-border-secondary
+   :open:
+
+   1. **Create the database.** Right-click the server in Database Explorer,
+      choose **New > Database**, name it ``university_db``. Or run:
+
+      .. code-block:: sql
+
+         CREATE DATABASE university_db;
+
+   2. **Point the console.** Open a Query Console and verify the database
+      dropdown shows ``university_db``. Every DDL statement lands in
+      whichever database that dropdown shows.
+
+   3. **Select the schema.** Expand ``university_db`` in the explorer.
+      If you see *"No schemas selected"*, click the three dots and check
+      **public**.
+
+   4. **Run the script.** Open ``lecture6_schema.sql`` via **File > Open**.
+      Use ``Ctrl+Enter`` for the current statement or ``Ctrl+Shift+Enter``
+      for the full file.
+
+   .. tip::
+
+      Always confirm the database dropdown before running any DDL.
+      Running a ``DROP TABLE`` against the wrong database is a common and
+      expensive mistake.
 
 
 From Logical to Physical
 ====================================================
 
+The logical schema says *what* exists. SQL tells the database *how* to
+enforce it. We implement the university schema table by table across this
+lecture. By the end of class you will have a running ``university_db`` in
+DataGrip.
+
 
 .. dropdown:: The Logical-to-Physical Gap
    :class-container: sd-border-secondary
-   
+
 
    .. rubric:: What the Logical Schema Leaves Open
 
@@ -115,47 +159,11 @@ From Logical to Physical
    - **Indent continuations**: ``REFERENCES`` indented under its constraint clause.
 
 
-.. dropdown:: Setting Up in DataGrip
+.. dropdown:: Choosing the Right Data Type
    :class-container: sd-border-secondary
 
-   .. rubric:: Four Steps Before Writing Any DDL
 
-   1. **Create the database.** Right-click the server in Database Explorer,
-      choose **New > Database**, name it ``university_db``. Or run:
-
-      .. code-block:: sql
-
-         CREATE DATABASE university_db;
-
-   2. **Point the console.** Open a Query Console and verify the database
-      dropdown shows ``university_db``. Every DDL statement lands in
-      whichever database that dropdown shows.
-
-   3. **Select the schema.** Expand ``university_db`` in the explorer.
-      If you see *"No schemas selected"*, click the three dots and check
-      **public**.
-
-   4. **Run the script.** Open ``lecture6_schema.sql`` via **File > Open**.
-      Use ``Ctrl+Enter`` for the current statement or ``Ctrl+Shift+Enter``
-      for the full file.
-
-   .. tip::
-
-      Always confirm the database dropdown before running any DDL.
-      Running a ``DROP TABLE`` against the wrong database is a common and
-      expensive mistake.
-
-
-
-PostgreSQL Data Types
-====================================================
-
-
-.. dropdown:: Choosing the Right Type
-   :class-container: sd-border-secondary
-   
-
-   .. rubric:: Type Selection Reference
+   .. rubric:: PostgreSQL Data Type Reference
 
    .. list-table::
       :widths: 18 22 40
@@ -204,7 +212,7 @@ PostgreSQL Data Types
 
 .. dropdown:: Why Never FLOAT for GPA or Money
    :class-container: sd-border-secondary
-   
+
 
    .. rubric:: Binary Floating-Point Cannot Represent Most Decimal Fractions Exactly
 
@@ -230,16 +238,20 @@ PostgreSQL Data Types
 
    .. warning::
 
-      Use ``NUMERIC(p,s)`` for any column where precision matters: GPA,
-      tuition, budget. ``FLOAT`` is appropriate only for scientific
-      measurements where approximate representation is acceptable.
+      Use ``NUMERIC(3,2)`` for GPA, ``NUMERIC(12,2)`` for salary, and
+      ``NUMERIC(14,2)`` for budget. ``FLOAT`` is appropriate only for
+      scientific measurements where approximate representation is acceptable.
 
    .. admonition:: Demo 1 -- FLOAT vs. NUMERIC for GPA
       :class: note
 
-      Run both table examples and compare query results. Observe that
-      ``SELECT gpa = 3.9 AS exact_match`` returns ``false`` for the FLOAT
-      table and ``true`` for the NUMERIC table.
+      Create ``grade_wrong`` with ``FLOAT`` and insert the row shown.
+      Run ``SELECT * FROM grade_wrong WHERE gpa = 3.9`` and observe that
+      it returns zero rows. Then run
+      ``SELECT gpa, gpa = 3.9 FROM grade_wrong`` to see the stored value
+      and the failed comparison side by side. Recreate the table with
+      ``NUMERIC(3,2)`` and repeat both queries to confirm exact storage
+      and a successful match.
 
       .. code-block:: sql
 
@@ -312,22 +324,38 @@ Constraints
 
 .. dropdown:: PRIMARY KEY
    :class-container: sd-border-secondary
-   
+
 
    .. rubric:: Declaring Primary Keys: Simple and Composite
 
-   A ``PRIMARY KEY`` constraint combines ``NOT NULL`` and ``UNIQUE``
-   automatically. It may be declared at the column level (single-attribute
-   PKs) or at the table level (required for composite PKs and for named
-   constraints).
+   A ``PRIMARY KEY`` constraint uniquely identifies every row in a table.
+   It is shorthand for ``NOT NULL`` plus ``UNIQUE`` combined: PostgreSQL
+   enforces both automatically and creates a unique B-tree index on the
+   PK column(s). Each table may have at most one primary key, declared
+   either at the column level (single column) or at the table level
+   (single or composite).
+
+   Key concepts:
+
+   - A **simple PK** spans one column and can be declared inline or at the table level.
+   - A **composite PK** spans two or more columns and must always be declared at the table level.
+   - **Named constraints** use the ``pk_`` prefix so the constraint name appears in error messages.
+   - **Unnamed constraints** receive a system-generated name such as ``department_pkey``, which identifies the table but not the intent.
+   - Auto-generated integer PKs are declared with ``SERIAL`` (legacy) or ``GENERATED ALWAYS AS IDENTITY`` (SQL standard, preferred).
+
+   Resources:
+
+   - `PostgreSQL documentation: Primary Keys <https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-PRIMARY-KEYS>`__
+   - `PostgreSQL documentation: Serial types <https://www.postgresql.org/docs/current/datatype-numeric.html#DATATYPE-SERIAL>`__
 
    .. admonition:: Demo 2 -- PRIMARY KEY: Simple and Composite
       :class: note
 
-      Create all three tables and insert valid rows. Then attempt a duplicate
-      insert on each and compare the error messages: the unnamed constraint
-      produces ``"department_pkey"``; the named constraint produces
-      ``"pk_course"``.
+      Create all three tables. Run ``\d department``, ``\d course``, and
+      ``\d enrollment`` in psql and locate the primary key constraint name
+      in each. Insert the two valid enrollment rows shown. Then attempt
+      the duplicate triple and observe the error message; confirm it names
+      ``pk_enrollment``.
 
       .. code-block:: sql
 
@@ -420,14 +448,24 @@ Constraints
 
 .. dropdown:: SERIAL vs. GENERATED ALWAYS AS IDENTITY
    :class-container: sd-border-secondary
-   
 
-   .. rubric:: Auto-Incrementing Primary Keys: The Old Way and the Right Way
 
-   ``SERIAL`` wires the sequence as a ``DEFAULT``: bypassing it with an
-   explicit value is silent and undetected. ``GENERATED ALWAYS AS IDENTITY``
-   hands ownership to the engine: inserting a manual value raises an
-   immediate error.
+   .. rubric:: Auto-Generated Primary Keys
+
+   When the PK is a surrogate integer with no business meaning, PostgreSQL
+   can generate its values automatically using a sequence. Two syntaxes
+   exist: ``SERIAL`` is a legacy shorthand that has been available since
+   early PostgreSQL versions, and ``GENERATED ALWAYS AS IDENTITY`` is the
+   SQL:2003 standard form introduced in PostgreSQL 10. Both produce a
+   sequence under the hood, but they differ critically in how they handle
+   explicit value inserts.
+
+   Key concepts:
+
+   - ``SERIAL``: wires the sequence as a column ``DEFAULT``; explicit inserts bypass it silently.
+   - ``GENERATED ALWAYS AS IDENTITY``: the engine owns the value; explicit inserts are rejected immediately.
+   - ``OVERRIDING SYSTEM VALUE``: the intentional escape hatch for restores and migrations; does not advance the sequence.
+   - After any bulk restore using ``OVERRIDING SYSTEM VALUE``, ``setval()`` must be called to advance the sequence past the highest existing ID.
 
    .. list-table::
       :widths: 40 30 30
@@ -449,6 +487,11 @@ Constraints
       * - Customizable inline
         - No
         - Yes
+
+   Resources:
+
+   - `PostgreSQL documentation: Serial types <https://www.postgresql.org/docs/current/datatype-numeric.html#DATATYPE-SERIAL>`__
+   - `PostgreSQL documentation: CREATE SEQUENCE <https://www.postgresql.org/docs/current/sql-createsequence.html>`__
 
    .. admonition:: Demo 4 -- SERIAL Silent Bypass
       :class: note
@@ -539,28 +582,79 @@ Constraints
          DROP TABLE department;
 
 
+   .. admonition:: Think Prompt
+      :class: hint
+
+      When would you legitimately need ``OVERRIDING SYSTEM VALUE``?
+      After using it, what must you do to the sequence to prevent future
+      duplicate key errors?
+
+   .. dropdown:: Answer
+      :class-container: sd-border-success
+
+      Restoring a database from backup is the most common case. The backup
+      contains rows with specific IDs that must be preserved exactly;
+      ``OVERRIDING SYSTEM VALUE`` allows those IDs to be written directly.
+      However, the sequence counter is not updated during the restore, so
+      it remains at 1. The first subsequent auto-insert will call
+      ``nextval()``, get 1, and collide with the restored data. The fix is
+      to call ``setval()`` immediately after the restore to advance the
+      sequence past the highest existing ID.
+
+      .. code-block:: sql
+
+         -- Restore original IDs from backup
+         INSERT INTO department (dept_id, dept_name)
+             OVERRIDING SYSTEM VALUE
+             VALUES (1, 'Computer Science'),
+                    (2, 'Mathematics'),
+                    (3, 'Physics');
+
+         -- Sequence counter is still 1; next auto-insert will collide
+         INSERT INTO department (dept_name) VALUES ('Chemistry');
+         -- ERROR: duplicate key value (dept_id)=(1)
+
+         -- Fix: advance the sequence past the highest existing ID
+         SELECT setval(
+             'department_dept_id_seq',
+             (SELECT MAX(dept_id) FROM department)
+         );
+         -- setval returns 3; next auto-insert will produce 4
+
+         INSERT INTO department (dept_name) VALUES ('Chemistry');
+         -- dept_id = 4; no collision
+
+
 .. dropdown:: ISA as a Shared-PK Pattern
    :class-container: sd-border-secondary
-   
+
 
    .. rubric:: Implementing ISA Hierarchies in SQL
 
-   In the shared-PK strategy, each subtype table uses the same primary key
-   value as its supertype row. The subtype PK is simultaneously a FK
-   referencing the supertype, so a subtype row cannot exist without a
-   matching supertype row. The identity sequence lives on the supertype only.
+   You already modeled ISA hierarchies in your ERD and mapped them in the
+   logical schema. In the **shared-PK strategy**, each subtype table uses
+   the *same primary key value* as its supertype row. The subtype PK is
+   simultaneously a FK referencing the supertype, so a subtype row cannot
+   exist without a matching supertype row. The identity sequence lives on
+   the supertype only; the subtype receives the value via the application
+   insert.
 
-   Key rules:
+   Key concepts:
 
-   - ``student.person_id`` has the type ``INTEGER PRIMARY KEY`` with no ``GENERATED ALWAYS``; the value comes from the supertype insert.
-   - ``ON DELETE CASCADE`` removes the student row automatically when the person row is deleted.
-   - The hierarchy can be arbitrarily deep: ``grad_student`` is a subtype of ``student``, which is a subtype of ``person``.
+   - The subtype PK is declared ``INTEGER PRIMARY KEY`` with no ``GENERATED ALWAYS``: the value comes from the supertype.
+   - ``ON DELETE CASCADE`` on the FK ensures that deleting a supertype row removes all subtype rows automatically.
+   - The ISA hierarchy can be arbitrarily deep: ``grad_student`` is a subtype of ``student``, which is a subtype of ``person``.
    - No new sequence is created on the subtype; only one identity column exists per entity hierarchy.
+
+   Resources:
+
+   - `PostgreSQL documentation: Table inheritance <https://www.postgresql.org/docs/current/ddl-inherit.html>`__
+   - `PostgreSQL documentation: CREATE TABLE <https://www.postgresql.org/docs/current/sql-createtable.html>`__
 
    .. admonition:: Think Prompt
       :class: hint
 
-      ``student.person_id`` uses ``INTEGER PRIMARY KEY`` with no
+      ``student.person_id`` is declared as ``INTEGER PRIMARY KEY`` with no
       ``GENERATED ALWAYS``. Why? What would happen if you added
       ``GENERATED ALWAYS AS IDENTITY`` to it?
 
@@ -634,40 +728,106 @@ Constraints
 
 .. dropdown:: FOREIGN KEY: Syntax and Options
    :class-container: sd-border-secondary
-   
+
 
    .. rubric:: Referential Integrity Between Tables
 
-   A ``FOREIGN KEY`` constraint enforces that the child column's value must
-   match a value present in the parent table's ``PRIMARY KEY`` or ``UNIQUE``
-   column. Any insert or update that would leave the child referencing a
-   non-existent parent row is rejected immediately.
+   A ``FOREIGN KEY`` constraint enforces referential integrity between two
+   tables. The child table declares a column (or combination of columns)
+   that must match a value present in the parent table's ``PRIMARY KEY``
+   or ``UNIQUE`` column. Any insert or update that would leave the child
+   referencing a non-existent parent row is rejected immediately.
 
-   ``ON DELETE`` / ``ON UPDATE`` actions:
+   Key concepts:
+
+   - The referenced column must be a ``PRIMARY KEY`` or ``UNIQUE`` in the parent table.
+   - Tables must be created in dependency order: the parent must exist before the child can reference it.
+   - **Column-level** FK syntax is available but cannot be named; always use table-level syntax in production.
+   - ``ON DELETE`` and ``ON UPDATE`` clauses control what happens to child rows when the parent changes; the default for both is ``NO ACTION``.
+   - Circular FK dependencies require ``DEFERRABLE INITIALLY DEFERRED`` to resolve.
+
+   .. rubric:: NO ACTION vs. RESTRICT
+
+   Both actions prevent deletion of a parent row that has child rows, but
+   they differ in when the check fires and whether deferral is possible.
 
    .. list-table::
-      :widths: 25 35 30
+      :widths: 35 33 32
+      :header-rows: 1
+      :class: compact-table
+
+      * -
+        - ``NO ACTION``
+        - ``RESTRICT``
+      * - Check timing
+        - End of statement
+        - Immediate
+      * - Deferrable
+        - Yes
+        - No
+      * - Blocks delete
+        - Yes
+        - Yes
+
+   ``NO ACTION`` defers the check to end-of-statement, making it compatible
+   with ``DEFERRABLE``. ``RESTRICT`` checks immediately, before any other
+   constraints in the statement fire. In practice ``NO ACTION`` is almost
+   always the right choice.
+
+   Resources:
+
+   - `PostgreSQL documentation: Foreign Keys <https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-FK>`__
+   - `PostgreSQL documentation: CREATE TABLE <https://www.postgresql.org/docs/current/sql-createtable.html>`__
+
+   .. rubric:: Referential Actions
+
+   The **parent** table holds the referenced key (the ``PRIMARY KEY`` side).
+   The **child** table holds the foreign key (the ``REFERENCES`` side).
+   Example: ``department`` (parent) has multiple ``professor`` rows (child).
+
+   Every FK declaration accepts two independent action clauses triggered
+   when a parent row is deleted or updated. Each clause independently takes
+   one of the five actions below. Omitting a clause defaults to ``NO ACTION``.
+
+   .. list-table::
+      :widths: 20 30 40
       :header-rows: 1
       :class: compact-table
 
       * - **Action**
         - **Effect on child rows**
         - **Use when...**
-      * - ``NO ACTION`` (default)
-        - Parent change blocked at statement end; deferrable
-        - General-purpose default
-      * - ``RESTRICT``
-        - Parent change blocked immediately; never deferrable
-        - Orphaning is always a mistake
       * - ``CASCADE``
-        - Child rows deleted or updated to match
-        - Child has no meaning without the parent
+        - Deleted or updated to match
+        - Child has no meaning without the parent (``enrollment`` without a ``student``)
       * - ``SET NULL``
         - FK column set to ``NULL``
-        - Child survives independently; column must be nullable
+        - Child survives independently; the link is severed (``professor`` when a dept is removed)
       * - ``SET DEFAULT``
         - FK column reset to its default
-        - Sentinel/fallback parent row always exists
+        - A fallback parent row always exists
+      * - ``RESTRICT``
+        - Parent change blocked immediately
+        - Orphaning is always a mistake; no deferral needed
+      * - ``NO ACTION``
+        - Parent change blocked at statement end
+        - Same semantics as ``RESTRICT`` but deferrable
+
+   .. admonition:: Think Prompt
+      :class: hint
+
+      What happens if you try to insert a ``professor`` row before the
+      referenced ``person`` row exists? At what point does PostgreSQL raise
+      the error?
+
+   .. dropdown:: Answer
+      :class-container: sd-border-success
+
+      PostgreSQL raises a foreign key violation immediately at insert time.
+      The error reads: ``insert or update on table "professor" violates
+      foreign key constraint "fk_prof_person"``. With the default
+      ``INITIALLY IMMEDIATE`` setting the engine checks on every insert
+      and update.
 
    .. admonition:: Demo 7 -- NO ACTION vs. RESTRICT
       :class: note
@@ -749,10 +909,13 @@ Constraints
    .. admonition:: Demo 8 -- ON DELETE CASCADE
       :class: note
 
-      Insert Alice and Bob into ``person``, their ``student`` rows, and
-      three enrollment rows. Delete Alice from ``student`` and confirm that
-      her two enrollment rows disappear automatically via ``CASCADE``.
-      Bob's enrollment row remains untouched.
+      Insert all rows as shown and confirm three enrollment rows exist
+      with ``SELECT * FROM enrollment``. Delete student 1 from ``student``
+      and run ``SELECT * FROM enrollment`` again to confirm her two
+      enrollment rows were removed automatically. Then delete student 2
+      from ``person`` instead and confirm the cascade propagates through
+      two levels: first removing the ``student`` row, then the
+      ``enrollment`` row.
 
       .. code-block:: sql
 
@@ -807,10 +970,9 @@ Constraints
 
       Insert Alice and Bob as professors in Computer Science and Carol in
       Mathematics. Delete the CS department and confirm Alice and Bob
-      survive with ``dept_id = NULL``. Then attempt to add ``NOT NULL``
-      to ``dept_id`` and observe that it fails because the column already
-      contains null values, demonstrating why ``SET NULL`` requires a
-      nullable column.
+      survive with ``dept_id = NULL``. Confirm Carol is unaffected. Then
+      attempt to add ``NOT NULL`` to ``dept_id`` and observe the error
+      explaining why ``SET NULL`` requires a nullable column.
 
       .. code-block:: sql
 
@@ -928,25 +1090,118 @@ Constraints
          DROP TABLE person;
 
 
+   .. admonition:: Think Prompt
+      :class: hint
+
+      For each action, name a real university scenario where it is the
+      correct choice, and one where it would silently destroy data or
+      block a legitimate operation.
+
+   .. dropdown:: Answer
+      :class-container: sd-border-success
+
+      ``CASCADE`` is correct for ``enrollment`` when a student withdraws:
+      all enrollment records should disappear with the student. It would
+      silently destroy data if used on ``professor.dept_id``, because
+      dissolving a department would delete all its professors.
+
+      ``SET NULL`` is correct for ``professor.dept_id`` when a department
+      is removed: the professor still exists and can be reassigned. It
+      would be wrong on ``enrollment.person_id`` because a grade record
+      with a null student is meaningless.
+
+      ``RESTRICT`` is correct on ``course_prereq``: you should not be able
+      to delete a course that other courses depend on without first
+      cleaning up those dependencies. It would block a legitimate
+      restructuring operation if a department dissolves and all its courses
+      need to be removed at once.
+
+
 .. dropdown:: Deferrable Foreign Keys
    :class-container: sd-border-secondary
-   
+
 
    .. rubric:: Resolving Circular FK Dependencies
 
-   When two tables reference each other (e.g., ``department.chair_id``
-   references ``professor``, and ``professor.dept_id`` references
-   ``department``), no valid insert order exists with immediate FK checking.
-   The solution is ``DEFERRABLE INITIALLY DEFERRED``: move the FK check from
-   statement end to transaction commit.
+   By default every FK is checked immediately after each statement. This
+   becomes a problem when two tables reference each other: neither can be
+   inserted first without violating the other's FK. Declaring a FK
+   ``DEFERRABLE INITIALLY DEFERRED`` postpones the check to ``COMMIT``,
+   allowing a transaction to build a consistent state before validation
+   fires.
 
    Two deferral modes:
 
-   - **Mode 1** (``DEFERRABLE INITIALLY DEFERRED``): FK is always deferred to ``COMMIT``; use for circular dependencies.
+   - **Mode 1** (``DEFERRABLE INITIALLY DEFERRED``): FK is always deferred to ``COMMIT``; right choice for circular dependencies. No extra syntax needed inside ``BEGIN``/``COMMIT``.
    - **Mode 2** (``DEFERRABLE INITIALLY IMMEDIATE``): FK fires at statement end by default; a specific transaction can opt in via ``SET CONSTRAINTS fk_name DEFERRED``.
 
-   Only structural constraints support deferral: ``FOREIGN KEY``, ``UNIQUE``,
-   and ``PRIMARY KEY``. ``NOT NULL`` and ``CHECK`` cannot be deferred.
+   Key concepts:
+
+   - ``NOT DEFERRABLE`` (default): check fires after every statement; no workaround for circular dependencies.
+   - Only ``FOREIGN KEY``, ``UNIQUE``, and ``PRIMARY KEY`` support deferral; ``NOT NULL`` and ``CHECK`` do not.
+
+   .. rubric:: Which Constraint Types Support Deferral?
+
+   .. list-table::
+      :widths: 22 15 63
+      :header-rows: 1
+      :class: compact-table
+
+      * - Constraint type
+        - Deferrable?
+        - Why
+      * - ``FOREIGN KEY``
+        - Yes
+        - Referential integrity is a structural relationship; temporarily inconsistent states are meaningful mid-transaction
+      * - ``UNIQUE``
+        - Yes
+        - Uniqueness may be transiently violated when swapping key values within a transaction
+      * - ``PRIMARY KEY``
+        - Yes
+        - Shares the same mechanics as ``UNIQUE``
+      * - ``NOT NULL``
+        - No
+        - A missing value has no meaningful transient state; there is nothing to defer
+      * - ``CHECK``
+        - No
+        - Row-level expression; evaluated once per row at write time with no cross-row dependency
+
+   .. rubric:: Three Deferral Modes Compared
+
+   .. list-table::
+      :widths: 30 24 24 22
+      :header-rows: 1
+      :class: compact-table
+
+      * -
+        - **Mode 1**
+        - **Mode 2**
+        - **Default**
+      * - Check timing
+        - ``COMMIT``
+        - Stmt end
+        - Stmt end
+      * - Always deferred
+        - Yes
+        - No
+        - No
+      * - Per-txn opt-in
+        - N/A
+        - Yes
+        - No
+      * - Overridable
+        - No
+        - Yes
+        - No
+
+   Use Mode 1 for circular FK dependencies where every transaction needs
+   deferral. Use Mode 2 when deferral is the exception and most
+   transactions should still get immediate checking.
+
+   Resources:
+
+   - `PostgreSQL documentation: SET CONSTRAINTS <https://www.postgresql.org/docs/current/sql-set-constraints.html>`__
+   - `PostgreSQL documentation: CREATE TABLE <https://www.postgresql.org/docs/current/sql-createtable.html>`__
 
    .. admonition:: Demo 11 -- Deferrable Foreign Keys: The Solution
       :class: note
@@ -1088,9 +1343,15 @@ Constraints
 
 .. dropdown:: NOT NULL and UNIQUE
    :class-container: sd-border-secondary
-   
+
 
    .. rubric:: Two Independent Questions for Every Column
+
+   ``NOT NULL`` and ``UNIQUE`` are the two most frequently used
+   column-level constraints. They answer independent questions: one asks
+   whether a value must always be present, the other asks whether a value
+   must be distinct across rows. Understanding how both interact with
+   ``NULL`` is essential before applying them to any real schema.
 
    For every column, ask two independent questions before writing the
    ``CREATE TABLE`` statement:
@@ -1098,8 +1359,72 @@ Constraints
    1. **Can a row legally exist without a value in this column?** If no, add ``NOT NULL``.
    2. **Can two rows ever share the same value?** If no, add ``UNIQUE``.
 
-   ``PRIMARY KEY`` answers both questions simultaneously: it is shorthand
-   for ``NOT NULL`` plus ``UNIQUE``.
+   Key concepts:
+
+   - ``NOT NULL`` and ``UNIQUE`` are orthogonal: each can be applied independently.
+   - ``PRIMARY KEY`` combines both automatically: it is shorthand for ``NOT NULL`` plus ``UNIQUE``.
+   - A column can be ``UNIQUE`` but nullable: multiple ``NULL`` s are allowed because ``NULL`` :math:`\neq` ``NULL``.
+   - A column can be ``NOT NULL`` without being ``UNIQUE``: names and dates are common examples.
+
+   .. rubric:: Column-by-Column Decision: The ``person`` Table
+
+   For every column, ask two questions before writing ``CREATE TABLE``:
+   can the column be null, and can two rows share the same value?
+
+   .. code-block:: sql
+
+      CREATE TABLE person (
+          person_id     INTEGER
+              GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+          first_name    VARCHAR(100) NOT NULL,
+          last_name     VARCHAR(100) NOT NULL,
+          middle_name   VARCHAR(100),
+          date_of_birth DATE         NOT NULL,
+          street        VARCHAR(200),
+          city          VARCHAR(100),
+          state         CHAR(2),
+          zip           CHAR(5)
+      );
+
+   .. list-table::
+      :widths: 30 20 20
+      :header-rows: 1
+      :class: compact-table
+
+      * - Column
+        - NULL ok?
+        - Duplicate ok?
+      * - ``person_id``
+        - No
+        - No
+      * - ``first_name``
+        - No
+        - Yes
+      * - ``last_name``
+        - No
+        - Yes
+      * - ``middle_name``
+        - Yes
+        - Yes
+      * - ``date_of_birth``
+        - No
+        - Yes
+      * - ``street``
+        - Yes
+        - Yes
+      * - ``state``
+        - Yes
+        - Yes
+      * - ``zip``
+        - Yes
+        - Yes
+
+   ``first_name``, ``last_name``, and ``date_of_birth`` are mandatory: a
+   person cannot exist in the university without them. Address fields and
+   ``middle_name`` are optional. No column here needs ``UNIQUE`` beyond
+   ``person_id``: two people can share a name, birthday, or address.
+   ``person_id`` gets both ``NOT NULL`` and ``UNIQUE`` for free from
+   ``PRIMARY KEY``.
 
    .. warning::
 
@@ -1108,6 +1433,11 @@ Constraints
       ``NULL`` values because ``NULL`` is not ``< 0.0`` in SQL's three-valued
       logic. Always pair a ``CHECK`` constraint with ``NOT NULL`` unless
       ``NULL`` is a legitimate value.
+
+   Resources:
+
+   - `PostgreSQL documentation: NOT NULL constraints <https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-NOT-NULL>`__
+   - `PostgreSQL documentation: UNIQUE constraints <https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-UNIQUE-CONSTRAINTS>`__
 
    .. admonition:: Demo 13 -- UNIQUE and the NULL Trap
       :class: note
@@ -1165,6 +1495,11 @@ Constraints
       same four inserts; confirm all four now succeed, demonstrating that
       standard ``UNIQUE`` treats every ``NULL`` as distinct.
 
+      ``NULLS NOT DISTINCT`` was introduced in PostgreSQL 15. It treats
+      ``NULL`` as a known, comparable value, so at most one row may carry
+      it in the constrained column. Use this modifier when the business rule
+      says that the absence of a value is itself a singleton state.
+
       .. code-block:: sql
 
          -- Step 14a: NULLS NOT DISTINCT -- at most one NULL allowed
@@ -1203,16 +1538,73 @@ Constraints
          DROP TABLE device;
 
 
+.. dropdown:: Composite UNIQUE
+   :class-container: sd-border-secondary
+
+   .. rubric:: Uniqueness on a Combination of Columns
+
+   A composite ``UNIQUE`` constraint spans two or more columns and is always
+   declared at the table level. Uniqueness is enforced on the combination:
+   each individual column may repeat freely across rows as long as no two
+   rows share the same tuple of values. This is the correct pattern whenever
+   a business rule says that a pair (or larger group) of values must be
+   unique together, but neither value alone needs to be distinct.
+
+   Key concepts:
+
+   - Must be declared at the table level using ``CONSTRAINT name UNIQUE (col1, col2)``.
+   - Each individual column can repeat; only the combination is constrained.
+   - A composite PK already implies a composite ``UNIQUE``; adding one explicitly is redundant.
+   - PostgreSQL creates a multi-column B-tree index automatically to enforce the constraint.
+
+   .. code-block:: sql
+
+      CREATE TABLE course_prereq (
+          successor_id VARCHAR(20) NOT NULL,
+          prereq_id    VARCHAR(20) NOT NULL,
+          CONSTRAINT fk_cp_successor
+              FOREIGN KEY (successor_id)
+                  REFERENCES course (course_id)
+                  ON DELETE CASCADE,
+          CONSTRAINT fk_cp_prereq
+              FOREIGN KEY (prereq_id)
+                  REFERENCES course (course_id)
+                  ON DELETE CASCADE,
+          CONSTRAINT uq_cp_pair
+              UNIQUE (successor_id, prereq_id)
+      );
+
+      INSERT INTO course_prereq VALUES ('CS301','CS101'); -- OK
+      INSERT INTO course_prereq VALUES ('CS301','CS201'); -- OK: same successor, different prereq
+      INSERT INTO course_prereq VALUES ('CS301','CS101'); -- FAIL: duplicate pair
+
+   - Row 2: ``CS301`` repeats as ``successor_id`` with a different ``prereq_id``; allowed.
+   - Row 3: the pair ``(CS301, CS101)`` already exists in row 1; rejected.
+
+
 .. dropdown:: CHECK Constraints
    :class-container: sd-border-secondary
-   
+
 
    .. rubric:: Row-Level Business Rule Enforcement
 
-   A ``CHECK`` constraint evaluates a Boolean expression for every inserted
-   or updated row. If the expression evaluates to ``FALSE``, the operation
-   is rejected. If it evaluates to ``NULL`` (because an operand is ``NULL``),
-   the row is **accepted** -- which is the ``NULL`` trap.
+   A ``CHECK`` constraint enforces an arbitrary boolean expression on one
+   or more columns. PostgreSQL rejects any ``INSERT`` or ``UPDATE`` where
+   the expression evaluates to ``FALSE``. Expressions that evaluate to
+   ``UNKNOWN`` because of a ``NULL`` operand pass silently, which is the
+   source of the most common ``CHECK`` mistake.
+
+   Key concepts:
+
+   - **Column-level** ``CHECK``: declared inline; can only reference that column.
+   - **Table-level** ``CHECK``: declared after all columns; can reference any combination of columns; must be named with the ``chk_`` prefix.
+   - **NULL trap**: ``CHECK`` never rejects ``NULL``; always pair with ``NOT NULL`` when a null value is logically invalid.
+   - **Vocabulary enforcement**: ``CHECK IN (...)`` is simple but requires ``ALTER TABLE`` to extend; alternatives are ``ENUM`` types and lookup tables with a FK.
+
+   Resources:
+
+   - `PostgreSQL documentation: CHECK constraints <https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-CHECK-CONSTRAINTS>`__
+   - `PostgreSQL documentation: Enumerated types <https://www.postgresql.org/docs/current/datatype-enum.html>`__
 
    .. admonition:: Think Prompt
       :class: hint
@@ -1229,14 +1621,52 @@ Constraints
       check passes silently. The fix is to add ``NOT NULL`` alongside the
       ``CHECK``.
 
+   .. admonition:: Think Prompt -- Vocabulary Enforcement Strategies
+      :class: hint
+
+      The ``academic_standing`` vocabulary is hardcoded in a ``CHECK``.
+      If the university adds a new standing category, what SQL is required?
+      What are the alternative patterns and what do they trade off?
+
+   .. dropdown:: Answer
+      :class-container: sd-border-success
+
+      .. list-table::
+         :widths: 20 25 25 20
+         :header-rows: 1
+         :class: compact-table
+
+         * - **Pattern**
+           - **Adding a value**
+           - **Removing a value**
+           - **Visible in DDL?**
+         * - ``CHECK IN (...)``
+           - ``ALTER TABLE DROP`` then ``ADD CONSTRAINT``; full table scan
+           - ``ALTER TABLE DROP`` then ``ADD CONSTRAINT``
+           - Yes
+         * - ``ENUM`` type
+           - ``ALTER TYPE ... ADD VALUE``; no scan
+           - Not supported without dropping dependent objects
+           - Partial
+         * - Lookup table + FK
+           - ``INSERT`` one row
+           - ``DELETE`` one row
+           - No
+
+      ``CHECK IN`` is simplest and self-documenting but requires a table
+      rewrite to change on large tables. A lookup table is the most flexible
+      but hides the vocabulary behind a join. ``ENUM`` sits in between:
+      cheap to extend, but removing or renaming a value is not supported
+      without dropping and recreating dependent objects.
+
    .. admonition:: Demo 15 -- CHECK Constraints
       :class: note
 
       **Step 15a**: Insert the valid contract row and confirm it succeeds.
       Attempt the two invalid rows (end before start; equal dates) and
-      observe the ``chk_dates`` error. Then drop ``NOT NULL`` from
-      ``end_date`` and insert a row with ``end_date = NULL``; confirm it
-      is accepted because ``CHECK`` evaluates to ``UNKNOWN``, not ``FALSE``.
+      observe the ``chk_dates`` error. Then insert a row with
+      ``end_date = NULL`` and observe that it passes silently because
+      ``CHECK`` evaluates to ``UNKNOWN``, not ``FALSE``.
 
       **Step 15b**: Insert a student with a valid standing and confirm it
       succeeds. Attempt ``'Expelled'`` and observe the ``chk_standing``
@@ -1299,12 +1729,59 @@ Constraints
 .. dropdown:: Category Pattern
    :class-container: sd-border-secondary
 
-   .. rubric:: Implementing Categories (Union Types) in SQL
+   .. rubric:: Categories as an Exclusive-Arc CHECK Pattern
 
    A category (union type) represents an entity that can be associated with
    one of several disjoint supertype tables. The exclusive-arc pattern uses
    one nullable FK per supertype and a ``CHECK`` constraint that asserts
    exactly one of them is non-null at any given time.
+
+   Key concepts:
+
+   - One **nullable FK** per possible supertype; all but one must be ``NULL`` for any given row.
+   - ``chk_exclusive_arc``: casts each ``IS NOT NULL`` test to ``INT`` and asserts the sum equals 1.
+   - A **surrogate PK** on the category table replaces the shared-PK strategy used by ISA.
+   - An optional ``owner_type`` column improves query performance but must be kept consistent with the arc check manually.
+
+   Resources:
+
+   - `PostgreSQL documentation: CHECK constraints <https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-CHECK-CONSTRAINTS>`__
+
+   .. rubric:: Exclusive-Arc in Data
+
+   .. list-table::
+      :widths: 18 15 15 52
+      :header-rows: 1
+      :class: compact-table
+
+      * - ``person_ssn``
+        - ``tax_id``
+        - ``routing``
+        -
+      * - 123-45
+        - NULL
+        - NULL
+        - Valid -- person (arc sum = 1)
+      * - NULL
+        - TX-123
+        - NULL
+        - Valid -- company (arc sum = 1)
+      * - NULL
+        - NULL
+        - 021000021
+        - Valid -- bank (arc sum = 1)
+      * - 123-45
+        - TX-123
+        - NULL
+        - **Rejected** -- two FKs non-null (arc sum = 2)
+      * - NULL
+        - NULL
+        - NULL
+        - **Rejected** -- all FKs null (arc sum = 0)
+
+   The ``::INT`` cast converts each ``IS NOT NULL`` boolean to 0 or 1,
+   making the sum a clean count of non-null FKs. Exactly one FK must be
+   non-null for any given row.
 
    .. admonition:: Demo 16 -- Categories: Exclusive-Arc CHECK Pattern
       :class: note
@@ -1399,7 +1876,16 @@ Constraints
    ``EXCLUDE`` is a PostgreSQL-specific constraint that generalizes ``UNIQUE``
    from equality to any binary operator. Where ``UNIQUE`` rejects two rows
    whose values are *equal*, ``EXCLUDE`` rejects two rows whose values satisfy
-   a given operator pair simultaneously.
+   a given operator pair simultaneously. The constraint fires only when
+   *every* operator in the clause returns ``TRUE`` simultaneously against
+   an existing row.
+
+   Key concepts:
+
+   - ``EXCLUDE USING GIST``: requires a GiST index; the only index type that supports multi-column operator exclusion.
+   - ``WITH`` operator: specifies the binary predicate tested pairwise against every existing row.
+   - Range overlap operator ``&&``: returns ``TRUE`` when two ranges share at least one point.
+   - Multi-column ``EXCLUDE``: all conditions must hold simultaneously for the constraint to fire.
 
    Why ``UNIQUE`` is not enough:
 
@@ -1410,6 +1896,12 @@ Constraints
       INSERT INTO exam_schedule VALUES ('EGR 1202', '[1,50)');   -- OK
       INSERT INTO exam_schedule VALUES ('EGR 1202', '[40,80)');  -- OK -- but overlaps!
 
+   Resources:
+
+   - `PostgreSQL documentation: EXCLUDE constraint <https://www.postgresql.org/docs/current/sql-createtable.html#SQL-CREATETABLE-EXCLUDE>`__
+   - `PostgreSQL documentation: Range types and operators <https://www.postgresql.org/docs/current/rangetypes.html>`__
+   - `PostgreSQL documentation: GiST indexes <https://www.postgresql.org/docs/current/gist.html>`__
+
    .. admonition:: Demo 17 -- EXCLUDE Constraint with GIST and Range Overlap
       :class: note
 
@@ -1417,10 +1909,7 @@ Constraints
       constraint violation. Insert ``'[50,80)'`` for ``EGR 1202`` and confirm
       it succeeds: ``[1,50)`` excludes seat 50 so there is no overlap. Insert
       ``'[1,50)'`` for ``EGR 1104`` and confirm it succeeds: the room
-      condition fails so the constraint does not fire. Run the final two
-      ``SELECT`` statements to confirm that ``&&`` returns ``TRUE`` (the
-      ranges overlap) while ``=`` returns ``FALSE`` (the ranges are not equal
-      -- which is why ``UNIQUE`` cannot catch the overlap).
+      condition fails so the constraint does not fire.
 
       .. code-block:: sql
 
@@ -1472,7 +1961,7 @@ Building the University Schema
 
 .. dropdown:: Creation Order: Parents Before Children
    :class-container: sd-border-secondary
-   
+
 
    .. rubric:: Every FK Must Reference a Table That Already Exists
 
@@ -1508,8 +1997,119 @@ Building the University Schema
        you need at least one deferrable constraint to resolve the cycle.
 
 
-.. dropdown:: Building and Verifying the Full Schema
+.. dropdown:: Verifying the Schema: psql Meta-Commands
    :class-container: sd-border-secondary
+
+   .. rubric:: psql: The Command-Line Client
+
+   **psql** is the PostgreSQL interactive client that unlocks meta-commands
+   prefixed with ``\``. Meta-commands are processed by the client and never
+   sent to the server; they do not end with a semicolon.
+
+   Connecting:
+
+   .. code-block:: bash
+
+      psql -d university_db
+      psql -U postgres -d university_db
+      psql -h localhost -p 5432 -U postgres -d university_db
+
+   .. tip::
+
+      On Windows, open **SQL Shell (psql)** from the Start menu; it prompts
+      for host, port, database, username, and password interactively.
+
+   .. list-table::
+      :widths: 28 50
+      :header-rows: 1
+      :class: compact-table
+
+      * - **Meta-command**
+        - **What it shows**
+      * - ``\l``
+        - All databases on the server
+      * - ``\c university_db``
+        - Switch to ``university_db``
+      * - ``\dt``
+        - All tables in the current schema
+      * - ``\d tablename``
+        - Columns, types, constraints
+      * - ``\d+ tablename``
+        - Same plus FK *Referenced by* section and storage parameters
+      * - ``\ds``
+        - All sequences
+      * - ``\dn``
+        - All schemas in the database
+      * - ``\timing``
+        - Toggle query execution time display
+      * - ``\q``
+        - Quit psql
+
+   .. important::
+
+      Meta-commands start with ``\`` and do **not** end with a semicolon.
+      SQL statements end with ``;`` and are sent to the server. Mixing them
+      up is the most common beginner mistake in psql.
+
+   .. tip::
+
+      Always run ``\d+ tablename`` before any ``DROP`` or
+      ``TRUNCATE CASCADE`` to inspect what references the table.
+
+
+.. dropdown:: Verifying the Schema: Catalog Views
+   :class-container: sd-border-secondary
+
+   .. rubric:: Querying Database Metadata with SQL
+
+   A **catalog view** is a read-only virtual table maintained by the
+   database engine that exposes metadata about the database itself: tables,
+   columns, constraints, indexes, sequences, and more. You query a catalog
+   view with an ordinary ``SELECT`` statement; no special tool or privilege
+   is required.
+
+   **Two families of catalog views:**
+
+   ``information_schema`` (SQL standard):
+
+   .. list-table::
+      :widths: 35 50
+      :header-rows: 1
+      :class: compact-table
+
+      * - **View**
+        - **What it shows**
+      * - ``.tables``
+        - All tables and views
+      * - ``.columns``
+        - Columns, types, nullability
+      * - ``.table_constraints``
+        - Named constraints and types
+      * - ``.referential_constraints``
+        - FK delete and update actions
+
+   ``pg_catalog`` (PostgreSQL-specific):
+
+   .. list-table::
+      :widths: 35 50
+      :header-rows: 1
+      :class: compact-table
+
+      * - **View**
+        - **What it shows**
+      * - ``pg_sequences``
+        - Sequences and current values
+      * - ``pg_indexes``
+        - Full index definitions
+      * - ``pg_stat_user_tables``
+        - Live row-count estimates
+
+   .. card::
+       :class-card: sd-border-info
+
+       Use ``information_schema`` for portable scripts; use ``pg_catalog``
+       when you need PostgreSQL-specific detail such as partial indexes or
+       storage parameters. Both families are accessed with plain ``SELECT``.
 
    .. admonition:: Demo 18 -- Verifying the Schema with Catalog Views
       :class: note
@@ -1608,62 +2208,30 @@ Building the University Schema
          DROP TABLE person;
 
 
-.. dropdown:: Verifying the Schema: psql Meta-Commands
-   :class-container: sd-border-secondary
 
-   .. rubric:: psql: The Command-Line Client
-
-   **psql** is the PostgreSQL interactive client that unlocks meta-commands
-   prefixed with ``\``. Meta-commands are processed by the client and never
-   sent to the server; they do not end with a semicolon.
-
-   Connecting:
-
-   .. code-block:: bash
-
-      psql -d university_db
-      psql -U postgres -d university_db
-      psql -h localhost -p 5432 -U postgres -d university_db
-
-   .. list-table::
-      :widths: 28 50
-      :header-rows: 1
-      :class: compact-table
-
-      * - **Meta-command**
-        - **What it shows**
-      * - ``\d tablename``
-        - Columns, types, constraints
-      * - ``\d+ tablename``
-        - Same plus FK *Referenced by* section and storage parameters
-      * - ``\dt``
-        - All tables in the current schema
-      * - ``\di``
-        - All indexes
-      * - ``\dn``
-        - All schemas in the database
-      * - ``\l``
-        - All databases on the server
-
-   .. tip::
-
-      Always run ``\d+ tablename`` before any ``DROP`` or
-      ``TRUNCATE CASCADE`` to inspect what references the table.
-
-
-
-ALTER TABLE and Schema Evolution
+ALTER TABLE, DROP, and TRUNCATE
 ====================================================
 
 
 .. dropdown:: Common ALTER TABLE Operations
    :class-container: sd-border-secondary
-   
+
 
    .. rubric:: Evolving a Live Schema Safely
 
-   Not all ``ALTER TABLE`` operations are equal. Some complete in milliseconds
-   on any table size; others hold an exclusive lock and rewrite every row.
+   ``ALTER TABLE`` modifies an existing table definition without dropping
+   and recreating it. It is the primary tool for schema evolution: adding
+   columns, changing types, adding or removing constraints, and renaming
+   objects. Not all operations are equal: some complete instantly while
+   others trigger a full table rewrite and hold an exclusive lock for its
+   duration.
+
+   Key concepts:
+
+   - **Instant operations**: adding nullable columns, renaming columns, dropping constraints, adding a ``NOT NULL`` column with a constant default (PG 11+).
+   - **Expensive operations**: adding a ``NOT NULL`` column without a default, changing to an incompatible type; both require rewriting every row.
+   - **Safe migration pattern**: add the column nullable first, backfill in batches, then add the ``NOT NULL`` constraint with ``NOT VALID`` followed by ``VALIDATE CONSTRAINT``.
+   - **Lock implications**: expensive operations hold ``ACCESS EXCLUSIVE``; reads and writes on that table block for the duration.
 
    .. list-table::
       :widths: 45 25 30
@@ -1700,6 +2268,10 @@ ALTER TABLE and Schema Evolution
       * - ``DROP CONSTRAINT``
         - No
         - Instant
+
+   Resources:
+
+   - `PostgreSQL documentation: ALTER TABLE <https://www.postgresql.org/docs/current/sql-altertable.html>`__
 
    .. admonition:: Demo 19 -- Common ALTER TABLE Operations
       :class: note
@@ -1890,16 +2462,25 @@ ALTER TABLE and Schema Evolution
          DROP TABLE person;
 
 
-
-DELETE, TRUNCATE, and DROP
-====================================================
-
-
-.. dropdown:: Choosing the Right Removal Command
+.. dropdown:: DELETE, TRUNCATE, and DROP
    :class-container: sd-border-secondary
-   
+
 
    .. rubric:: Three Commands, Three Different Scopes
+
+   All three commands remove rows, but they differ in scope, speed, and
+   what survives. ``DELETE`` removes specific rows and fires triggers.
+   ``TRUNCATE`` removes all rows instantly without firing row-level triggers.
+   ``DROP`` removes the table structure entirely along with all its data,
+   constraints, and indexes.
+
+   Key concepts:
+
+   - ``DELETE``: supports ``WHERE``; slow on large tables; fires triggers; fully rollbackable.
+   - ``TRUNCATE``: no ``WHERE``; fast on any table size; does not fire row-level triggers; rollbackable in PostgreSQL.
+   - ``TRUNCATE RESTART IDENTITY``: resets the identity sequence to its start value; use when reloading data from scratch.
+   - ``TRUNCATE CASCADE``: also truncates all tables that have a FK referencing the truncated table; use with caution.
+   - ``DROP``: removes the table entirely; ``IF EXISTS`` prevents an error if the table is already gone; ``CASCADE`` drops dependent objects.
 
    .. list-table::
       :widths: 28 18 18 18
@@ -1952,6 +2533,12 @@ DELETE, TRUNCATE, and DROP
         - Yes
         - No
         - No
+
+   Resources:
+
+   - `PostgreSQL documentation: DELETE <https://www.postgresql.org/docs/current/sql-delete.html>`__
+   - `PostgreSQL documentation: TRUNCATE <https://www.postgresql.org/docs/current/sql-truncate.html>`__
+   - `PostgreSQL documentation: DROP TABLE <https://www.postgresql.org/docs/current/sql-droptable.html>`__
 
    .. admonition:: Think Prompt
       :class: hint
@@ -2089,7 +2676,7 @@ Best Practices and Mistakes to Avoid
 
 .. dropdown:: The Six Most Common DDL Mistakes
    :class-container: sd-border-secondary
-   
+
 
    .. rubric:: Mistakes That Cost the Most to Fix Later
 

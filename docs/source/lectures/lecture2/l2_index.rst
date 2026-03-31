@@ -37,10 +37,10 @@ Contents
    :maxdepth: 2
    :titlesonly:
 
-   lecture
-   quiz
-   exercises
-   references
+   l2_lecture
+   l2_quiz
+   l2_exercises
+   l2_references
 
 Next Steps
 ----------

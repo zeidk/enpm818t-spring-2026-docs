@@ -4,6 +4,69 @@ Changelog
 
 All notable changes to the ENPM818T Spring 2026 course documentation are recorded here.
 
+.. dropdown:: v3.0.0 -- L6 Lecture Updated for DDL v4.0 Slides (2026-03-28)
+   :icon: tag
+   :class-container: sd-border-warning
+
+   .. rubric:: lecture6/lecture.rst
+
+   Six targeted additions to bring the RST document into full alignment
+   with the v4.0 Beamer slide deck.
+
+   - **Prerequisites promoted to top-level section**: the DataGrip
+     four-step setup block (create database, point console, select schema,
+     run script) was previously a dropdown buried inside "From Logical to
+     Physical"; it is now a standalone ``====`` section at the top of the
+     file, matching the slide deck hierarchy. The duplicate
+     "Setting Up in DataGrip" dropdown was removed.
+   - **University schema figure placeholder added**: light/dark/LaTeX
+     variants added below the "From Logical to Physical" intro using the
+     standard ``only-light`` / ``only-dark`` / ``only:: latex`` pattern,
+     pointing to ``/_static/images/L6/university_full_light.png`` and
+     ``university_full_dark.png``.
+   - **NO ACTION vs. RESTRICT comparison table added**: the three-row
+     table (Check timing / Deferrable / Blocks delete) from the slides
+     now appears inline in the FOREIGN KEY section, with accompanying
+     prose explaining the key difference (``NO ACTION`` defers to
+     end-of-statement and is compatible with ``DEFERRABLE``;
+     ``RESTRICT`` checks immediately and can never be deferred).
+   - **Person column nullability/uniqueness reference table added**: the
+     ``NULL ok?`` / ``Duplicate ok?`` table covering all eight columns
+     of the ``person`` table (``person_id``, ``first_name``,
+     ``last_name``, ``middle_name``, ``date_of_birth``, ``street``,
+     ``state``, ``zip``) now appears in the NOT NULL and UNIQUE section,
+     with the ``CREATE TABLE`` statement for context.
+   - **Deferability-by-constraint-type table restructured**: the old
+     malformed four-column table (with a spurious empty column) replaced
+     with a clean three-column table (Constraint type / Deferrable? /
+     Why) covering ``FOREIGN KEY``, ``UNIQUE``, ``PRIMARY KEY``,
+     ``NOT NULL``, and ``CHECK``. The three-deferral-modes comparison
+     table (Mode 1 / Mode 2 / Default: Check timing, Always deferred,
+     Per-txn opt-in, Overridable) added separately as a
+     ``.. rubric::``.
+   - **Exclusive-arc data table added inline**: the five-row table
+     showing valid and rejected ``vehicle_owner`` rows with arc sum
+     annotations (arc sum = 1 valid; arc sum = 2 and arc sum = 0
+     rejected) now appears before Demo 16, matching the "Exclusive-Arc
+     in Data" slide frame.
+
+
+.. dropdown:: v2.7.0 -- Lectures Index Updated with L7 Row (2026-03-28)
+   :icon: tag
+   :class-container: sd-border-success
+
+   .. rubric:: lectures/index.rst
+
+   - Added L7 row to the schedule table: topic "DML, Transactions, and
+     Python" with key concepts ``INSERT``, ``UPDATE``, ``DELETE``,
+     upsert with ``ON CONFLICT``, ACID properties, transaction lifecycle
+     (``BEGIN`` / ``COMMIT`` / ``ROLLBACK``), savepoints, isolation
+     levels, psycopg3 (connection management, parameterized queries,
+     server-side cursors, connection pooling), and loading data from
+     CSV with Python.
+   - Added ``lecture7/index`` to the ``.. toctree::`` directive.
+
+
 .. dropdown:: v2.6.0 -- GP2 psycopg3 Migration and Scope Adjustment (2026-03-23)
    :icon: tag
    :class-container: sd-border-success
