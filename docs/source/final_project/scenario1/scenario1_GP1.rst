@@ -8,11 +8,24 @@ Overview
 Design the PostgreSQL database schema that will serve as the transactional backbone of your traffic management system. You will identify entities from business requirements, model their relationships, define keys and constraints, and prove your design is in Third Normal Form (3NF).
 
 .. card::
-   :class-card: sd-bg-warning sd-bg-text-dark
+   :class-card: sd-bg-dark sd-text-white sd-shadow-sm
 
-   **Timeline**: 2 weeks |
-   **Weight**: 10 points (20% of final project) |
-   **Team Size**: 4 students
+   **GP1 -- At a Glance**
+
+   .. list-table::
+      :widths: 30 70
+      :class: compact-table
+
+      * - **Duration**
+        - 2 weeks
+      * - **Weight**
+        - 10 points (20% of final project)
+      * - **Lectures**
+        - L1--L5
+      * - **Team Size**
+        - 4 students
+      * - **Submission**
+        - Canvas + GitHub repository link
 
 
 .. important::

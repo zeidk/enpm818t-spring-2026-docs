@@ -8,13 +8,24 @@ Overview
 Add Neo4j for medical knowledge relationships and clinical decision support, complete your three-database polyglot system, deploy with Docker Compose, and write a final technical report.
 
 .. card::
-   :class-card: sd-bg-warning sd-bg-text-dark
+   :class-card: sd-bg-dark sd-text-white sd-shadow-sm
 
-   **Timeline**: 2 weeks |
-   **Weight**: 15 points (30% of final project, includes final report) |
-   **Team Size**: 4 students
+   **GP4 -- At a Glance**
 
-**Builds on**: Your PostgreSQL + MongoDB system from GP2 and GP3
+   .. list-table::
+      :widths: 30 70
+      :class: compact-table
+
+      * - **Duration**
+        - 2 weeks
+      * - **Weight**
+        - 15 points (30% of final project, includes final report)
+      * - **Builds on**
+        - Your PostgreSQL + MongoDB system from GP2 and GP3
+      * - **Team Size**
+        - 4 students
+      * - **Submission**
+        - Canvas + GitHub repository link
 
 
 Learning Objectives

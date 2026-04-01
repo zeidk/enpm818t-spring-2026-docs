@@ -54,5 +54,6 @@ After successfully completing this course, you will be able to:
    changelog/changelog
    syllabus/index
    lectures/index
+   reading_material/index
    final_project/index
    glossary/glossary

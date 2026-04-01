@@ -8,13 +8,24 @@ Overview
 Add MongoDB to handle semi-structured clinical documents and healthcare data with flexible schemas. Integrate with your PostgreSQL system to create a polyglot persistence architecture for unified patient records.
 
 .. card::
-   :class-card: sd-bg-warning sd-bg-text-dark
+   :class-card: sd-bg-dark sd-text-white sd-shadow-sm
 
-   **Timeline**: 2 weeks |
-   **Weight**: 10 points (20% of final project) |
-   **Team Size**: 4 students
+   **GP3 -- At a Glance**
 
-**Builds on**: Your secure PostgreSQL system from GP2
+   .. list-table::
+      :widths: 30 70
+      :class: compact-table
+
+      * - **Duration**
+        - 2 weeks
+      * - **Weight**
+        - 10 points (20% of final project)
+      * - **Builds on**
+        - Your secure PostgreSQL system from GP2
+      * - **Team Size**
+        - 4 students
+      * - **Submission**
+        - Canvas + GitHub repository link
 
 
 Learning Objectives

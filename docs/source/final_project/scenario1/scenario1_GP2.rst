@@ -8,13 +8,26 @@ Overview
 Implement your GP1 design in PostgreSQL, generate realistic sample data, write SQL queries supporting traffic operations, and build a Python command-line application with a menu-driven interface.
 
 .. card::
-   :class-card: sd-bg-warning sd-bg-text-dark
+   :class-card: sd-bg-dark sd-text-white sd-shadow-sm
 
-   **Timeline**: 3 weeks |
-   **Weight**: 15 points (30% of final project) |
-   **Team Size**: 4 students
+   **GP2 -- At a Glance**
 
-**Builds on**: Your GP1 relational design
+   .. list-table::
+      :widths: 30 70
+      :class: compact-table
+
+      * - **Duration**
+        - 3 weeks
+      * - **Weight**
+        - 15 points (30% of final project)
+      * - **Lectures**
+        - L6--L8
+      * - **Builds on**
+        - Your GP1 relational design
+      * - **Team Size**
+        - 4 students
+      * - **Submission**
+        - Canvas + GitHub repository link
 
 
 Learning Objectives
@@ -29,6 +42,16 @@ By completing this group project, you will be able to:
 - Integrate PostgreSQL with Python using psycopg3
 - Design repository and service layer architecture
 - Build a menu-driven CLI application
+
+.. tip::
+
+   This project requires ``SELECT`` fundamentals, aggregate functions
+   (``COUNT``, ``SUM``, ``AVG``), ``GROUP BY`` / ``HAVING``, and
+   subqueries. If these topics have not yet been covered in lecture, see
+   the :doc:`/reading_material/select_aggregates_subqueries` page for a
+   self-contained reference with syntax, examples, and GP2-style worked
+   queries. Practice with the :doc:`/reading_material/exercises` and test
+   your understanding with the :doc:`/reading_material/quiz`.
 
 
 .. important::

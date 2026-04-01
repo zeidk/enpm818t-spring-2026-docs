@@ -5,6 +5,31 @@ Changelog
 All notable changes to the ENPM818T Spring 2026 course documentation are recorded here.
 
 
+.. dropdown:: v3.3.0 -- Reading Material: SELECT, Aggregates, and Subqueries (2026-04-01)
+   :icon: tag
+   :class-container: sd-border-success
+
+   Added a new top-level **Reading Material** section covering SQL topics
+   required for GP2 that have not yet been presented in a formal lecture.
+
+   - :doc:`../reading_material/select_aggregates_subqueries`: ``SELECT``
+     fundamentals (``WHERE``, ``ORDER BY``, ``LIMIT`` / ``OFFSET``),
+     aggregate functions (``COUNT``, ``SUM``, ``AVG``, ``MIN``, ``MAX``),
+     ``GROUP BY``, ``HAVING``, subqueries (non-correlated and correlated,
+     ``IN`` / ``ANY`` / ``ALL``, derived tables, scalar subqueries,
+     ``EXISTS`` / ``NOT EXISTS``), and GP2-style worked examples for both
+     scenarios.
+   - :doc:`../reading_material/exercises`: eight exercises progressing from
+     basic filtering through GP2-level combined queries with CTEs and
+     ``LATERAL``.
+   - :doc:`../reading_material/quiz`: 25 questions (15 multiple choice,
+     7 true/false, 3 essay).
+
+   Both GP2 pages (:doc:`../final_project/scenario1/scenario1_GP2` and
+   :doc:`../final_project/scenario2/scenario2_GP2`) now link to the reading
+   material.
+
+
 .. dropdown:: v3.2.0 -- Replace SELECT * in GP2 Repository Examples (2026-04-01)
    :icon: tag
    :class-container: sd-border-warning

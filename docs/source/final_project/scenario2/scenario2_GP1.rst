@@ -8,11 +8,24 @@ Overview
 Design the PostgreSQL database schema that will serve as the transactional backbone of your healthcare management system. You will model clinical workflows, identify healthcare-specific identifiers, and define clinical constraints.
 
 .. card::
-   :class-card: sd-bg-warning sd-bg-text-dark
+   :class-card: sd-bg-dark sd-text-white sd-shadow-sm
 
-   **Timeline**: 2 weeks |
-   **Weight**: 10 points (20% of final project) |
-   **Team Size**: 4 students
+   **GP1 -- At a Glance**
+
+   .. list-table::
+      :widths: 30 70
+      :class: compact-table
+
+      * - **Duration**
+        - 2 weeks
+      * - **Weight**
+        - 10 points (20% of final project)
+      * - **Lectures**
+        - L1--L5
+      * - **Team Size**
+        - 4 students
+      * - **Submission**
+        - Canvas + GitHub repository link
 
 
 .. important::
