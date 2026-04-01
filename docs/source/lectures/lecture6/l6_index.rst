@@ -28,10 +28,9 @@ By the end of this lecture, you will be able to:
 - Evolve a live schema safely with ``ALTER TABLE`` and distinguish ``DROP`` from ``TRUNCATE``.
 - Apply PostgreSQL-specific DDL: ``GENERATED ALWAYS AS IDENTITY``, deferrable constraints, ``EXCLUDE``.
 
-Contents
---------
 
 .. toctree::
+   :hidden:
    :maxdepth: 2
    :titlesonly:
 

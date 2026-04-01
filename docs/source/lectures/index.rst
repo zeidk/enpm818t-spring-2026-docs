@@ -46,10 +46,11 @@ Schedule
      - Cartesian product, relational algebra, ``INNER`` / ``LEFT`` / ``RIGHT`` / ``FULL OUTER`` / ``CROSS`` join, self-join, semi/anti join (``EXISTS`` / ``NOT EXISTS``), ``LATERAL``, ``ON`` vs ``WHERE`` semantics, logical vs physical joins (nested loop, hash, merge), ``EXPLAIN (ANALYZE, BUFFERS)``, Big O analysis, disk/memory architecture (heap pages, ``shared_buffers``, ``work_mem``), B+ tree indexing, composite indexes, index design for joins
 
 
-Contents
---------
+.. Contents
+.. --------
 
 .. toctree::
+   :hidden:
    :maxdepth: 3
    :titlesonly:
 

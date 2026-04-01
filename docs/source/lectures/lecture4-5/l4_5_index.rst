@@ -28,10 +28,8 @@ By the end of this lecture, you will be able to:
 - Justify strategic denormalization decisions with performance trade-offs.
 - Design materialized views and redundant columns to optimize read-heavy workloads.
 
-Contents
---------
-
 .. toctree::
+   :hidden:
    :maxdepth: 2
    :titlesonly:
 

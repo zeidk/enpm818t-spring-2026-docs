@@ -4,17 +4,6 @@ Changelog
 
 All notable changes to the ENPM818T Spring 2026 course documentation are recorded here.
 
-.. dropdown:: v3.2.0 -- Right-Side TOC Collapse Behavior (2026-04-01)
-   :icon: tag
-   :class-container: sd-border-success
-
-   .. rubric:: conf.py
-
-   - Changed ``show_toc_level`` from ``2`` to ``1`` in ``html_theme_options``
-     so the right-hand table of contents starts collapsed at H1 sections and
-     expands to reveal H2 subsections on scroll or click, matching the
-     enpm818z documentation style.
-
 
 .. dropdown:: v3.1.0 -- Lecture 8: JOINs, Query Execution, and Indexing (2026-04-01)
    :icon: tag

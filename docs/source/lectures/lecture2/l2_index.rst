@@ -30,10 +30,8 @@ By the end of this lecture, you will be able to:
 - Evaluate design trade-offs and detect common modeling errors.
 
 
-Contents
---------
-
 .. toctree::
+   :hidden:
    :maxdepth: 2
    :titlesonly:
 

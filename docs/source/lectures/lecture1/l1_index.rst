@@ -27,10 +27,8 @@ By the end of this lecture, you will be able to:
 - Install and configure PostgreSQL, Python, and DataGrip for the course.
 
 
-Contents
---------
-
 .. toctree::
+   :hidden:
    :maxdepth: 2
    :titlesonly:
 

@@ -30,10 +30,8 @@ By the end of this lecture, you will be able to:
 - Read and draw Crow's Foot notation as the standard logical-level representation.
 
 
-Contents
---------
-
 .. toctree::
+   :hidden:
    :maxdepth: 2
    :titlesonly:
 

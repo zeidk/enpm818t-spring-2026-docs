@@ -347,10 +347,8 @@ Support Resources
   - Technical troubleshooting (not sharing code)
 
 
-Scenario Details
-----------------
-
 .. toctree::
+   :hidden:
    :maxdepth: 2
    :titlesonly:
 

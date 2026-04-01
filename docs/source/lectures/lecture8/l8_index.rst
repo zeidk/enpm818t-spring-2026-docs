@@ -31,10 +31,8 @@ By the end of this lecture, you will be able to:
 - Read basic PostgreSQL ``EXPLAIN`` output and interpret join nodes.
 - Design indexes (especially B+ tree and composite) that support join-heavy queries.
 
-Contents
---------
-
 .. toctree::
+   :hidden:
    :maxdepth: 2
    :titlesonly:
 

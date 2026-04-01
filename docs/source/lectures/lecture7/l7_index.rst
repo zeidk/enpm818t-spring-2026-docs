@@ -29,10 +29,8 @@ By the end of this lecture, you will be able to:
 - Structure a Python project using the repository pattern.
 - Generate realistic seed data for the university schema using an LLM prompt.
 
-Contents
---------
-
 .. toctree::
+   :hidden:
    :maxdepth: 2
    :titlesonly:
 
