@@ -116,7 +116,7 @@ Each project consists of four cumulative group projects (GP1 through GP4), where
    * - GP2: PostgreSQL + Python
      - Week 8
      - Week 11
-     - 5 weeks (incl. break)
+     - 3 weeks
      - 37.5%
    * - GP3: MongoDB Integration
      - Week 11
