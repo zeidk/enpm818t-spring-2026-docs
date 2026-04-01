@@ -4,6 +4,63 @@ Changelog
 
 All notable changes to the ENPM818T Spring 2026 course documentation are recorded here.
 
+.. dropdown:: v3.2.0 -- Right-Side TOC Collapse Behavior (2026-04-01)
+   :icon: tag
+   :class-container: sd-border-success
+
+   .. rubric:: conf.py
+
+   - Changed ``show_toc_level`` from ``2`` to ``1`` in ``html_theme_options``
+     so the right-hand table of contents starts collapsed at H1 sections and
+     expands to reveal H2 subsections on scroll or click, matching the
+     enpm818z documentation style.
+
+
+.. dropdown:: v3.1.0 -- Lecture 8: JOINs, Query Execution, and Indexing (2026-04-01)
+   :icon: tag
+   :class-container: sd-border-success
+
+   .. rubric:: lectures/lecture8/ (new)
+
+   Six new RST files created from the Marp markdown lecture and supplemented
+   with content from the prior-year LaTeX slide deck:
+
+   - **l8_index.rst**: overview, learning objectives, toctree, next steps.
+   - **l8_lecture.rst**: full lecture covering Cartesian products, relational
+     algebra (with :math:`\sigma`, :math:`\pi`, :math:`\times`,
+     :math:`\bowtie` symbols), all SQL join types (``INNER``, ``LEFT``,
+     ``RIGHT``, ``FULL OUTER``, ``CROSS``, self-join, ``USING`` /
+     ``NATURAL``, semi/anti via ``EXISTS`` / ``NOT EXISTS``, ``LATERAL``),
+     ``ON`` vs ``WHERE`` semantics, physical join strategies (nested loop,
+     hash, merge), ``EXPLAIN (ANALYZE, BUFFERS)`` interpretation, Big O
+     analysis of join algorithms, disk and memory architecture (heap pages,
+     ``shared_buffers``, ``work_mem``), B+ tree indexing, composite indexes,
+     and PostgreSQL tuning tips. Includes business-domain result tables
+     (CUSTOMERS / ORDERS) from the LaTeX slide deck for ``LEFT JOIN`` and
+     ``FULL OUTER JOIN``.
+   - **l8_exercises.rst**: six exercises -- Cartesian product row counts,
+     choosing join types, join result predictor (``ON`` vs ``WHERE``),
+     join-algorithm-to-scenario matching, index design (take-home), and
+     self-join hierarchy (take-home). All include solutions.
+   - **l8_quiz.rst**: 30 questions (18 multiple choice, 8 true/false,
+     4 essay) covering joins, ``EXPLAIN``, Big O, indexing, and storage
+     architecture.
+   - **l8_references.rst**: PostgreSQL official docs (table expressions,
+     ``EXPLAIN``, indexes, planner/optimizer), textbook references
+     (Silberschatz, Elmasri & Navathe), and additional resources
+     (Use The Index Luke, pgMustard, PostgreSQL wiki).
+   - **l8_cheat_sheet.rst**: condensed reference tables for join types,
+     ``ON`` vs ``WHERE`` rules, semi/anti patterns, physical join
+     strategies with Big O, ``EXPLAIN`` checklist, index types, B+ tree
+     rules, and tuning checklist.
+
+   .. rubric:: lectures/index.rst
+
+   - Added L8 row to the schedule table with topic "JOINs, Query Execution,
+     and Indexing" and key concepts.
+   - Added ``lecture8/l8_index`` to the ``.. toctree::``.
+
+
 .. dropdown:: v3.0.0 -- L6 Lecture Updated for DDL v4.0 Slides (2026-03-28)
    :icon: tag
    :class-container: sd-border-warning
