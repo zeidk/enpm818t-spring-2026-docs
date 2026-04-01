@@ -41,6 +41,9 @@ Schedule
    * - L7
      - DML, Transactions, and Python
      - ``INSERT``, ``UPDATE``, ``DELETE``, upsert with ``ON CONFLICT``, ACID properties, transaction lifecycle (``BEGIN`` / ``COMMIT`` / ``ROLLBACK``), savepoints, isolation levels, psycopg3 (connection management, parameterized queries, server-side cursors, connection pooling), loading data from CSV with Python
+   * - L8
+     - JOINs, Query Execution, and Indexing
+     - Cartesian product, relational algebra, ``INNER`` / ``LEFT`` / ``RIGHT`` / ``FULL OUTER`` / ``CROSS`` join, self-join, semi/anti join (``EXISTS`` / ``NOT EXISTS``), ``LATERAL``, ``ON`` vs ``WHERE`` semantics, logical vs physical joins (nested loop, hash, merge), ``EXPLAIN (ANALYZE, BUFFERS)``, Big O analysis, disk/memory architecture (heap pages, ``shared_buffers``, ``work_mem``), B+ tree indexing, composite indexes, index design for joins
 
 
 Contents
@@ -56,3 +59,4 @@ Contents
    lecture4-5/l4_5_index
    lecture6/l6_index
    lecture7/l7_index
+   lecture8/l8_index

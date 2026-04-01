@@ -67,7 +67,7 @@ html_theme_options = {
     # Navigation
     "navigation_depth": 3,
     "show_nav_level": 1,
-    "show_toc_level": 2,
+    "show_toc_level": 1,
     "show_prev_next": True,
     # Footer
     "footer_start": ["copyright"],
@@ -96,4 +96,5 @@ master_doc = "index"
 
 html_css_files = [
     "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css",
+    "my.css",
 ]
