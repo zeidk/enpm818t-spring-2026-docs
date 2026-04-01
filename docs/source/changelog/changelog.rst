@@ -5,6 +5,25 @@ Changelog
 All notable changes to the ENPM818T Spring 2026 course documentation are recorded here.
 
 
+.. dropdown:: v3.2.0 -- Replace SELECT * in GP2 Repository Examples (2026-04-01)
+   :icon: tag
+   :class-container: sd-border-warning
+
+   .. rubric:: :doc:`../final_project/scenario1/scenario1_GP2`
+
+   - Replaced ``SELECT *`` with explicit column list
+     (``intersection_id``, ``intersection_name``, ``latitude``,
+     ``longitude``) in the ``IntersectionRepository`` example code for both
+     ``find_by_id`` and ``find_all`` methods.
+
+   .. rubric:: :doc:`../final_project/scenario2/scenario2_GP2`
+
+   - Replaced ``SELECT *`` with explicit column list (``patient_id``,
+     ``mrn``, ``first_name``, ``last_name``, ``date_of_birth``) in the
+     ``PatientRepository`` example code for both ``find_by_id`` and
+     ``find_all`` methods.
+
+
 .. dropdown:: v3.1.0 -- Lecture 8: JOINs, Query Execution, and Indexing (2026-04-01)
    :icon: tag
    :class-container: sd-border-success
@@ -14,8 +33,8 @@ All notable changes to the ENPM818T Spring 2026 course documentation are recorde
    Six new RST files created from the Marp markdown lecture and supplemented
    with content from the prior-year LaTeX slide deck:
 
-   - **l8_index.rst**: overview, learning objectives, toctree, next steps.
-   - **l8_lecture.rst**: full lecture covering Cartesian products, relational
+   - :doc:`../lectures/lecture8/l8_index`: overview, learning objectives, toctree, next steps.
+   - :doc:`../lectures/lecture8/l8_lecture`: full lecture covering Cartesian products, relational
      algebra (with :math:`\sigma`, :math:`\pi`, :math:`\times`,
      :math:`\bowtie` symbols), all SQL join types (``INNER``, ``LEFT``,
      ``RIGHT``, ``FULL OUTER``, ``CROSS``, self-join, ``USING`` /
@@ -27,23 +46,23 @@ All notable changes to the ENPM818T Spring 2026 course documentation are recorde
      and PostgreSQL tuning tips. Includes business-domain result tables
      (CUSTOMERS / ORDERS) from the LaTeX slide deck for ``LEFT JOIN`` and
      ``FULL OUTER JOIN``.
-   - **l8_exercises.rst**: six exercises -- Cartesian product row counts,
+   - :doc:`../lectures/lecture8/l8_exercises`: six exercises -- Cartesian product row counts,
      choosing join types, join result predictor (``ON`` vs ``WHERE``),
      join-algorithm-to-scenario matching, index design (take-home), and
      self-join hierarchy (take-home). All include solutions.
-   - **l8_quiz.rst**: 30 questions (18 multiple choice, 8 true/false,
+   - :doc:`../lectures/lecture8/l8_quiz`: 30 questions (18 multiple choice, 8 true/false,
      4 essay) covering joins, ``EXPLAIN``, Big O, indexing, and storage
      architecture.
-   - **l8_references.rst**: PostgreSQL official docs (table expressions,
+   - :doc:`../lectures/lecture8/l8_references`: PostgreSQL official docs (table expressions,
      ``EXPLAIN``, indexes, planner/optimizer), textbook references
      (Silberschatz, Elmasri & Navathe), and additional resources
      (Use The Index Luke, pgMustard, PostgreSQL wiki).
-   - **l8_cheat_sheet.rst**: condensed reference tables for join types,
+   - :doc:`../lectures/lecture8/l8_cheat_sheet`: condensed reference tables for join types,
      ``ON`` vs ``WHERE`` rules, semi/anti patterns, physical join
      strategies with Big O, ``EXPLAIN`` checklist, index types, B+ tree
      rules, and tuning checklist.
 
-   .. rubric:: lectures/index.rst
+   .. rubric:: :doc:`../lectures/index`
 
    - Added L8 row to the schedule table with topic "JOINs, Query Execution,
      and Indexing" and key concepts.

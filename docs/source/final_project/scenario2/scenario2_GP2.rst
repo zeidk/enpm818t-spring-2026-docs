@@ -365,7 +365,9 @@ Part 3: Python CLI Application
               with DatabaseConfig.get_connection() as conn:
                   with conn.cursor(row_factory=dict_row) as cur:
                       cur.execute(
-                          "SELECT * FROM patient WHERE patient_id = %s",
+                          "SELECT patient_id, mrn, first_name, "
+                          "last_name, date_of_birth "
+                          "FROM patient WHERE patient_id = %s",
                           (patient_id,)
                       )
                       row = cur.fetchone()
@@ -375,7 +377,9 @@ Part 3: Python CLI Application
               with DatabaseConfig.get_connection() as conn:
                   with conn.cursor(row_factory=dict_row) as cur:
                       cur.execute(
-                          "SELECT * FROM patient ORDER BY patient_id "
+                          "SELECT patient_id, mrn, first_name, "
+                          "last_name, date_of_birth "
+                          "FROM patient ORDER BY patient_id "
                           "LIMIT %s OFFSET %s",
                           (limit, offset)
                       )

@@ -331,7 +331,9 @@ Part 3: Python CLI Application
               with DatabaseConfig.get_connection() as conn:
                   with conn.cursor(row_factory=dict_row) as cur:
                       cur.execute(
-                          "SELECT * FROM intersection WHERE intersection_id = %s",
+                          "SELECT intersection_id, intersection_name, "
+                          "latitude, longitude "
+                          "FROM intersection WHERE intersection_id = %s",
                           (intersection_id,)
                       )
                       row = cur.fetchone()
@@ -341,7 +343,9 @@ Part 3: Python CLI Application
               with DatabaseConfig.get_connection() as conn:
                   with conn.cursor(row_factory=dict_row) as cur:
                       cur.execute(
-                          "SELECT * FROM intersection ORDER BY intersection_id "
+                          "SELECT intersection_id, intersection_name, "
+                          "latitude, longitude "
+                          "FROM intersection ORDER BY intersection_id "
                           "LIMIT %s OFFSET %s",
                           (limit, offset)
                       )
