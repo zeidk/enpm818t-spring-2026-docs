@@ -44,6 +44,9 @@ Schedule
    * - L8
      - JOINs, Query Execution, and Indexing
      - Cartesian product, relational algebra, ``INNER`` / ``LEFT`` / ``RIGHT`` / ``FULL OUTER`` / ``CROSS`` join, self-join, semi/anti join (``EXISTS`` / ``NOT EXISTS``), ``LATERAL``, ``ON`` vs ``WHERE`` semantics, logical vs physical joins (nested loop, hash, merge), ``EXPLAIN (ANALYZE, BUFFERS)``, Big O analysis, disk/memory architecture (heap pages, ``shared_buffers``, ``work_mem``), B+ tree indexing, composite indexes, index design for joins
+   * - L9
+     - Document Store Databases
+     - Document data model, BSON, nested documents and arrays, embedding vs referencing, MongoDB CRUD (``insertOne``, ``find``, ``updateOne``, ``deleteOne``), aggregation pipeline (``$match``, ``$group``, ``$sort``, ``$lookup``), indexing (compound, multikey, wildcard, partial, TTL), ``explain()`` output, WiredTiger storage (journaling, checkpoints, compression), replication (replica sets, oplog, elections, read/write concerns), sharding (shard keys, chunks, ``mongos``), design patterns (subset, schema versioning), anti-patterns (bloated documents, unbounded arrays)
 
 
 .. Contents
@@ -61,3 +64,4 @@ Schedule
    lecture6/l6_index
    lecture7/l7_index
    lecture8/l8_index
+   lecture9/l9_index

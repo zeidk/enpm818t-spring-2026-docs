@@ -47,10 +47,12 @@ Next Steps
 
 - In the next lecture (**L9**), we will cover:
 
-  - Subqueries: correlated and non-correlated; ``EXISTS``, ``IN``, scalar subqueries.
-  - Aggregates and grouping: ``GROUP BY``, ``HAVING``, ``COUNT``, ``SUM``, ``AVG``.
-  - Window functions: ``ROW_NUMBER``, ``RANK``, ``DENSE_RANK``, cumulative sums.
-  - Advanced grouping: ``GROUPING SETS``, ``CUBE``, ``ROLLUP``.
+  - Document store databases: concepts, internals, and MongoDB in practice.
+  - The document data model: BSON, nested documents, arrays, embedding vs referencing.
+  - MongoDB CRUD operations and the aggregation pipeline.
+  - Indexing strategies: compound, multikey, wildcard, partial indexes.
+  - Storage internals (WiredTiger), replication, and sharding.
+  - Design patterns and anti-patterns for document databases.
 
 - Before next class: complete the take-home exercises (Exercises 3 and 4 on
   the exercises page) and experiment with ``EXPLAIN (ANALYZE, BUFFERS)`` on
