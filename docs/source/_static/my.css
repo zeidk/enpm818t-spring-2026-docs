@@ -19,3 +19,70 @@ table.compact-table th p {
   margin-bottom: 0 !important;
   line-height: 1.25;
 }
+
+/* ============================================================
+ * Custom Admonition: Task
+ * Usage: .. admonition:: Task 2.1: Required Collections (2 pts)
+ *           :class: task
+ * ============================================================ */
+
+/* ------------------------------------------------------------
+ * Task – Light mode
+ * ------------------------------------------------------------ */
+.admonition.task {
+  background-color: #f0f7ff;
+  border: 2px solid #3b82f6;
+  border-radius: 0.35rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.admonition.task > .admonition-title {
+  background-color: #dbeafe;
+  font-weight: 600;
+  font-size: 1.05em;
+  border-bottom: 1px solid #3b82f6;
+}
+
+.admonition.task {
+  --pst-icon-admonition-default: "\f0ae";  /* fa-tasks */
+}
+
+.admonition.task > .admonition-title::before {
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  color: #2563eb;
+}
+
+/* ------------------------------------------------------------
+ * Task – Dark mode
+ * ------------------------------------------------------------ */
+html[data-theme="dark"] .admonition.task {
+  background-color: #1e293b;
+  border-color: #60a5fa;
+}
+
+html[data-theme="dark"] .admonition.task > .admonition-title {
+  background-color: #1e3a5f;
+  border-bottom-color: #60a5fa;
+}
+
+html[data-theme="dark"] .admonition.task > .admonition-title::before {
+  color: #93bbfd;
+}
+
+/* ------------------------------------------------------------
+ * Task – Auto mode (dark system preference)
+ * ------------------------------------------------------------ */
+@media (prefers-color-scheme: dark) {
+  html[data-theme="auto"] .admonition.task {
+    background-color: #1e293b;
+    border-color: #60a5fa;
+  }
+  html[data-theme="auto"] .admonition.task > .admonition-title {
+    background-color: #1e3a5f;
+    border-bottom-color: #60a5fa;
+  }
+  html[data-theme="auto"] .admonition.task > .admonition-title::before {
+    color: #93bbfd;
+  }
+}

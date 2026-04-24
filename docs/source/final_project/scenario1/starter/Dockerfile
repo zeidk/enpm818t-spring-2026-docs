@@ -36,4 +36,4 @@ COPY . .
 
 # Default command: launch the menu-driven CLI.
 # Adjust the module path to wherever your main() lives.
-CMD ["python", "-m", "src.cli.main"]
+CMD ["python", "-m", "cli.main"]

@@ -181,7 +181,7 @@ Progressive Development
    system (this deliverable merges the original GP3 and GP4):
 
    - Design 4+ MongoDB collections for event data
-   - Write 6+ MongoDB aggregation pipelines and geospatial queries
+   - Write 6+ MongoDB aggregation pipelines and array operations
    - Design 5+ Redis data structures (strings, hashes, sorted sets, lists, pub/sub)
    - Implement cache-aside pattern and pub/sub broadcasting
    - Add 2+ unified CLI operations using all three databases

@@ -53,9 +53,8 @@ How to Adopt It
       ├── mongodb/
       │   ├── mongo_setup.js
       │   └── mongo_data.js
-      └── src/
-          └── cli/
-              └── main.py
+      └── cli/
+          └── main.py
 
 2. Create your ``.env`` using the **recommended class-wide defaults**
    (or your own -- just make sure ``README.md`` lists them):
@@ -112,7 +111,7 @@ The starter intentionally stops short of a few things so you can make
 the decisions yourself:
 
 1. **Your application code**. The ``Dockerfile`` copies the whole
-   build context and runs ``python -m src.cli.main``. Adjust the
+   build context and runs ``python -m cli.main``. Adjust the
    module path if your entrypoint lives elsewhere.
 2. **Your Python drivers**. Add the ones you need to
    ``requirements.txt`` (at minimum: ``psycopg2-binary``,

@@ -50,6 +50,31 @@ final **technical report** documenting the system end-to-end.
    - Technical report: outline kept; no strict page limit
    - Optional presentation has been dropped
 
+.. admonition:: What Carries Over from GP2
+   :class: important
+
+   GP3 **extends** the system you built in GP2 -- you are not starting
+   from scratch. Your GP2 deliverables form the PostgreSQL layer of the
+   final polyglot system:
+
+   - **postgresql/schema.sql** and **postgresql/data.sql**: Reuse
+     directly. Place them in the ``postgresql/`` directory so Docker
+     Compose seeds them on first boot.
+   - **postgresql/queries.sql**: Include in your submission for
+     completeness; no changes required.
+   - **config/database.py**: Your existing PostgreSQL connection
+     module. You will add ``mongodb.py`` and ``neo4j_config.py``
+     alongside it.
+   - **repositories/**, **services/**, **cli/main.py**: Extend these
+     with MongoDB and Neo4j support. Your existing PostgreSQL
+     repositories and menu options should continue to work unchanged.
+   - **models/**: Keep your existing dataclasses; add new ones only
+     if needed for cross-database service results.
+   - **requirements.txt**: Add ``pymongo`` and ``neo4j`` to your
+     existing dependencies.
+   - **.env.example**: Add ``MONGO_*`` and ``NEO4J_*`` variables
+     alongside your existing ``DB_*`` variables.
+
 
 Learning Objectives
 -------------------
@@ -76,10 +101,8 @@ Part 1: Polyglot Persistence Design
 **Objective**: Analyze your clinical data and decide what belongs in
 PostgreSQL, MongoDB, or Neo4j.
 
-.. dropdown:: Task 1.1: Data Partitioning Analysis (2 points)
-   :icon: gear
-   :class-container: sd-border-primary
-   :open:
+.. admonition:: Task 1.1: Data Partitioning Analysis (2 points)
+   :class: task
 
    For each data type in your healthcare system, evaluate whether it
    belongs in **PostgreSQL**, **MongoDB**, or **Neo4j**. Consider:
@@ -93,7 +116,15 @@ PostgreSQL, MongoDB, or Neo4j.
    5. **Volume**: Moderate or high write throughput?
    6. **Evolution**: Schema stable or changes with clinical practice?
 
-   **Decision Template** (use for each data type):
+   **Decision Template** -- complete one entry for each **new** data
+   type you are adding to MongoDB or Neo4j (e.g., clinical notes,
+   imaging metadata, care plans, diseases, medications, drug
+   interactions). You do not need to re-justify data that stays in
+   PostgreSQL from GP2 -- a brief summary table listing those data
+   types and stating "remains in PostgreSQL (unchanged from GP2)" is
+   sufficient. The example below shows the expected depth for new
+   data types; include your completed templates in
+   ``docs/polyglot_design.pdf``.
 
    .. code-block:: text
 
@@ -113,6 +144,12 @@ PostgreSQL, MongoDB, or Neo4j.
                      needed, minimal relational needs, schema evolves
                      with practice
 
+   The following is a **recommended** starting point, not a mandate.
+   You may follow these suggestions, adjust them, or propose a
+   different partitioning -- as long as you justify every decision
+   in your ``docs/polyglot_design.pdf`` using the Decision Template
+   above.
+
    **Keep in PostgreSQL** (from GP2):
 
    - Patient demographics (structured, ACID, access-controlled)
@@ -120,7 +157,7 @@ PostgreSQL, MongoDB, or Neo4j.
    - Prescriptions and medications (strong consistency required)
    - Insurance claims and billing (financial accuracy, ACID)
 
-   **Move to MongoDB** (new):
+   **Candidates for MongoDB**:
 
    - **Clinical notes**: variable structure by note type (progress,
      consult, discharge)
@@ -130,7 +167,7 @@ PostgreSQL, MongoDB, or Neo4j.
    - **Patient surveys**: different question sets by survey type
      (PHQ-9, GAD-7, pain scales)
 
-   **Model in Neo4j** (new):
+   **Candidates for Neo4j**:
 
    - **Diseases** with ICD-10 codes, category, chronic/acute
    - **Medications** with drug class, dosage forms
@@ -138,6 +175,9 @@ PostgreSQL, MongoDB, or Neo4j.
    - **Drug interactions** (bidirectional, severity)
    - **Treatment pathways** (disease → medication) with evidence level
    - **Contraindications** (medication → disease)
+
+   If you deviate from these suggestions, explain what you changed
+   and why in your design document.
 
    Document your decisions and rationale in
    ``docs/polyglot_design.pdf``. This file should also include your
@@ -153,10 +193,8 @@ Part 2: MongoDB Schema Design
 **Objective**: Design document schemas for at least 4 collections with
 appropriate indexes.
 
-.. dropdown:: Task 2.1: Required Collections (2 points)
-   :icon: gear
-   :class-container: sd-border-primary
-   :open:
+.. admonition:: Task 2.1: Required Collections (2 points)
+   :class: task
 
    Design **at least 4 collections**. Two detailed examples are
    provided below; design at least two more of your own.
@@ -260,9 +298,8 @@ appropriate indexes.
         because they are always queried with the parent note and
         are bounded.
 
-.. dropdown:: Task 2.2: Index Strategy (1 point)
-   :icon: gear
-   :class-container: sd-border-primary
+.. admonition:: Task 2.2: Index Strategy (1 point)
+   :class: task
 
    For each collection, define appropriate indexes and document them
    in ``docs/polyglot_design.pdf``.
@@ -284,10 +321,8 @@ Part 3: MongoDB Implementation
 
 **Objective**: Set up MongoDB collections and write clinical queries.
 
-.. dropdown:: Task 3.1: Database Setup (1 point)
-   :icon: gear
-   :class-container: sd-border-primary
-   :open:
+.. admonition:: Task 3.1: Database Setup (1 point)
+   :class: task
 
    Create ``mongo_setup.js`` to define collections with validation
    and indexes:
@@ -336,9 +371,8 @@ Part 3: MongoDB Implementation
    **Files to create**: ``mongodb/mongo_setup.js`` and
    ``mongodb/mongo_data.js``
 
-.. dropdown:: Task 3.2: Query Development (2 points)
-   :icon: gear
-   :class-container: sd-border-primary
+.. admonition:: Task 3.2: Query Development (2 points)
+   :class: task
 
    Write **at least 6 MongoDB queries** covering the following
    categories:
@@ -389,10 +423,8 @@ Part 4: Neo4j Medical Knowledge Graph
 meaningful node types and relationships, and write Cypher queries for
 clinical decision support.
 
-.. dropdown:: Task 4.1: Graph Structure (2 points)
-   :icon: gear
-   :class-container: sd-border-primary
-   :open:
+.. admonition:: Task 4.1: Graph Structure (2 points)
+   :class: task
 
    Design a graph with at least **4 node types** and **4
    relationship types**.
@@ -452,9 +484,8 @@ clinical decision support.
         description: "Increased bleeding risk"
       }]->(Aspirin)
 
-.. dropdown:: Task 4.2: Graph Setup and Data (1 point)
-   :icon: gear
-   :class-container: sd-border-primary
+.. admonition:: Task 4.2: Graph Setup and Data (1 point)
+   :class: task
 
    Create a Neo4j setup script with sample medical knowledge:
 
@@ -495,20 +526,27 @@ clinical decision support.
 
    **Minimum graph size** (reduced from original GP4):
 
-   - **15+** medication nodes
-   - **10+** disease nodes
-   - **10+** symptom nodes (or equivalent fourth type)
-   - **25+** INTERACTS_WITH relationships
-   - **15+** TREATED_BY relationships
-   - **10+** PRESENTS_WITH relationships
+   - **10+** medication nodes
+   - **8+** disease nodes
+   - **8+** symptom nodes (or equivalent fourth type)
+   - **15+** INTERACTS_WITH relationships
+   - **10+** TREATED_BY relationships
+   - **8+** PRESENTS_WITH relationships
    - **5+**  CONTRAINDICATED_IN relationships
+
+   .. note::
+
+      Simplified or approximate medical data is acceptable. You do not
+      need to verify every interaction against a clinical drug database
+      -- use freely available references (e.g., RxNorm, Drugs.com
+      interaction checker) for common medications and focus on building
+      a graph large enough to demonstrate meaningful traversals.
 
    **Files to create**: ``neo4j/graph_setup.cypher`` and
    ``neo4j/graph_data.cypher``
 
-.. dropdown:: Task 4.3: Clinical Decision Support Queries (1 point)
-   :icon: gear
-   :class-container: sd-border-primary
+.. admonition:: Task 4.3: Clinical Decision Support Queries (1 point)
+   :class: task
 
    Write **at least 4 Cypher queries** (reduced from original 6+):
 
@@ -587,10 +625,8 @@ Part 5: System Integration and Docker Deployment
 cross-database CLI operations, and deploy the whole system with
 Docker Compose.
 
-.. dropdown:: Task 5.1: Multi-Database Python Integration (2 points)
-   :icon: gear
-   :class-container: sd-border-primary
-   :open:
+.. admonition:: Task 5.1: Multi-Database Python Integration (2 points)
+   :class: task
 
    **Extend your project structure**:
 
@@ -646,9 +682,8 @@ Docker Compose.
                   "safety_alerts": interaction_alerts,
               }
 
-.. dropdown:: Task 5.2: Unified CLI Operations (2 points)
-   :icon: gear
-   :class-container: sd-border-primary
+.. admonition:: Task 5.2: Unified CLI Operations (2 points)
+   :class: task
 
    Add CLI menu options that demonstrate all three databases working
    together. You need **at least 2 unified operations**:
@@ -685,6 +720,155 @@ Docker Compose.
         prescription record
       - Neo4j: pairwise interaction lookup across active meds + new med
       - (MongoDB not required for this operation)
+
+.. dropdown:: Example: Complete Patient Record Output
+   :icon: terminal
+   :class-container: sd-border-info
+
+   Below is an example of what the **Complete Patient Record** unified
+   operation might look like when all three databases are working
+   together. Your exact output will differ, but this shows the
+   expected level of detail.
+
+   .. code-block:: text
+
+      $ python -m cli.main
+
+      ╔══════════════════════════════════════╗
+      ║   Healthcare Management System       ║
+      ╠══════════════════════════════════════╣
+      ║  1. Patient CRUD                     ║
+      ║  2. Appointment CRUD                 ║
+      ║  3. Prescription CRUD                ║
+      ║  4. Run SQL Queries                  ║
+      ║  5. MongoDB Queries                  ║
+      ║  6. Complete Patient Record          ║
+      ║  7. Prescription Safety Check        ║
+      ║  0. Exit                             ║
+      ╚══════════════════════════════════════╝
+
+      Select option: 6
+      Enter patient MRN: 0000012345
+
+      ══════════════════════════════════════════════════════════════
+                COMPLETE PATIENT RECORD — MRN: 0000012345
+      ══════════════════════════════════════════════════════════════
+
+      ── PostgreSQL: Demographics & Medications ──────────────────
+        Name:           Jane Doe
+        DOB:            1968-03-15 (age 58)
+        Insurance:      BlueCross PPO (ID: BC-9981234)
+        Primary Provider: Dr. Sarah Chen (NPI: 1234567890)
+
+        Active Medications (4):
+          1. Lisinopril 10mg — daily — since 2025-08-01
+          2. Metformin 500mg  — twice daily — since 2024-11-15
+          3. Atorvastatin 20mg — at bedtime — since 2025-02-10
+          4. Omeprazole 20mg — daily — since 2026-01-05
+
+      ── MongoDB: Recent Clinical Notes ──────────────────────────
+        Notes Found: 3 (last 6 months)
+
+        2026-02-15 | progress_note | Dr. Chen
+          Chief Complaint: Follow-up for hypertension management
+          Assessment: Hypertension improving on current regimen
+          Plan: Continue lisinopril 10mg, recheck in 3 months
+
+        2026-02-18 | consultation | Dr. Patel (Cardiology)
+          Reason: Evaluate cardiac murmur
+          Findings: Grade II/VI systolic murmur, benign
+          Recommendation: Echocardiogram in 6 months
+
+        2025-12-10 | progress_note | Dr. Chen
+          Chief Complaint: Diabetes management
+          Assessment: HbA1c 7.2%, slightly above target
+          Plan: Continue metformin, dietary counseling
+
+      ── Neo4j: Drug Interaction Check ───────────────────────────
+        Checking 4 active medications for interactions...
+
+        ⚠ MODERATE: Lisinopril ↔ Metformin
+          Risk of hypoglycemia; monitor blood glucose closely
+
+        ✓ No other interactions found among active medications.
+
+      ══════════════════════════════════════════════════════════════
+
+.. dropdown:: Example: Prescription Safety Check Output
+   :icon: terminal
+   :class-container: sd-border-info
+
+   Below is an example of what the **Prescription Safety Check**
+   unified operation might look like — first a safe prescription,
+   then an unsafe one. (Assumes the user selected option **7** from
+   the main menu.)
+
+   .. code-block:: text
+
+      Select option: 7
+
+      ══════════════════════════════════════════════════════════════
+                    PRESCRIPTION SAFETY CHECK
+      ══════════════════════════════════════════════════════════════
+
+      Enter patient MRN: 0000012345
+      Medication to prescribe: Amlodipine
+      Dosage: 5mg daily
+
+      ── PostgreSQL: Patient Lookup ──────────────────────────────
+        ✓ Patient found: Jane Doe (MRN: 0000012345)
+        Active medications: Lisinopril, Metformin, Atorvastatin,
+                            Omeprazole
+
+      ── Neo4j: Interaction Check ────────────────────────────────
+        Checking Amlodipine against 4 active medications...
+
+        ✓ Amlodipine ↔ Lisinopril     — no interaction
+        ✓ Amlodipine ↔ Metformin      — no interaction
+        ✓ Amlodipine ↔ Atorvastatin   — no interaction
+        ✓ Amlodipine ↔ Omeprazole     — no interaction
+
+        RESULT: SAFE — no interactions detected.
+
+      ── PostgreSQL: Inserting Prescription ──────────────────────
+        ✓ Prescription #3021 created
+          Medication:  Amlodipine 5mg
+          Frequency:   daily
+          Prescriber:  Dr. Chen (NPI: 1234567890)
+          Start Date:  2026-04-24
+
+      ══════════════════════════════════════════════════════════════
+
+   **Unsafe prescription example:**
+
+   .. code-block:: text
+
+      Enter patient MRN: 0000012345
+      Medication to prescribe: Warfarin
+      Dosage: 5mg daily
+
+      ── PostgreSQL: Patient Lookup ──────────────────────────────
+        ✓ Patient found: Jane Doe (MRN: 0000012345)
+        Active medications: Lisinopril, Metformin, Atorvastatin,
+                            Omeprazole, Amlodipine
+
+      ── Neo4j: Interaction Check ────────────────────────────────
+        Checking Warfarin against 5 active medications...
+
+        ✗ MAJOR: Warfarin ↔ Omeprazole
+          Omeprazole may increase Warfarin levels, raising
+          bleeding risk. Consider alternative PPI or closer
+          INR monitoring.
+
+        ✗ MODERATE: Warfarin ↔ Atorvastatin
+          Statins may potentiate anticoagulant effect.
+          Monitor INR closely if co-prescribed.
+
+        RESULT: UNSAFE — 2 interactions detected (1 major).
+        ✗ Prescription NOT inserted.
+        → Review interactions with prescribing physician.
+
+      ══════════════════════════════════════════════════════════════
 
 .. dropdown:: Docker Compose Primer
    :icon: info
@@ -781,9 +965,8 @@ Docker Compose.
      ``docker-compose down -v`` to re-seed.
 
 
-.. dropdown:: Task 5.3: Docker Compose Deployment (1 point)
-   :icon: gear
-   :class-container: sd-border-primary
+.. admonition:: Task 5.3: Docker Compose Deployment (1 point)
+   :class: task
 
    .. tip::
 
@@ -858,10 +1041,8 @@ Part 6: Final Technical Report
 system. **No strict page limit** -- be thorough but concise. Submit
 as PDF.
 
-.. dropdown:: Task 6.1: Report Outline (8 points)
-   :icon: gear
-   :class-container: sd-border-primary
-   :open:
+.. admonition:: Task 6.1: Report Outline (8 points)
+   :class: task
 
    Your report must include **all of the following sections**:
 
@@ -923,20 +1104,19 @@ Folder Structure
    │   ├── graph_setup.cypher
    │   ├── graph_data.cypher
    │   └── cypher_queries.cypher
-   ├── src/
-   │   ├── config/
-   │   │   ├── database.py
-   │   │   ├── mongodb.py
-   │   │   └── neo4j_config.py
-   │   ├── repositories/
-   │   │   ├── postgres/
-   │   │   ├── mongodb/
-   │   │   └── neo4j/
-   │   ├── services/
-   │   │   ├── clinical_service.py
-   │   │   └── prescription_safety.py
-   │   └── cli/
-   │       └── main.py             # Updated with 2+ unified operations
+   ├── config/
+   │   ├── database.py             # Existing from GP2
+   │   ├── mongodb.py              # New
+   │   └── neo4j_config.py         # New
+   ├── repositories/
+   │   ├── postgres/               # Existing from GP2
+   │   ├── mongodb/
+   │   └── neo4j/
+   ├── services/
+   │   ├── clinical_service.py     # Existing, now cross-database
+   │   └── prescription_safety.py  # New: uses Neo4j
+   ├── cli/
+   │   └── main.py                 # Updated with 2+ unified operations
    ├── docs/
    │   ├── polyglot_design.pdf      # Partitioning, MongoDB schemas,
    │   │                           # Neo4j node/rel catalog, indexes
@@ -989,19 +1169,32 @@ Documentation Files
 
    .. code-block:: text
 
-      DB_HOST=localhost
+      # --- PostgreSQL ---
+      DB_HOST=localhost            # use "postgres" inside Docker Compose
       DB_PORT=5432
       DB_NAME=healthcare_management
       DB_USER=healthcare_admin
       DB_PASSWORD=<fill-in-your-password>
 
-      MONGO_HOST=localhost
+      # --- MongoDB ---
+      MONGO_HOST=localhost         # use "mongodb" inside Docker Compose
       MONGO_PORT=27017
       MONGO_DB=healthcare_management
 
-      NEO4J_URI=bolt://localhost:7687
+      # --- Neo4j ---
+      NEO4J_URI=bolt://localhost:7687   # use "bolt://neo4j:7687" inside Docker Compose
       NEO4J_USER=neo4j
       NEO4J_PASSWORD=<fill-in-your-password>
+
+   .. note::
+
+      When your app runs **inside Docker Compose**, it must connect to
+      the service names (``postgres``, ``mongodb``, ``neo4j``) instead
+      of ``localhost``. The provided
+      :doc:`Docker Compose Starter <scenario2_docker_starter>` already
+      sets the correct values in the ``app`` service's ``environment:``
+      block, so the ``.env`` values above are only used for **local
+      development** outside of Docker.
 
    **.env** (actual values used by your system -- see the
    "Credentials for Grading" section below for the policy and
@@ -1098,8 +1291,8 @@ Submission
    **Neo4j Files**:
 
    - [ ] ``graph_setup.cypher`` creates 4+ node types with properties
-   - [ ] ``graph_data.cypher`` populates minimum graph (15+
-     medications, 10+ diseases, 25+ interactions)
+   - [ ] ``graph_data.cypher`` populates minimum graph (10+
+     medications, 8+ diseases, 15+ interactions)
    - [ ] ``cypher_queries.cypher`` contains 4+ clinical decision
      support queries
    - [ ] Drug-interaction checking works for a list of medications
