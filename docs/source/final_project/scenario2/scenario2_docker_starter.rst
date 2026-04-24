@@ -135,7 +135,7 @@ the decisions yourself:
    (``NEO4J_URI``, ``NEO4J_USER``, ``NEO4J_PASSWORD``, etc.),
    **not** hard-coded values.
 5. **Log hygiene.** Quiet down pymongo / neo4j DEBUG logs before
-   the grader tries to read your output.
+   I try to read your output.
 
 
 Common First-Run Problems

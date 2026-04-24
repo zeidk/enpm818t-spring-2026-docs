@@ -126,7 +126,7 @@ the decisions yourself:
    replica-set setup or index builds. Wrap your first few queries in
    a short retry loop.
 5. **Log hygiene.** Quiet down pymongo / redis DEBUG logs before
-   the grader tries to read your output.
+   I try to read your output.
 
 
 Common First-Run Problems

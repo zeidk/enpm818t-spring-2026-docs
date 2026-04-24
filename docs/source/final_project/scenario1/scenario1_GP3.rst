@@ -82,8 +82,8 @@ report** documenting the system end-to-end.
    - **.env.example**: Add ``MONGO_*`` and ``REDIS_*`` variables
      alongside your existing ``DB_*`` variables.
    - **.env**: GP2 required ``.env`` to be in ``.gitignore``. For
-     GP3 you must **commit** ``.env`` with actual values so the
-     grader can run your system (see "Credentials for Grading"
+     GP3 you must **commit** ``.env`` with actual values so
+     I can run your system (see "Credentials for Grading"
      below).
 
 
@@ -883,7 +883,7 @@ Docker Compose.
    A single command -- ``docker-compose up --build`` -- starts
    PostgreSQL, MongoDB, Redis, and your Python app together. That is
    how polyglot systems are typically deployed in production, and it
-   is what the grader will use to run your submission. If your
+   is what I will use to run your submission. If your
    Compose file works, your three-database system is demonstrably
    reproducible on any machine with Docker installed.
 
@@ -1172,34 +1172,40 @@ Credentials for Grading
 -----------------------
 
 You need passwords to run the databases locally and inside Docker
-Compose. Because the instructor has to run your submission, you must
+Compose. Because I have to run your submission, you must
 share the passwords you used. **The policy for this assignment is:**
 
 1. Commit **both** ``.env.example`` (template with placeholders) and
    ``.env`` (actual values you used) in your submission.
 2. The ``.env`` file must contain the exact values your
    ``docker-compose.yml`` and application read at runtime, so that
-   ``docker-compose up --build`` works for the grader with zero
+   ``docker-compose up --build`` works for me with zero
    manual edits.
 
 .. warning::
 
    In a real project, ``.env`` **must be in ``.gitignore``** --
    committing secrets to a repository is a security anti-pattern.
-   For this course we explicitly override that practice so the
-   grader can run your system reproducibly. Treat every value in
+   For this course we explicitly override that practice so
+   I can run your system reproducibly. Treat every value in
    your ``.env`` as disposable and **do not reuse any password that
    protects a real account, service, or personal project**.
 
 **Recommended class-wide defaults** (use these unless you have a
-specific reason not to -- fewer variations make grading faster):
+specific reason not to -- fewer variations make grading faster).
+These are the values the
+:doc:`Docker Compose Starter <scenario1_docker_starter>` uses by
+default:
 
 .. code-block:: text
 
-   POSTGRES_PASSWORD=enpm818t
+   PG_USER=enpm
+   PG_PASSWORD=enpm818t
+   PG_DB=traffic_management
+   MONGO_DB=traffic_management
 
 If you use different values, your ``README.md`` must list them in
-a short "Credentials" section so the grader can verify them at a
+a short "Credentials" section so I can verify them at a
 glance.
 
 
@@ -1208,12 +1214,26 @@ Submission
 
 .. important::
 
-   Submit **one** ZIP file to Canvas: ``GP3_Traffic_Team{X}.zip``
+   **Two things to submit:**
 
-   Replace ``{X}`` with your team number (e.g.,
-   ``GP3_Traffic_Team03.zip``).
+   1. **Canvas**: Upload **one** ZIP file named
+      ``GP3_Traffic_Team{X}.zip`` (replace ``{X}`` with your team
+      number, e.g., ``GP3_Traffic_Team03.zip``). The ZIP must
+      contain the complete folder structure shown above.
+
+   2. **GitHub**: Paste your team's **GitHub repository link** in
+      the Canvas submission comments. The repository must be
+      **private** with me (``zeidk``) added as a
+      **collaborator**. The repository should contain the same
+      code as the ZIP.
 
    **Due**: Monday **05/12/2026** at 11:59 PM.
+
+   .. warning::
+
+      Any commits pushed to the GitHub repository **after the
+      deadline** will result in a **5-point deduction**.
+      I will check the commit history.
 
 
 .. admonition:: Submission Checklist
