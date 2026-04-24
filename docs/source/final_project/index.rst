@@ -330,7 +330,7 @@ Support Resources
 **Office Hours**
 
 - Instructor: By appointment (email zeidk@umd.edu)
-- TA: By appointment (email zhanif@umd.edu)
+- Instructor: By appointment (email zhanif@umd.edu)
 
 **Technical Documentation**
 

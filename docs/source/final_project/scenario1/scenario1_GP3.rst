@@ -49,6 +49,59 @@ report** documenting the system end-to-end.
    - Technical report: outline kept; no strict page limit
    - Optional presentation has been dropped
 
+.. dropdown:: Suggested Team Work Plan (~2.5 weeks)
+   :icon: clock
+   :class-container: sd-border-success
+   :open:
+
+   With 4 team members, the workload is roughly **10--14 hours per
+   student** over 2.5 weeks (~4--6 hours/week each). Use this table
+   to plan your work and parallelize across team members.
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 48 12
+      :class: compact-table
+
+      * - Deliverable
+        - Effort
+      * - Data partitioning analysis + Decision Templates
+        - 2--3 h
+      * - 4 MongoDB collection schemas + index strategy
+        - 3--4 h
+      * - ``mongo_setup.js`` with validation
+        - 2 h
+      * - ``mongo_data.js`` (500+ events, 200+ sensor readings)
+        - 3--4 h
+      * - 6 MongoDB queries with documentation
+        - 4--5 h
+      * - Redis: 5 data structures + 4 operations
+        - 4--5 h
+      * - 2 config modules (``mongodb.py``, ``redis_config.py``)
+        - 1--2 h
+      * - Repository classes for MongoDB + Redis
+        - 3--4 h
+      * - 2 unified CLI operations (cross-database)
+        - 4--6 h
+      * - Docker Compose + Dockerfile (starter provided)
+        - 2--3 h
+      * - ``polyglot_design.pdf``
+        - 4--5 h
+      * - ``technical_report.pdf`` (7 sections)
+        - 6--8 h
+      * - README update, ``team_contributions.md``, ``.env`` files
+        - 1--2 h
+      * - **Total (team)**
+        - **~40--55 h**
+
+   .. tip::
+
+      **Parallelize aggressively.** Two members can work on MongoDB
+      (Parts 2--3) while the other two work on Redis (Part 4). The
+      integration layer (Part 5) requires all pieces, so finish the
+      database-specific work by the end of week 1. Start Docker
+      early -- do not wait until the last day to containerize.
+
 .. admonition:: What Carries Over from GP2
    :class: important
 
