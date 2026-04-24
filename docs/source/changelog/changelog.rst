@@ -5,6 +5,336 @@ Changelog
 All notable changes to the ENPM818T Spring 2026 course documentation are recorded here.
 
 
+.. dropdown:: v4.0.0 -- Final Project Restructure: GP3 and GP4 Merged (2026-04-24)
+   :icon: tag
+   :class-container: sd-border-warning
+
+   Because of the compressed end-of-semester schedule, the original
+   GP3 (MongoDB) and GP4 (third database + Docker + final report) have
+   been combined into a single final deliverable named GP3. Total
+   project weight and skills covered are unchanged; scope has been
+   trimmed to remain achievable in roughly 2.5 weeks (04/24 -- 05/12).
+
+   .. rubric:: :doc:`../final_project/scenario1/scenario1_GP3` (rewritten)
+
+   - Rewritten to combine MongoDB (Parts 2-3: 4+ collections, 6+
+     queries) with the third-database track (Part 4: Redis, 5+ data
+     structures, 4+ operations -- reduced from 6+), cross-database
+     Python integration with **2** unified CLI operations (reduced
+     from 3), Docker Compose deployment (Part 5), and a final
+     technical report (Part 6, outline preserved, no strict page
+     limit).
+   - **Dates**: Posted Thursday 04/24/2026, due Monday 05/12/2026
+     at 11:59 PM.
+   - **Weight**: 25 points (50% of final project).
+   - Added a "What Changed from the Original Schedule" admonition
+     documenting the merge and scope cuts.
+   - Grading rubric rebalanced to sum to 25 points across six parts.
+   - Optional presentation dropped entirely.
+
+   .. rubric:: :doc:`../final_project/scenario2/scenario2_GP3` (rewritten)
+
+   - Same structural changes as Scenario 1, but with Neo4j as the
+     third database: 4+ node types and 4+ relationship types
+     (reduced from 6+/6+), minimum graph sizes reduced (15+
+     medications, 10+ diseases, 25+ interactions), 4+ Cypher queries
+     (reduced from 6+), drug-interaction-driven prescription safety
+     check preserved as a required unified operation.
+   - **Dates**: Same as Scenario 1.
+   - **Weight**: 25 points (50% of final project).
+
+   .. rubric:: scenario1/scenario1_GP4.rst and scenario2/scenario2_GP4.rst
+
+   - **Deleted**. Content merged into the new GP3.
+   - Removed from both scenario index toctrees.
+
+   .. rubric:: :doc:`../final_project/scenario1/index` and :doc:`../final_project/scenario2/index`
+
+   - "Three Cumulative Projects" replaces "Four"; project table
+     updated (removed the GP4 row, GP3 row rewritten to show
+     combined scope); GP3 dropdown rewritten as the merged
+     deliverable; GP4 dropdown removed; toctree removes GP4.
+
+   .. rubric:: :doc:`../final_project/index`
+
+   - Overview updated from "four progressive group projects" to
+     "three progressive group projects" with a ``.. note::``
+     explaining the merge.
+   - Project Weight table replaced: GP1 (10, 20%) + GP2 (15, 30%) +
+     GP3 Complete Polyglot System (25, 50%) = 50 points total
+     (unchanged project weight).
+   - Progressive Structure section rewritten to describe three
+     projects instead of four.
+   - Legacy "40% of your overall course grade" reference corrected
+     to 55% (matching the syllabus).
+
+   .. rubric:: :doc:`../syllabus/index`
+
+   - Grade Breakdown: Group Projects label changed from GP1--GP4
+     to GP1--GP3.
+   - Course Schedule: Week 11 deliverable dropped "GP3 Posted";
+     Week 12 now shows "GP3 Posted (04/24)"; Week 13 is Quiz 5
+     only; Week 15 shows "GP3 Due (Application + Report + Peer
+     Eval)".
+   - Group Projects table: GP4 row removed; GP3 row rewritten as
+     "Complete Polyglot System", Posted Week 12 (04/24), Due Week
+     15 (05/12), ~2.5 weeks, 50% of project.
+   - Added a parenthetical note documenting the merge.
+
+   .. rubric:: scenario1/scenario1_GP1.rst
+
+   - Forward-reference line updated from "foundation for GP2,
+     GP3, and GP4" to "foundation for GP2 and GP3 (complete
+     polyglot system...)".
+
+   .. rubric:: Docker Compose support (new)
+
+   - **Docker Compose Primer** dropdown added to both GP3 pages
+     before Task 5.3: what Compose is, service-name networking,
+     a command cheat-sheet (``up --build``, ``up -d``, ``down``,
+     ``down -v``, ``logs -f``, ``exec``, ``ps``, ``restart``),
+     minimal file anatomy, and common gotchas.
+   - **Docker Compose Starter files** committed as real files
+     under ``scenario{1,2}/starter/``:
+
+     - ``scenario1/starter/docker-compose.yml`` -- PostgreSQL +
+       MongoDB + Redis + app, with healthchecks,
+       ``service_healthy`` ``depends_on``, a ``mongo-seed``
+       sidecar that runs ``mongo_setup.js`` / ``mongo_data.js``
+       after Mongo is ready, named volumes, env-var-driven
+       passwords with class-wide defaults.
+     - ``scenario2/starter/docker-compose.yml`` -- same plus
+       Neo4j with a generous ``start_period`` for its 30-60
+       second first boot and a ``neo4j-seed`` sidecar that runs
+       ``graph_setup.cypher`` / ``graph_data.cypher`` via
+       ``cypher-shell``.
+     - ``scenario{1,2}/starter/Dockerfile`` -- Python 3.12-slim
+       with ``libpq-dev`` / ``build-essential`` for psycopg2
+       wheels, cache-friendly layer order.
+
+   - :doc:`../final_project/scenario1/scenario1_docker_starter`
+     and :doc:`../final_project/scenario2/scenario2_docker_starter`:
+     new pages that ``literalinclude`` the starter files,
+     explain how to adopt them, walk through the first
+     successful ``docker-compose up --build``, document what
+     students still have to do (app code, drivers, retry logic,
+     log hygiene), and troubleshoot 4-5 common first-run
+     problems. Added to both scenario toctrees and cross-linked
+     from Task 5.3 of each GP3 via a ``.. tip::`` block.
+
+   .. rubric:: Credentials for Grading (new policy)
+
+   - New "Credentials for Grading" section added to both GP3
+     pages between Documentation Files and Submission. Students
+     must commit **both** ``.env.example`` (placeholders) and
+     ``.env`` (actual values used) so ``docker-compose up
+     --build`` works for the grader with zero manual edits.
+   - Added ``.. warning::`` that this deliberately overrides
+     normal ``.gitignore`` practice and that students must use
+     throwaway passwords.
+   - Recommends class-wide defaults (``POSTGRES_PASSWORD=enpm818t``
+     for Scenario 1; ``PG_PASSWORD=enpm818t`` +
+     ``NEO4J_PASSWORD=enpm818t-neo4j`` for Scenario 2; Neo4j
+     requires 8+ chars).
+   - Folder structures and submission checklists in both GP3s
+     updated to include both ``.env.example`` and ``.env``.
+   - ``.env.example`` templates switched from ``your_password_here``
+     to ``<fill-in-your-password>`` placeholders for clarity.
+
+   .. rubric:: Report format
+
+   - ``docs/polyglot_design.md`` renamed to
+     ``docs/polyglot_design.pdf`` across both GP3 pages (matches
+     the existing ``design_report.pdf`` convention from GP1).
+   - Documentation Files section clarifies that students may
+     author in any format (Word, Google Docs, Markdown, LaTeX)
+     but must submit PDF; raw ``.md`` / ``.docx`` not accepted
+     for graded reports.
+
+
+.. dropdown:: v3.5.0 -- Lecture 11: Optimizing SQL Queries (2026-04-23)
+   :icon: tag
+   :class-container: sd-border-success
+
+   .. rubric:: lectures/lecture11/ (new)
+
+   Seven new RST files for the Optimizing SQL Queries lecture:
+
+   - :doc:`../lectures/lecture11/l11_index`: overview, learning
+     objectives (10 items), toctree, and next steps.
+   - :doc:`../lectures/lecture11/l11_lecture`: full lecture
+     covering the rules of perf, why query optimization is the
+     first performance lever, query plans and the optimizer,
+     ``EXPLAIN`` vs ``EXPLAIN ANALYZE`` (and safe diagnostics on
+     mutating queries with ``BEGIN; ... ROLLBACK;``), reading
+     basic plans (``Seq Scan``, cost/rows/width, ``Filter``,
+     ``Rows Removed by Filter``, planning vs execution time),
+     PostgreSQL cost constants (``seq_page_cost``,
+     ``random_page_cost``, ``cpu_tuple_cost``,
+     ``cpu_index_tuple_cost``, ``cpu_operator_cost``, parallel
+     costs), latency "magic numbers" (L1/L2 cache, RAM, SSD,
+     disk, network), unwinding advanced plans inside-out
+     (``Sort``, ``Merge Join``, ``GroupAggregate``, ``Limit``),
+     join-key selection and ``Memoize``, debugging CTE / view /
+     temp-table plans, ``EXPLAIN (ANALYZE, BUFFERS)`` /
+     ``(ANALYZE, MEMORY)`` / ``(ANALYZE, SERIALIZE)``, SARGABLE
+     vs non-SARGABLE predicates, compound-index design
+     (leftmost-prefix, ESR rule), index drawbacks, and the three
+     physical join strategies (Nested Loop, Merge, Hash).
+     Includes a brief transactions interlude and ACID coverage.
+   - :doc:`../lectures/lecture11/l11_postgres_setup`: Docker
+     (``postgres:17``) and native install options, plus a sample
+     ``employees`` / ``departments`` database with **both**
+     string and foreign-key join columns so students can
+     reproduce the ~3x speedup shown in lecture.
+   - :doc:`../lectures/lecture11/l11_exercises`: nine exercises
+     -- reading basic plans, estimate-vs-actual, SARGABLE
+     classification, compound-index design with ESR, reproducing
+     the join-key speedup, ``BUFFERS`` cold-vs-warm, unwinding a
+     complex plan, matching join strategy to workload, and safe
+     ``EXPLAIN ANALYZE`` on mutations. All include solutions.
+   - :doc:`../lectures/lecture11/l11_quiz`: 32 questions
+     (18 multiple choice, 10 true/false, 4 essay).
+   - :doc:`../lectures/lecture11/l11_references`: PostgreSQL
+     official docs (Using EXPLAIN, Planner Cost Constants,
+     Resource Consumption, Indexes, Planner/Optimizer, Planner
+     Statistics), textbook references (Silberschatz, GUW,
+     Kleppmann, Winand), and additional resources
+     (use-the-index-luke.com, explain.depesz.com, pgMustard,
+     ``pg_stat_statements``, PostgreSQL monitoring views).
+   - :doc:`../lectures/lecture11/l11_cheat_sheet`: condensed
+     reference for ``EXPLAIN`` variants, plan-line anatomy,
+     common operators, cost constants, magic numbers, SARGABLE
+     vs non-SARGABLE, ESR compound-index design, index
+     trade-offs, join strategies, and an optimization checklist.
+
+   .. rubric:: :doc:`../lectures/index`
+
+   - Added L11 row to the schedule table with topic "Optimizing
+     SQL Queries" and a comprehensive key-concepts list.
+   - Added ``lecture11/l11_index`` to the ``.. toctree::``.
+
+   .. rubric:: :doc:`../glossary/glossary`
+
+   - 18 new L11 terms added across existing letter sections,
+     and two new letter sections created (**H** and **Q**) with
+     corresponding entries in the letter-nav line:
+
+     - A: ACID
+     - B: BUFFERS (EXPLAIN option)
+     - C: Common Table Expression (CTE), Cost (Query Plan)
+     - E: ESR Rule (Equality-Sort-Range), EXPLAIN, EXPLAIN ANALYZE
+     - H (new): Hash Join
+     - L: Leftmost-Prefix Rule
+     - M: Memoize, Merge Join
+     - N: Nested Loop Join
+     - Q (new): Query Optimizer, Query Plan
+     - S: SARGABLE, Seq Scan (Sequential Scan), shared_buffers
+     - W: work_mem
+
+
+.. dropdown:: v3.4.0 -- Lecture 10: Key/Value Stores and Graph Databases (2026-04-23)
+   :icon: tag
+   :class-container: sd-border-success
+
+   .. rubric:: lectures/lecture10/ (new)
+
+   Nine new RST files for a two-topic lecture covering Key/Value
+   Stores (Part 1) and Graph Databases (Part 2):
+
+   - :doc:`../lectures/lecture10/l10_index`: overview, learning
+     objectives (10 items), toctree, and next steps.
+   - :doc:`../lectures/lecture10/l10_kv_lecture`: K/V data model,
+     ``put``/``get``/``delete`` API, in-memory vs persistent
+     stores, schemaless design (and why schemas always exist
+     implicitly), naming conventions and composite keys, a worked
+     Twitter-clone example, LevelDB internals (LSM trees,
+     MemTable, SSTable, compaction, bloom filters, tombstones),
+     LSM vs B-tree trade-offs, distributed challenges
+     (consensus, rendezvous hashing for sharding), CAP theorem,
+     PACELC classification (PA/EL, PA/EC, PC/EL, PC/EC), and
+     hands-on Redis.
+   - :doc:`../lectures/lecture10/l10_graph_lecture`: property
+     graph data model (nodes, labels, directed and typed
+     relationships, properties), graph use cases (social
+     networks, recommendations, fraud detection, knowledge
+     graphs), Cypher CRUD (``MATCH``, ``CREATE``, ``SET``,
+     ``REMOVE``, ``DELETE``, ``DETACH DELETE``), Cypher
+     analytics patterns (friend-of-a-friend, shortest path,
+     collaborative filtering, tree navigation, variable-length
+     paths), and hands-on Neo4j.
+   - :doc:`../lectures/lecture10/l10_redis_setup`: Docker
+     (Redis Stack) + native install options, plus sample data
+     for users/feeds/friends/leaderboard/sessions/Bloom filters.
+   - :doc:`../lectures/lecture10/l10_neo4j_setup`: Docker
+     (``neo4j:5-community``) + Desktop + AuraDB cloud options,
+     plus a sample social + purchase graph with constraints and
+     indexes.
+   - :doc:`../lectures/lecture10/l10_exercises`: 10 exercises
+     with dropdown solutions (5 K/V, 5 graph) -- key design for
+     a customer domain, Redis rate-limiter, leaderboard with
+     sorted sets, LSM-vs-B-tree choice, PACELC classification,
+     movie-recommendation graph modeling, Cypher CRUD warm-up,
+     shortest-path / traversal depth, SQL-vs-Cypher 3-hop
+     comparison, and choose-the-right-tool.
+   - :doc:`../lectures/lecture10/l10_quiz`: 32 questions
+     (18 multiple choice, 10 true/false, 4 essay).
+   - :doc:`../lectures/lecture10/l10_references`: Redis docs,
+     Neo4j / Cypher docs, textbook references (Silberschatz,
+     Sadalage & Fowler, Robinson et al., Kleppmann), and
+     additional resources (LevelDB, RocksDB, Cassandra paper,
+     Dynamo paper, PACELC paper, Jepsen analyses).
+   - :doc:`../lectures/lecture10/l10_cheat_sheet`: condensed
+     two-part reference covering the K/V data model, modeling
+     patterns, common Redis commands, LSM mental model, LSM vs
+     B-tree choice, rendezvous hashing, CAP / PACELC, and the
+     property-graph model, Cypher naming, patterns, CRUD,
+     analytics, and a NoSQL family decision checklist.
+
+   .. rubric:: :doc:`../lectures/index`
+
+   - Added L10 row to the schedule table with topic "Key/Value
+     Stores and Graph Databases" and a comprehensive
+     key-concepts list covering both halves of the lecture.
+   - Added ``lecture10/l10_index`` to the ``.. toctree::``.
+
+   .. rubric:: :doc:`../glossary/glossary`
+
+   - 26 new L10 terms added alphabetically across existing
+     letter sections:
+
+     - A: Availability (CAP)
+     - B: Bloom Filter
+     - C: CAP Theorem, Cassandra, Compaction (LSM),
+       Consensus (Distributed Systems), Consistency (CAP),
+       Cypher
+     - D: DynamoDB
+     - E: Embedded Database
+     - G: Graph Database
+     - I: In-Memory Database
+     - K: Key-Value Store (K/V Store)
+     - L: Label (Graph), LevelDB, LSM Tree (Log-Structured
+       Merge Tree)
+     - M: MemTable
+     - N: Neo4j, Node (Graph)
+     - P: PACELC, Partition Tolerance, Property (Graph),
+       Property Graph
+     - R: Redis, Relationship (Graph), Rendezvous Hashing
+     - S: Shortest Path (Cypher), SSTable (Sorted String Table)
+     - T: Tombstone (LSM), TTL (Time-To-Live)
+     - V: Variable-Length Path (Cypher)
+
+   .. rubric:: Accuracy pass
+
+   - Corrected ``BROTHER_OF`` / ``SISTER_OF`` direction in the
+     property-graph example (Daniel is male; Sunita is female).
+   - Cleaned up a multi-line Cypher ``CREATE`` pattern in
+     Exercise 7 that split ``->`` across lines.
+   - Fixed alphabetical placement of a handful of new glossary
+     entries that I initially dropped in the wrong spot (CAP,
+     Cassandra, Compaction, Property, In-Memory, TTL).
+
+
 .. dropdown:: v3.3.0 -- Reading Material: SELECT, Aggregates, and Subqueries (2026-04-01)
    :icon: tag
    :class-container: sd-border-success
