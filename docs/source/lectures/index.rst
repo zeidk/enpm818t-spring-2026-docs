@@ -47,6 +47,12 @@ Schedule
    * - L9
      - Document Store Databases
      - Document data model, BSON, nested documents and arrays, embedding vs referencing, MongoDB CRUD (``insertOne``, ``find``, ``updateOne``, ``deleteOne``), aggregation pipeline (``$match``, ``$group``, ``$sort``, ``$lookup``), indexing (compound, multikey, wildcard, partial, TTL), ``explain()`` output, WiredTiger storage (journaling, checkpoints, compression), replication (replica sets, oplog, elections, read/write concerns), sharding (shard keys, chunks, ``mongos``), design patterns (subset, schema versioning), anti-patterns (bloated documents, unbounded arrays)
+   * - L10
+     - Key/Value Stores and Graph Databases
+     - K/V data model, ``put``/``get``/``delete`` API, in-memory vs persistent stores, schemaless design, composite keys, LevelDB internals (LSM trees, MemTable, SSTable, compaction, bloom filters, tombstones), LSM vs B-tree trade-offs, distributed K/V (consensus, sharding via rendezvous hashing), CAP theorem, PACELC classification (PA/EL, PA/EC, PC/EL, PC/EC), Redis (strings, hashes, lists, sets, sorted sets, ``EXPIRE`` / ``TTL``, bloom filters); property-graph model (nodes, labels, directed and typed relationships, properties), graph use cases (social networks, recommendations, fraud detection, knowledge graphs), Cypher (``MATCH``, ``CREATE``, ``SET``, ``REMOVE``, ``DELETE``, ``DETACH DELETE``, variable-length paths, ``shortestPath``), Neo4j
+   * - L11
+     - Optimizing SQL Queries
+     - Query optimizer and query plans, ``EXPLAIN`` vs ``EXPLAIN ANALYZE``, safe diagnostics on mutating queries (``BEGIN; ... ROLLBACK;``), reading basic plans (``Seq Scan``, cost, rows, width, ``Filter``, ``Rows Removed by Filter``, planning and execution time), PostgreSQL cost constants (``seq_page_cost``, ``random_page_cost``, ``cpu_tuple_cost``, ``cpu_index_tuple_cost``, ``cpu_operator_cost``, ``parallel_setup_cost``, ``parallel_tuple_cost``), latency "magic numbers" (L1/L2 cache, RAM, SSD, disk, network), unwinding advanced plans inside-out (``Sort``, ``Merge Join``, ``GroupAggregate``, ``Limit``), join-key selection and ``Memoize``, debugging CTE / view / temp-table plans, advanced analysis (``EXPLAIN (ANALYZE, BUFFERS)`` / ``(ANALYZE, MEMORY)`` / ``(ANALYZE, SERIALIZE)``), SARGABLE vs non-SARGABLE predicates, compound-index design (leftmost-prefix, ESR rule), index drawbacks (write amplification, index size), physical join strategies (``Nested Loop``, ``Merge Join``, ``Hash Join``), how PostgreSQL chooses a join strategy (``work_mem``, indexes, selectivity, join condition type)
 
 
 .. Contents
@@ -65,3 +71,5 @@ Schedule
    lecture7/l7_index
    lecture8/l8_index
    lecture9/l9_index
+   lecture10/l10_index
+   lecture11/l11_index

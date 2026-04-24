@@ -7,7 +7,15 @@ Overview
 
 The final project is the capstone experience of ENPM818T, where you will design, implement, and deploy a complete polyglot persistence system. Working in teams of 4 students, you will build a real-world database application that leverages multiple database technologies, each chosen for its specific strengths.
 
-The project spans 9 weeks through four progressive group projects (GP1 through GP4), allowing you to apply everything you learn in lectures to a substantial, portfolio-worthy system.
+The project runs through three progressive group projects (GP1 through GP3), allowing you to apply everything you learn in lectures to a substantial, portfolio-worthy system.
+
+.. note::
+
+   The final project was originally structured as four group projects
+   (GP1 -- GP4). Due to the compressed end-of-semester schedule, the
+   original GP3 (MongoDB) and GP4 (third database + Docker + final
+   report) have been **combined into a single final GP3**. The total
+   project weight and the skills covered are unchanged.
 
 
 What is Polyglot Persistence?
@@ -103,7 +111,7 @@ Learn More About Polyglot Persistence
 Project Weight
 --------------
 
-The final project accounts for **40% of your overall course grade** and consists of:
+The final project accounts for **55% of your overall course grade** (see the syllabus for the full breakdown) and consists of:
 
 .. list-table::
    :header-rows: 1
@@ -122,18 +130,14 @@ The final project accounts for **40% of your overall course grade** and consists
      - 15
      - 30%
      - 3 weeks
-   * - GP3: NoSQL Database Integration
-     - 10
-     - 20%
-     - 2 weeks
-   * - GP4: System Integration + Report
-     - 15
-     - 30%
-     - 2 weeks
+   * - GP3: Complete Polyglot System (MongoDB + third DB + Docker + report)
+     - 25
+     - 50%
+     - ~2.5 weeks
    * - **Total**
      - **50**
      - **100%**
-     - **9 weeks**
+     - **~7.5 weeks**
 
 
 Learning Objectives
@@ -199,21 +203,18 @@ Each group project builds on the previous work:
 - Build Python application with repository and service layers
 - Create menu-driven CLI application
 
-**GP3: NoSQL Integration (2 weeks)**
+**GP3: Complete Polyglot System (~2.5 weeks)**
 
-- Design MongoDB collections for semi-structured data
-- Implement document schemas with embedding and referencing
-- Write 6+ MongoDB queries (aggregation pipelines, text search, array operations)
-- Integrate with existing PostgreSQL application
-- Document polyglot data partitioning decisions
-
-**GP4: Complete System Integration (2 weeks)**
-
-- Add third database (Redis for Traffic, Neo4j for Healthcare)
-- Implement complete three-database architecture
-- Deploy using Docker Compose
-- Write 8-to-12-page technical report
-- Optional: Present system to class
+- Design MongoDB collections for semi-structured data (4+ collections,
+  6+ aggregation / text / array queries)
+- Add a third database (Redis for Traffic, Neo4j for Healthcare):
+  5+ Redis data structures **or** a 4+ node-type / 4+ relationship-type
+  knowledge graph with 4+ Cypher queries
+- Integrate all three databases in Python with 2+ unified cross-database
+  CLI operations
+- Deploy the whole system with Docker Compose
+- Write a final technical report (outline provided; no strict page
+  limit)
 
 
 Team Formation

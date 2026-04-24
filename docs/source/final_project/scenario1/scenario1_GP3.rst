@@ -1,11 +1,16 @@
-=======================================================
-Group Project 3: MongoDB Document Database Integration
-=======================================================
+====================================================================
+Group Project 3: Complete Polyglot System (MongoDB + Redis)
+====================================================================
 
 Overview
 --------
 
-Add MongoDB to handle high-volume traffic event data with flexible schemas. Integrate with your PostgreSQL system to create a polyglot persistence architecture.
+This is the **final deliverable** of the course. You will combine MongoDB
+(for high-volume traffic events and flexible sensor schemas) and Redis
+(for real-time state and caching) with the PostgreSQL system you built
+in GP2, producing a **complete three-database polyglot architecture**
+deployed via Docker Compose. You will also write a final **technical
+report** documenting the system end-to-end.
 
 .. card::
    :class-card: sd-bg-dark sd-text-white sd-shadow-sm
@@ -16,10 +21,14 @@ Add MongoDB to handle high-volume traffic event data with flexible schemas. Inte
       :widths: 30 70
       :class: compact-table
 
+      * - **Posted**
+        - Thursday 04/24/2026
+      * - **Due**
+        - Monday 05/12/2026 at 11:59 PM
       * - **Duration**
-        - 2 weeks
+        - ~2.5 weeks
       * - **Weight**
-        - 10 points (20% of final project)
+        - 25 points (50% of final project, includes final report)
       * - **Builds on**
         - Your PostgreSQL system from GP2
       * - **Team Size**
@@ -27,62 +36,94 @@ Add MongoDB to handle high-volume traffic event data with flexible schemas. Inte
       * - **Submission**
         - Canvas + GitHub repository link
 
+.. admonition:: What Changed from the Original Schedule
+   :class: note
+
+   This assignment **combines the original GP3 (MongoDB) and GP4
+   (Redis + complete system + report)** into a single final deliverable
+   because of the compressed end-of-semester schedule. The scope has
+   been trimmed so the project remains achievable in ~2.5 weeks:
+
+   - Redis/third-DB queries and operations reduced from 6+ to 4
+   - Unified cross-database CLI operations reduced from 3 to 2
+   - Technical report: outline kept; no strict page limit
+   - Optional presentation has been dropped
+
 
 Learning Objectives
 -------------------
 
 By completing this group project, you will be able to:
 
-- Recognize when document databases are appropriate vs. relational
+- Recognize when document databases and key-value stores are appropriate
+  vs. relational
 - Design flexible document schemas with embedding and referencing
-- Write MongoDB aggregation pipelines for complex analytics
-- Implement geospatial queries in document databases
-- Integrate multiple databases in a Python application
-- Handle cross-database queries and data consistency
+- Write MongoDB aggregation pipelines and geospatial queries
+- Design Redis data structures for real-time state and caching
+- Implement cache-aside and write-through caching patterns
+- Use Redis pub/sub for real-time event broadcasting
+- Build a complete three-database architecture
+- Deploy polyglot systems using Docker Compose
+- Document complex distributed systems professionally
 
 
 Part 1: Polyglot Persistence Design
 ------------------------------------
 
-**Objective**: Analyze your data and decide what belongs in PostgreSQL vs. MongoDB.
+**Objective**: Analyze your data and decide what belongs in PostgreSQL,
+MongoDB, or Redis.
 
 .. dropdown:: Task 1.1: Data Partitioning Analysis (2 points)
    :icon: gear
    :class-container: sd-border-primary
    :open:
 
-   For each data type in your traffic management system, evaluate whether it belongs in PostgreSQL or MongoDB. Consider these factors:
+   For each data type in your traffic management system, evaluate
+   whether it belongs in **PostgreSQL**, **MongoDB**, or **Redis**.
+   Consider these factors:
 
    1. **Structure**: Fixed schema or variable?
    2. **Consistency**: Strong ACID needed or eventual consistency OK?
    3. **Relationships**: Many foreign keys or mostly independent?
-   4. **Query Pattern**: Complex JOINs or hierarchical/time-range access?
+   4. **Query Pattern**: Complex JOINs, hierarchical/time-range access,
+      or sub-ms key lookups?
    5. **Volume**: Moderate or high write throughput?
    6. **Evolution**: Schema stable or frequently changing?
+   7. **Staleness tolerance**: How fresh must reads be?
 
    .. list-table::
       :header-rows: 1
-      :widths: 30 35 35
+      :widths: 22 26 26 26
       :class: compact-table
 
       * - Characteristic
         - PostgreSQL
         - MongoDB
+        - Redis
       * - Schema
         - Fixed, rigid
         - Flexible, variable
+        - Key-addressed blobs
       * - Relationships
         - Many FKs, JOINs
         - Nested documents
+        - None
       * - Consistency
         - Strong ACID
-        - Eventual consistency
+        - Eventual OK
+        - Best-effort (in-mem)
       * - Volume
         - Moderate writes
-        - High write volume
+        - High writes
+        - Very high r/w
+      * - Latency
+        - ms range
+        - ms range
+        - sub-ms
       * - Evolution
-        - Migrations required
-        - Schema-less evolution
+        - Migrations
+        - Schema-less
+        - Ad-hoc keys
 
    **Decision Template** (use for each data type):
 
@@ -113,29 +154,45 @@ Part 1: Polyglot Persistence Design
    - Maintenance schedules (ACID transactions needed)
    - Emergency routes (complex relationships)
 
-   **Move to MongoDB** (new in GP3):
+   **Move to MongoDB** (new):
 
    - **Traffic flow events**: high-volume time-series measurements
-   - **Sensor readings**: variable schema per sensor type (camera, radar, lidar)
-   - **Incident reports**: embedded witness statements, flexible detail fields
+   - **Sensor readings**: variable schema per sensor type (camera,
+     radar, lidar)
+   - **Incident reports**: embedded witness statements, flexible
+     detail fields
    - **Traffic predictions**: ML model outputs, nested arrays
 
-   **Document your decisions and rationale** in ``docs/polyglot_design.md``. This file should also include your collection schemas (see Part 2) and index strategy.
+   **Cache / real-time state in Redis** (new):
 
-   **File to create**: ``docs/polyglot_design.md``
+   - **Current signal states**: read 100+ times/second, <10ms latency
+   - **Live intersection metrics**: hashes with per-intersection
+     status
+   - **Congestion rankings**: sorted-set leaderboard
+   - **Recent incidents queue**: list (newest-first)
+   - **Traffic alert broadcasting**: pub/sub channel
+
+   Document your decisions and rationale in
+   ``docs/polyglot_design.pdf``. This file should also include your
+   MongoDB collection schemas (Part 2), Redis structure catalog
+   (Part 4), and index strategy.
+
+   **File to create**: ``docs/polyglot_design.pdf``
 
 
 Part 2: MongoDB Schema Design
 ------------------------------
 
-**Objective**: Design document schemas for at least 4 collections with appropriate indexes.
+**Objective**: Design document schemas for at least 4 collections with
+appropriate indexes.
 
 .. dropdown:: Task 2.1: Required Collections (2 points)
    :icon: gear
    :class-container: sd-border-primary
    :open:
 
-   Design **at least 4 collections**. We show two detailed examples below; design at least two more of your own.
+   Design **at least 4 collections**. Two detailed examples are
+   provided below; design at least two more of your own.
 
    **1. traffic_flow_events**
 
@@ -190,9 +247,12 @@ Part 2: MongoDB Schema Design
         }
       }
 
-   **3-4. Your additional collections**: Choose from incident_reports, traffic_predictions, congestion_patterns, or others that make sense for your system.
+   **3-4. Your additional collections**: Choose from
+   incident_reports, traffic_predictions, congestion_patterns, or
+   others that make sense for your system.
 
-   **Schema Documentation Format** (include in ``docs/polyglot_design.md``):
+   **Schema Documentation Format** (include in
+   ``docs/polyglot_design.pdf``):
 
    .. code-block:: text
 
@@ -212,36 +272,17 @@ Part 2: MongoDB Schema Design
       Embedding Rationale: Lane distribution embedded because it is
         always queried with the parent event and is bounded (max 6 lanes)
 
-.. dropdown:: Embedding vs. Referencing
-   :icon: gear
-   :class-container: sd-border-primary
-
-   **Decision Tree**:
-
-   .. code-block:: text
-
-      Is data queried together?
-      |-- YES: Consider embedding
-      |   |-- Will embedding cause unbounded growth?
-      |       |-- YES: Use referencing
-      |       |-- NO: Embed
-      |-- NO: Use referencing
-
-   **Examples**:
-
-   - Embed: Lane distribution in traffic events (queried together, bounded)
-   - Do not embed: All sensor readings in intersection doc (unbounded growth)
-   - Reference: intersection_id to PostgreSQL (different databases)
-
 .. dropdown:: Task 2.2: Index Strategy (1 point)
    :icon: gear
    :class-container: sd-border-primary
 
-   For each collection, define appropriate indexes and document them in ``docs/polyglot_design.md``.
+   For each collection, define appropriate indexes and document them
+   in ``docs/polyglot_design.pdf``.
 
-   **MongoDB Index Types to Consider**:
+   **MongoDB index types to consider**:
 
-   - **Compound Indexes**: (intersection_id, timestamp) for time-range queries
+   - **Compound Indexes**: (intersection_id, timestamp) for
+     time-range queries
    - **Geospatial Indexes**: 2dsphere for location queries
    - **TTL Indexes**: Auto-delete old data (e.g., 90-day retention)
    - **Text Indexes**: Full-text search on incident descriptions
@@ -271,7 +312,8 @@ Part 3: MongoDB Implementation
    :class-container: sd-border-primary
    :open:
 
-   Create ``mongo_setup.js`` to define collections with validation and indexes:
+   Create ``mongo_setup.js`` to define collections with validation
+   and indexes:
 
    .. code-block:: javascript
 
@@ -309,13 +351,15 @@ Part 3: MongoDB Implementation
    - 200+ sensor readings (mix of camera, radar, lidar types)
    - Appropriate volumes for your additional collections
 
-   **Files to create**: ``mongodb/mongo_setup.js`` and ``mongodb/mongo_data.js``
+   **Files to create**: ``mongodb/mongo_setup.js`` and
+   ``mongodb/mongo_data.js``
 
 .. dropdown:: Task 3.2: Query Development (2 points)
    :icon: gear
    :class-container: sd-border-primary
 
-   Write **at least 6 MongoDB queries** covering the following categories:
+   Write **at least 6 MongoDB queries** covering the following
+   categories:
 
    **Aggregation Pipelines (3 queries minimum)**
 
@@ -331,7 +375,8 @@ Part 3: MongoDB Implementation
 
    Use MongoDB geospatial operators ($near, $geoWithin).
 
-   Example: *"Find sensor readings within 500m of a given incident location."*
+   Example: *"Find sensor readings within 500m of a given incident
+   location."*
 
    **Array Operations (2 queries minimum)**
 
@@ -339,7 +384,8 @@ Part 3: MongoDB Implementation
 
    Examples:
 
-   - *"Analyze lane-specific traffic patterns using $unwind on lane_distribution."*
+   - *"Analyze lane-specific traffic patterns using $unwind on
+     lane_distribution."*
    - *"Find events where any lane had average speed below 10 km/h."*
 
    **Query Documentation Format**:
@@ -359,12 +405,172 @@ Part 3: MongoDB Implementation
    **File to create**: ``mongodb/mongo_queries.js``
 
 
-Part 4: Python Integration
----------------------------
+Part 4: Redis Architecture and Implementation
+----------------------------------------------
 
-**Objective**: Extend your GP2 Python application with MongoDB support and cross-database services.
+**Objective**: Design a caching strategy, select appropriate Redis data
+structures, and implement them.
 
-.. dropdown:: Task 4.1: MongoDB Integration (2 points)
+.. dropdown:: Task 4.1: Caching Strategy and Data Structures (2 points)
+   :icon: gear
+   :class-container: sd-border-primary
+   :open:
+
+   Evaluate each data type for Redis suitability by considering read
+   frequency, latency requirements, and staleness tolerance.
+
+   **Caching Decision Template** (use for each data type you plan to
+   cache):
+
+   .. code-block:: text
+
+      Data: Current Signal States
+
+      Read Frequency: 100+ times/second (every dashboard refresh)
+      Write Frequency: Every 30-90 seconds (signal cycle changes)
+      Latency Requirement: <10ms (real-time display)
+      Staleness Tolerance: 5 seconds acceptable
+
+      Decision: Cache in Redis
+      Pattern: Write-through (update Redis on every signal change)
+      TTL: 300 seconds (safety net if writer fails)
+      Key Format: signal:{intersection_id}:{position}:state
+
+   Design **at least 5 Redis data structures**, using **one of each**
+   of the following types minimum. Document each structure with its
+   type, key pattern, TTL, write source, read pattern, and example
+   commands.
+
+   **1. Strings** -- Simple key-value:
+
+   .. code-block:: text
+
+      signal:15:north:state = "green"  (TTL: 300 seconds)
+
+   **2. Hashes** -- Objects with multiple fields:
+
+   .. code-block:: text
+
+      intersection:15:status = {
+        vehicle_count: 127,
+        avg_speed: 28.5,
+        congestion_level: "moderate",
+        last_update: "2026-02-19T14:30:00Z"
+      }
+
+   **3. Sorted Sets** -- Rankings:
+
+   .. code-block:: text
+
+      congestion:rankings = {
+        "intersection:15": 85.3,  // score = congestion level
+        "intersection:42": 91.5,
+        "intersection:23": 72.1
+      }
+
+   **4. Lists** -- Queues:
+
+   .. code-block:: text
+
+      incidents:recent = [incident_id_1, incident_id_2, ...]  // FIFO queue
+
+   **5. Pub/Sub** -- Broadcasting:
+
+   .. code-block:: text
+
+      channel:traffic_alerts = real-time alert broadcasting
+
+   **Data Structure Documentation Format**:
+
+   .. code-block:: text
+
+      Structure #1: Signal States
+
+      Redis Type: String
+      Key Pattern: signal:{intersection_id}:{position}:state
+      Value: Signal state string (green, yellow, red, flashing)
+      TTL: 300 seconds
+
+      Write Source: Signal controller updates (write-through)
+      Read Pattern: Dashboard polls every 2 seconds
+
+      Example Commands:
+        SET signal:15:north:state "green" EX 300
+        GET signal:15:north:state
+
+.. dropdown:: Caching Patterns Reference
+   :icon: gear
+   :class-container: sd-border-primary
+
+   **Cache-Aside Pattern** (Lazy Loading):
+
+   1. Application checks Redis
+   2. If MISS: Query PostgreSQL/MongoDB, store in Redis, return data
+   3. If HIT: Return cached data
+
+   **Write-Through Pattern**:
+
+   1. Application writes to database
+   2. Write to Redis cache immediately
+   3. Return success
+
+   **Cache Invalidation**: The hardest problem!
+
+   - Time-based: TTL expiration (simple but may serve stale data)
+   - Event-driven: Invalidate when source data changes (precise but
+     complex)
+   - Hybrid: TTL with manual invalidation for critical updates
+
+   **Document your chosen pattern for each cached data type with
+   justification** in ``docs/polyglot_design.pdf``.
+
+.. dropdown:: Task 4.2: Redis Setup and Operations (2 points)
+   :icon: gear
+   :class-container: sd-border-primary
+
+   **redis/redis_setup.py**: initialize all data structures with
+   sample data.
+
+   **redis/redis_operations.py**: implement **at least 4 operations**
+   covering the structure types you designed (write-through update,
+   sorted-set ranking query, pub/sub publish, cache-aside read).
+
+   .. code-block:: python
+
+      class RedisTrafficManager:
+          def update_signal_state(self, intersection_id, position, state):
+              """Update signal state with TTL."""
+              key = f"signal:{intersection_id}:{position}:state"
+              self.redis.setex(key, 300, state)  # 5 min TTL
+
+          def get_top_congested(self, limit=10):
+              """Get most congested intersections from sorted set."""
+              return self.redis.zrevrange(
+                  "congestion:rankings",
+                  0,
+                  limit - 1,
+                  withscores=True
+              )
+
+          def publish_alert(self, channel, message):
+              """Broadcast traffic alert via pub/sub."""
+              self.redis.publish(
+                  f"channel:{channel}",
+                  json.dumps(message)
+              )
+
+   **Files to create**: ``redis/redis_setup.py`` and
+   ``redis/redis_operations.py``
+
+
+Part 5: System Integration and Docker Deployment
+-------------------------------------------------
+
+**Objective**: Integrate all three databases in Python, add
+cross-database CLI operations, and deploy the whole system with
+Docker Compose.
+
+.. dropdown:: Task 5.1: Multi-Database Python Integration (2 points)
    :icon: gear
    :class-container: sd-border-primary
    :open:
@@ -376,42 +582,304 @@ Part 4: Python Integration
       traffic-management/
       ├── config/
       │   ├── database.py      # Existing: PostgreSQL
-      │   └── mongodb.py       # New: MongoDB connection
+      │   ├── mongodb.py       # New: MongoDB connection
+      │   └── redis_config.py  # New: Redis connection
       ├── repositories/
       │   ├── postgres/        # Existing from GP2
-      │   └── mongodb/         # New: MongoDB repositories
-      │       ├── traffic_events_repo.py
-      │       └── sensor_readings_repo.py
+      │   ├── mongodb/         # New
+      │   │   ├── traffic_events_repo.py
+      │   │   └── sensor_readings_repo.py
+      │   └── redis/           # New
+      │       └── cache_repo.py
       ├── services/
-      │   └── traffic_service.py  # Updated: Multi-database operations
+      │   └── traffic_service.py  # Updated: three-database operations
 
-   **Cross-Database Service Example**:
+   **Cross-Database Service Example** (combines all three):
 
    .. code-block:: python
 
       class TrafficDashboardService:
-          def get_intersection_dashboard(self, intersection_id):
-              # PostgreSQL: Intersection metadata
-              intersection = self.pg_repo.find_by_id(intersection_id)
+          def get_real_time_dashboard(self, intersection_id):
+              # PostgreSQL: infrastructure metadata (cached)
+              intersection = self._get_cached_intersection(intersection_id)
 
-              # MongoDB: Recent traffic events
+              # Redis: real-time metrics
+              current_metrics = self.redis.hgetall(
+                  f"intersection:{intersection_id}:status"
+              )
+
+              # MongoDB: recent history
               recent_events = self.mongo_repo.find_recent_events(
-                  intersection_id,
-                  minutes=60
+                  intersection_id, minutes=60
               )
 
               return {
-                  "intersection": intersection.to_dict(),
-                  "current_metrics": self._calculate_metrics(recent_events)
+                  "intersection": intersection,
+                  "current": current_metrics,
+                  "recent_history": recent_events,
               }
 
-   **New CLI Menu Options** (at least 3):
+          def _get_cached_intersection(self, intersection_id):
+              """Cache-aside pattern for PostgreSQL data."""
+              cache_key = f"cache:intersection:{intersection_id}"
+              cached = self.redis.get(cache_key)
+              if cached:
+                  return json.loads(cached)
 
-   - View recent traffic events for an intersection (MongoDB query)
-   - Show hourly traffic patterns for an intersection (aggregation pipeline)
-   - Intersection dashboard combining PostgreSQL metadata with MongoDB events (cross-database)
+              # Cache miss: fetch from PostgreSQL
+              intersection = self.pg_repo.find_by_id(intersection_id)
+              if intersection:
+                  self.redis.setex(
+                      cache_key, 3600, json.dumps(intersection.to_dict())
+                  )
+              return intersection.to_dict() if intersection else None
 
-   Update ``cli/main.py`` to include these new options alongside your GP2 options.
+.. dropdown:: Task 5.2: Unified CLI Operations (2 points)
+   :icon: gear
+   :class-container: sd-border-primary
+
+   Add CLI menu options that demonstrate all three databases working
+   together. You need **at least 2 unified operations**:
+
+   **Operation 1: Intersection Dashboard**
+
+   - PostgreSQL: infrastructure details
+   - MongoDB: last 60 min of traffic events
+   - Redis: current signal states and live metrics
+
+   **Operation 2: Report New Incident**
+
+   - Validate and insert into PostgreSQL
+   - Add detailed report to MongoDB
+   - Publish alert via Redis pub/sub
+   - Add to Redis recent incidents queue
+
+   (A third example you can use: **Top Congested Intersections**
+   -- Redis rankings joined to PostgreSQL metadata. Include it if
+   you have time.)
+
+   For each operation, document which databases are involved and why:
+
+   .. code-block:: text
+
+      Operation: Intersection Dashboard
+
+      Description: Real-time intersection view combining all databases
+
+      Databases Used:
+      - PostgreSQL: intersection metadata, signal config
+      - MongoDB: last 60 min of traffic events, sensor readings
+      - Redis: current signal states, live metrics
+
+   Update ``cli/main.py`` to include these new options alongside your
+   GP2 options and MongoDB options.
+
+.. dropdown:: Docker Compose Primer
+   :icon: info
+   :class-container: sd-border-info
+   :open:
+
+   **What is Docker Compose?**
+
+   Docker Compose is a tool for defining and running multi-container
+   applications. Instead of running ``docker run ...`` for each service
+   (one for PostgreSQL, one for MongoDB, one for Redis), you write a
+   single ``docker-compose.yml`` file that declares:
+
+   - Which **image** each service uses (e.g., ``postgres:14``)
+   - What **ports** are exposed to the host (e.g., ``5432``)
+   - What **volumes** persist data across container restarts
+   - What **environment variables** each service needs
+   - **Dependencies** between services (e.g., the app waits for the
+     databases before starting)
+
+   All services defined in the file share a Docker network and can
+   reach each other by **service name** (e.g., your Python app
+   connects to ``postgres:5432``, not ``localhost:5432``).
+
+   **Everyday commands**:
+
+   .. list-table::
+      :widths: 45 55
+      :header-rows: 1
+      :class: compact-table
+
+      * - **Command**
+        - **What it does**
+      * - ``docker-compose up --build``
+        - Build the app image and start all services in the
+          foreground. Stops on Ctrl+C.
+      * - ``docker-compose up -d``
+        - Start everything detached (background).
+      * - ``docker-compose down``
+        - Stop and remove all containers (keeps named volumes).
+      * - ``docker-compose down -v``
+        - Also remove named volumes (destroys persisted data).
+      * - ``docker-compose logs -f <service>``
+        - Tail logs for a specific service
+          (``postgres``, ``mongodb``, ``redis``, or ``app``).
+      * - ``docker-compose exec <service> <cmd>``
+        - Run a command inside a running service
+          (e.g., ``docker-compose exec postgres psql -U postgres``).
+      * - ``docker-compose ps``
+        - List the running services and their status.
+      * - ``docker-compose restart <service>``
+        - Restart one service without touching the others.
+
+   **Why it matters for this project**
+
+   A single command -- ``docker-compose up --build`` -- starts
+   PostgreSQL, MongoDB, Redis, and your Python app together. That is
+   how polyglot systems are typically deployed in production, and it
+   is what the grader will use to run your submission. If your
+   Compose file works, your three-database system is demonstrably
+   reproducible on any machine with Docker installed.
+
+   **Minimal file anatomy**
+
+   .. code-block:: yaml
+
+      version: '3.8'         # Compose file format version
+      services:              # One block per service
+        postgres:            # Service name (also the DNS name)
+          image: postgres:14 # Image to pull / build
+          ports:             # Host:container port mapping
+            - "5432:5432"
+          volumes:           # Named volume for persistence
+            - postgres_data:/var/lib/postgresql/data
+          environment:       # Env vars inside the container
+            POSTGRES_PASSWORD: ${PG_PASSWORD}  # From .env file
+      volumes:
+        postgres_data:       # Named-volume declaration
+
+   **Gotchas to plan for**
+
+   - When the app runs inside Compose, it connects to **service names**
+     (``postgres``, ``mongodb``, ``redis``), not ``localhost``. Your
+     ``.env`` should reflect this; supply both values for local dev
+     and in-compose use, or just use the service names.
+   - ``depends_on`` only waits for containers to **start**, not for
+     the database inside to be **ready** to accept connections. Your
+     app should retry connecting on startup.
+   - Schema-loading files placed in
+     ``./postgresql/:/docker-entrypoint-initdb.d`` run only on the
+     **first** boot of an empty data volume. Run
+     ``docker-compose down -v`` to re-seed.
+
+
+.. dropdown:: Task 5.3: Docker Compose Deployment (1 point)
+   :icon: gear
+   :class-container: sd-border-primary
+
+   .. tip::
+
+      **Do not write the compose file from scratch.** Start from the
+      skeleton provided on the
+      :doc:`Docker Compose Starter <scenario1_docker_starter>` page,
+      which gives you all four services (``postgres``, ``mongodb``,
+      ``redis``, ``app``) plus a ``mongo-seed`` sidecar, with
+      healthchecks and ``service_healthy`` dependencies already wired
+      up. Adapt it to your project rather than reinventing it -- the
+      grading target is a working three-database system.
+
+   For reference, a minimal structure looks like the following (the
+   starter is a superset of this):
+
+   .. code-block:: yaml
+
+      version: '3.8'
+      services:
+        postgres:
+          image: postgis/postgis:14-3.3
+          environment:
+            POSTGRES_DB: traffic_management
+          volumes:
+            - postgres_data:/var/lib/postgresql/data
+            - ./postgresql:/docker-entrypoint-initdb.d
+          ports:
+            - "5432:5432"
+
+        mongodb:
+          image: mongo:6
+          volumes:
+            - mongo_data:/data/db
+          ports:
+            - "27017:27017"
+
+        redis:
+          image: redis:7-alpine
+          command: redis-server --maxmemory 256mb
+          volumes:
+            - redis_data:/data
+          ports:
+            - "6379:6379"
+
+        app:
+          build: .
+          depends_on:
+            - postgres
+            - mongodb
+            - redis
+
+   After running ``docker-compose up --build``, verify:
+
+   1. PostgreSQL: schema loaded and data present
+   2. MongoDB: collections exist and data loaded
+   3. Redis: ``PING`` returns ``PONG``
+   4. Application starts and connects to all three databases
+
+   **Files to create**: ``docker-compose.yml`` and ``Dockerfile``
+
+
+Part 6: Final Technical Report
+-------------------------------
+
+**Objective**: Write a technical report documenting the complete
+system. **No strict page limit** -- be thorough but concise. Submit
+as PDF.
+
+.. dropdown:: Task 6.1: Report Outline (8 points)
+   :icon: gear
+   :class-container: sd-border-primary
+   :open:
+
+   Your report must include **all of the following sections**:
+
+   **1. Executive Summary**
+
+   System overview, three-database architecture, and key achievements.
+
+   **2. Architecture Overview**
+
+   System architecture diagram, component descriptions, and data flow
+   diagrams showing how data moves between PostgreSQL, MongoDB, and
+   Redis. Explicitly call out which database is the source of truth
+   for each data type.
+
+   **3. Database Design Decisions**
+
+   For each database (PostgreSQL, MongoDB, Redis): what data it
+   holds, why that database was chosen over the alternatives,
+   schema/structure highlights, and key design decisions (embedding
+   vs. referencing, key patterns, indexes, TTLs).
+
+   **4. Integration Architecture**
+
+   Cross-database operations, consistency strategies, cache
+   invalidation approach, and error handling when one database is
+   unavailable.
+
+   **5. Lessons Learned**
+
+   What worked well, challenges you faced, what you would do
+   differently.
+
+   **6. Team Contributions**
+
+   Each member's name, tasks completed, and contribution percentage
+   (sum to 100%).
+
+   **File to create**: ``docs/technical_report.pdf``
 
 
 Folder Structure
@@ -420,27 +888,40 @@ Folder Structure
 .. code-block:: text
 
    GP3_Traffic_Team{X}/
+   ├── postgresql/                 # From GP2
+   │   ├── schema.sql
+   │   ├── data.sql
+   │   └── queries.sql
    ├── mongodb/
    │   ├── mongo_setup.js          # Collection creation with validation
    │   ├── mongo_data.js           # Sample data for all collections
    │   └── mongo_queries.js        # 6+ documented queries
+   ├── redis/
+   │   ├── redis_setup.py          # Initialize all data structures
+   │   └── redis_operations.py     # 4+ operations across structures
    ├── src/
    │   ├── config/
    │   │   ├── database.py         # Existing: PostgreSQL
-   │   │   └── mongodb.py          # New: MongoDB connection
+   │   │   ├── mongodb.py          # New
+   │   │   └── redis_config.py     # New
    │   ├── repositories/
    │   │   ├── postgres/           # Existing from GP2
-   │   │   └── mongodb/            # New: MongoDB repositories
-   │   │       ├── traffic_events_repo.py
-   │   │       └── sensor_readings_repo.py
+   │   │   ├── mongodb/
+   │   │   └── redis/
    │   ├── services/
-   │   │   └── traffic_service.py  # Updated: cross-database operations
+   │   │   └── traffic_service.py  # Three-database operations
    │   └── cli/
-   │       └── main.py             # Updated: new MongoDB menu options
+   │       └── main.py             # Updated with 2+ unified operations
    ├── docs/
-   │   └── polyglot_design.md      # Partitioning, schemas, indexes
+   │   ├── polyglot_design.pdf      # Partitioning, schemas, indexes,
+   │   │                           # caching strategy, Redis structures
+   │   └── technical_report.pdf
+   ├── docker-compose.yml
+   ├── Dockerfile
    ├── requirements.txt
-   ├── .env.example
+   ├── .env.example              # template with placeholder values
+   ├── .env                      # actual values (committed for
+   │                             # grading -- see policy below)
    ├── README.md
    └── team_contributions.md
 
@@ -453,17 +934,34 @@ Documentation Files
    :class-container: sd-border-primary
    :open:
 
-   **docs/polyglot_design.md**
+   **docs/polyglot_design.pdf**
 
-   This is the main design document for GP3. It should contain three sections: (1) your data partitioning analysis explaining what stays in PostgreSQL and what moves to MongoDB with justifications for each data type, (2) your MongoDB collection schemas with document structures, embedding rationale, and expected volumes, and (3) your index strategy listing all indexes for each collection with their type, purpose, and the query patterns they support.
+   The main design document. **Submit as PDF** (you may author in
+   Word, Google Docs, Markdown, LaTeX -- whatever you prefer --
+   then export to PDF at submission time; do not submit a raw
+   ``.md`` or ``.docx``). It should contain four sections:
+   (1) data partitioning analysis across PostgreSQL, MongoDB, and
+   Redis with justifications for each data type;
+   (2) MongoDB collection schemas with document structures,
+   embedding rationale, and expected volumes;
+   (3) Index strategy for MongoDB with each index's type, purpose,
+   and supported queries;
+   (4) Redis caching strategy and data-structure catalog
+   documenting all 5+ structures with type, key pattern, TTL, write
+   source, read pattern, and example commands.
+
+   **docs/technical_report.pdf**
+
+   The final report (see Part 6 for required sections).
 
    **requirements.txt**
 
-   Updated from GP2 to include ``pymongo``.
+   Updated from GP2 to include ``pymongo`` and ``redis``.
 
-   **.env.example**
+   **.env.example** (template, no real values)
 
-   Updated from GP2 to include MongoDB connection variables:
+   Updated to include MongoDB and Redis connection variables. Use
+   obvious placeholders so it is clear this file is a template:
 
    .. code-block:: text
 
@@ -471,18 +969,69 @@ Documentation Files
       DB_PORT=5432
       DB_NAME=traffic_management
       DB_USER=postgres
-      DB_PASSWORD=your_password_here
+      DB_PASSWORD=<fill-in-your-password>
+
       MONGO_HOST=localhost
       MONGO_PORT=27017
       MONGO_DB=traffic_management
 
+      REDIS_HOST=localhost
+      REDIS_PORT=6379
+
+   **.env** (actual values used by your system -- see the
+   "Credentials for Grading" section below for the policy and
+   recommended defaults)
+
    **README.md**
 
-   Updated from GP2. Add MongoDB prerequisites (MongoDB 6+), setup instructions (``mongosh < mongodb/mongo_setup.js`` and ``mongosh < mongodb/mongo_data.js``), verification commands, and a data partitioning summary table showing which data lives in which database.
+   Updated from GP2. Add:
+
+   - MongoDB and Redis prerequisites.
+   - Docker quick-start instructions
+     (``docker-compose up --build``).
+   - An architecture summary table showing which database holds
+     which data.
+   - A description of the unified CLI operations.
 
    **team_contributions.md**
 
-   List each team member's name, tasks completed, hours contributed, and contribution percentage. Percentages must sum to 100%.
+   List each team member's name, tasks completed, hours contributed,
+   and contribution percentage. Percentages must sum to 100%.
+
+
+Credentials for Grading
+-----------------------
+
+You need passwords to run the databases locally and inside Docker
+Compose. Because the instructor has to run your submission, you must
+share the passwords you used. **The policy for this assignment is:**
+
+1. Commit **both** ``.env.example`` (template with placeholders) and
+   ``.env`` (actual values you used) in your submission.
+2. The ``.env`` file must contain the exact values your
+   ``docker-compose.yml`` and application read at runtime, so that
+   ``docker-compose up --build`` works for the grader with zero
+   manual edits.
+
+.. warning::
+
+   In a real project, ``.env`` **must be in ``.gitignore``** --
+   committing secrets to a repository is a security anti-pattern.
+   For this course we explicitly override that practice so the
+   grader can run your system reproducibly. Treat every value in
+   your ``.env`` as disposable and **do not reuse any password that
+   protects a real account, service, or personal project**.
+
+**Recommended class-wide defaults** (use these unless you have a
+specific reason not to -- fewer variations make grading faster):
+
+.. code-block:: text
+
+   POSTGRES_PASSWORD=enpm818t
+
+If you use different values, your ``README.md`` must list them in
+a short "Credentials" section so the grader can verify them at a
+glance.
 
 
 Submission
@@ -492,7 +1041,10 @@ Submission
 
    Submit **one** ZIP file to Canvas: ``GP3_Traffic_Team{X}.zip``
 
-   Replace ``{X}`` with your team number (e.g., ``GP3_Traffic_Team03.zip``).
+   Replace ``{X}`` with your team number (e.g.,
+   ``GP3_Traffic_Team03.zip``).
+
+   **Due**: Monday **05/12/2026** at 11:59 PM.
 
 
 .. admonition:: Submission Checklist
@@ -500,29 +1052,62 @@ Submission
 
    **Design Document**:
 
-   - [ ] ``polyglot_design.md`` covers partitioning, schemas, and indexes
-   - [ ] Each data type has a clear PostgreSQL vs. MongoDB justification
-   - [ ] 4+ collections documented with embedding rationale
+   - [ ] ``polyglot_design.pdf`` covers partitioning, MongoDB schemas,
+     indexes, caching strategy, and Redis structures
+   - [ ] Each data type has a clear PostgreSQL / MongoDB / Redis
+     justification
+   - [ ] 4+ MongoDB collections documented with embedding rationale
+   - [ ] 5+ Redis structures documented (1 of each core type
+     minimum)
 
    **MongoDB Files**:
 
-   - [ ] ``mongo_setup.js`` creates all collections with validation and indexes
-   - [ ] ``mongo_data.js`` loads realistic sample data (runs without errors)
+   - [ ] ``mongo_setup.js`` creates all collections with validation
+     and indexes
+   - [ ] ``mongo_data.js`` loads realistic sample data (runs without
+     errors)
    - [ ] ``mongo_queries.js`` contains 6+ queries with documentation
+
+   **Redis Files**:
+
+   - [ ] ``redis_setup.py`` initializes all structures with sample
+     data
+   - [ ] ``redis_operations.py`` implements 4+ operations across the
+     structure types
+   - [ ] Cache-aside pattern and pub/sub both implemented
 
    **Python Application**:
 
-   - [ ] MongoDB connection configured (pymongo)
-   - [ ] Repository classes for MongoDB collections
-   - [ ] Cross-database service methods working
-   - [ ] 3+ new CLI menu options for MongoDB data
+   - [ ] MongoDB and Redis connections configured
+   - [ ] Repository classes for each database
+   - [ ] 2+ unified CLI operations using all three databases
+   - [ ] Cache invalidation strategy implemented
+
+   **Deployment**:
+
+   - [ ] ``docker-compose.yml`` starts all three databases and the
+     application
+   - [ ] ``Dockerfile`` builds the application correctly
+   - [ ] ``docker-compose up --build`` results in a working system
+
+   **Final Report**:
+
+   - [ ] PDF with all six required sections (Exec Summary,
+     Architecture, Database Design Decisions, Integration,
+     Lessons Learned, Team Contributions)
+   - [ ] Architecture diagram included
+   - [ ] All three databases discussed with rationale
 
    **Supporting Files**:
 
-   - [ ] README.md updated with MongoDB setup instructions
-   - [ ] .env.example updated with MongoDB variables
-   - [ ] requirements.txt updated with pymongo
-   - [ ] team_contributions.md
+   - [ ] ``README.md`` updated with Docker quick-start instructions
+     (and a Credentials section if non-default values are used)
+   - [ ] ``requirements.txt`` updated with ``pymongo`` and ``redis``
+   - [ ] ``.env.example`` updated with MongoDB and Redis variables
+     (placeholders only)
+   - [ ] ``.env`` committed with the **actual** values used (policy:
+     see "Credentials for Grading")
+   - [ ] ``team_contributions.md`` (percentages sum to 100%)
 
 
 Grading Rubric
@@ -530,7 +1115,7 @@ Grading Rubric
 
 .. list-table::
    :header-rows: 1
-   :widths: 35 10 55
+   :widths: 38 10 52
    :class: compact-table
 
    * - Component
@@ -538,18 +1123,33 @@ Grading Rubric
      - Criteria
    * - **Part 1: Data Partitioning**
      - 2
-     - Clear rationale for each data type (1pt); documented decision framework (1pt)
-   * - **Part 2: Schema and Indexes**
+     - Clear rationale for each data type across PostgreSQL,
+       MongoDB, and Redis; documented decision framework
+   * - **Part 2: MongoDB Schema + Indexes**
      - 3
-     - 4+ collections with complete schemas and embedding rationale (2pts); appropriate indexes with justification (1pt)
-   * - **Part 3: Setup and Queries**
+     - 4+ collections with complete schemas and embedding rationale
+       (2 pts); appropriate indexes with justification (1 pt)
+   * - **Part 3: MongoDB Setup + Queries**
      - 3
-     - Collections with validation and realistic data (1pt); 6+ queries covering all categories with correct results (2pts)
-   * - **Part 4: Python Integration**
-     - 2
-     - MongoDB repositories and cross-database services (1pt); 3+ new CLI menu options working (1pt)
+     - Setup with validation + realistic data (1 pt); 6+ queries
+       covering all categories with correct results (2 pts)
+   * - **Part 4: Redis Architecture + Implementation**
+     - 4
+     - Caching decisions and 5+ data structures documented (2 pts);
+       setup + 4+ operations across structure types (2 pts)
+   * - **Part 5: Integration + Docker**
+     - 5
+     - Multi-database Python integration (2 pts); 2+ unified CLI
+       operations using all three databases (2 pts); working
+       Docker Compose (1 pt)
+   * - **Part 6: Technical Report**
+     - 8
+     - All six required sections (3 pts); architecture well-diagrammed
+       and justified (2 pts); database design decisions and
+       integration clearly explained (2 pts); lessons learned and
+       professional quality (1 pt)
    * - **Total**
-     - **10**
+     - **25**
      -
 
 
@@ -560,12 +1160,20 @@ Common Mistakes to Avoid
 
    **Frequent Errors**
 
-   - Treating MongoDB like SQL (many small collections with references instead of embedding related data)
+   - Treating MongoDB like SQL (many small collections with
+     references instead of embedding related data)
    - No schema validation (MongoDB is flexible, not lawless)
    - Missing TTL indexes (leads to unbounded storage growth)
-   - Using MongoDB ObjectIds to reference PostgreSQL without a clear strategy
-   - Only 10 documents per collection (does not demonstrate realistic usage)
-   - Choosing embed vs. reference without documented justification
+   - Caching everything (Redis memory is limited; be strategic)
+   - No TTL on cached data (stale data served indefinitely)
+   - Docker volumes not configured (data lost on container restart)
+   - Hardcoded connection strings (use environment variables)
+   - No cache invalidation (updating PostgreSQL but forgetting to
+     invalidate Redis)
+   - Pub/sub without subscribers (publishing alerts but no service
+     listens)
+   - Only 10 documents per collection (does not demonstrate realistic
+     usage)
 
 
 Tips for Success
@@ -573,8 +1181,41 @@ Tips for Success
 
 .. tip::
 
-   - **Design schemas before coding**: Sketch your document structures on paper first. Think about what gets queried together.
-   - **Embrace the document model**: If you find yourself creating many small collections with references between them, you are probably still thinking relationally.
-   - **Test aggregation pipelines incrementally**: Build pipelines one stage at a time in mongosh. Add $match, verify results, then add $group, verify again.
-   - **Use realistic cross-references**: When your MongoDB documents reference PostgreSQL intersection_ids, make sure those IDs actually exist in your GP2 data.
-   - **Use office hours**: Bring your schema designs for review. Discuss embedding vs. referencing trade-offs with instructors.
+   - **Start by sketching the three-database diagram**: which data
+     lives where, and which service touches which database.
+     Everything else follows from this.
+   - **Design MongoDB schemas before coding**. Decide what to embed
+     vs. reference. Think about what gets queried together.
+   - **Design Redis keys before coding**. Use a consistent
+     ``entity:id:field`` pattern. Think about TTLs.
+   - **Implement cache-aside first** for one entity, then extend.
+   - **Test with Docker early**. Do not wait until the last day to
+     containerize. Build and test Docker Compose incrementally.
+   - **Write the report throughout**. Capture architecture decisions
+     and screenshots as you build. Do not try to reconstruct
+     everything at the end.
+   - **Use office hours**. Bring schema designs, Docker issues, and
+     report structure for review.
+
+
+Final Project Summary
+---------------------
+
+.. admonition:: Cumulative Achievement
+   :class: note
+
+   **Points**:
+
+   - GP1: Relational Design = 10 points
+   - GP2: PostgreSQL + Python = 15 points
+   - GP3: Complete Polyglot System = 25 points
+   - **Total**: 50 points
+
+**Your Achievement**:
+
+You have built a production-grade polyglot persistence system
+demonstrating relational database design and normalization, complex
+SQL query optimization, document databases for high-volume flexible
+data, in-memory caching and pub/sub for real-time performance,
+cross-database integration, CLI application development, Docker
+deployment, and professional technical documentation.

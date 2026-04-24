@@ -11,7 +11,7 @@ Grade Breakdown
 
    * - Assignment
      - Percentage
-   * - Group Projects (GP1--GP4)
+   * - Group Projects (GP1--GP3)
      - 55%
    * - Quizzes
      - 40%
@@ -66,19 +66,19 @@ Course Schedule
      -
    * - 11 (04/14)
      - Key-Value (Redis) + Graph Databases (Neo4j)
-     - GP2 Due, GP3 Posted, Quiz 4
+     - GP2 Due, Quiz 4
    * - 12 (04/21)
      - Query Optimization + Indexing
-     -
+     - GP3 Posted (04/24)
    * - 13 (04/28)
      - Production Operations: Docker, Cloud, Migrations
-     - GP3 Due, GP4 Posted, Quiz 5
+     - Quiz 5
    * - 14 (05/05)
      - CTEs + Window Functions + Scaling
      -
    * - 15 (05/12)
      - Database Internals + Vector Databases
-     - GP4 Due (Application + Report + Peer Eval)
+     - GP3 Due (Application + Report + Peer Eval)
 
 .. note::
 
@@ -94,13 +94,13 @@ The group projects are the core of this course. Students work in teams to build 
 1. **Smart City Traffic Management System** (PostgreSQL + MongoDB + Redis)
 2. **Healthcare Patient Management Platform** (PostgreSQL + MongoDB + Neo4j)
 
-The project integrates PostgreSQL, MongoDB, and Redis into a unified Python application deployed to a cloud environment. Each team member is expected to contribute actively to the project, ensuring equitable participation and shared responsibility.
+The project integrates PostgreSQL, MongoDB, and a third database (Redis for Traffic, Neo4j for Healthcare) into a unified Python application deployed with Docker Compose. Each team member is expected to contribute actively to the project, ensuring equitable participation and shared responsibility.
 
-Each project consists of four cumulative group projects (GP1 through GP4), where each builds on the previous deliverable.
+Each project consists of three cumulative group projects (GP1 through GP3), where each builds on the previous deliverable. (The course was originally structured as four projects; due to the compressed end-of-semester schedule, the original GP3 and GP4 have been merged into a single final GP3 of equal combined scope.)
 
 .. list-table::
    :header-rows: 1
-   :widths: 30 12 12 20 12
+   :widths: 36 12 12 18 12
    :class: compact-table
 
    * - Project
@@ -112,19 +112,14 @@ Each project consists of four cumulative group projects (GP1 through GP4), where
      - Week 5
      - Week 8
      - 2 weeks
-     - 25%
+     - 20%
    * - GP2: PostgreSQL + Python
      - Week 8
      - Week 11
      - 3 weeks
-     - 37.5%
-   * - GP3: MongoDB Integration
-     - Week 11
-     - Week 13
-     - 2 weeks
-     - 25%
-   * - GP4: Complete System
-     - Week 13
-     - Week 15
-     - 2 weeks
-     - 12.5%
+     - 30%
+   * - GP3: Complete Polyglot System
+     - Week 12 (04/24)
+     - Week 15 (05/12)
+     - ~2.5 weeks
+     - 50%

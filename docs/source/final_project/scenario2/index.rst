@@ -129,13 +129,10 @@ Progressive Development
      - 3 weeks
      - Secure schema, clinical queries, CLI application
    * - **GP3**
-     - MongoDB Integration
-     - 2 weeks
-     - Clinical document schemas, aggregations, cross-database services
-   * - **GP4**
-     - Complete System
-     - 2 weeks
-     - Neo4j knowledge graph, Docker deployment, final report
+     - Complete Polyglot System (MongoDB + Neo4j)
+     - ~2.5 weeks
+     - Clinical document schemas, medical knowledge graph,
+       Docker deployment, technical report
 
 .. dropdown:: GP1: Relational Database Design (2 weeks)
    :icon: gear
@@ -165,33 +162,28 @@ Progressive Development
 
    **Deliverables**: SQL scripts, Python CLI application
 
-.. dropdown:: GP3: MongoDB Integration (2 weeks)
+.. dropdown:: GP3: Complete Polyglot System (~2.5 weeks)
    :icon: gear
    :class-container: sd-border-primary
 
-   Add document database for clinical documentation:
+   Add MongoDB and Neo4j to complete the three-database polyglot
+   system (this deliverable merges the original GP3 and GP4):
 
    - Design 4+ MongoDB collections for clinical documents
-   - Choose embedding vs. referencing for clinical data
-   - Write 6+ aggregation pipelines and text search queries
-   - Integrate with PostgreSQL for unified patient records
-
-   **Deliverables**: MongoDB schemas, clinical queries, integrated Python application
-
-.. dropdown:: GP4: Neo4j + Complete System (2 weeks)
-   :icon: gear
-   :class-container: sd-border-primary
-
-   Add medical knowledge graph and complete the system:
-
-   - Design graph with 6+ node types (diseases, medications, symptoms)
-   - Model 6+ relationship types (interactions, treatments, contraindications)
-   - Write 6+ Cypher queries for clinical decision support
-   - Implement drug interaction checking
+   - Write 6+ MongoDB aggregation pipelines and text search queries
+   - Design a medical knowledge graph with 4+ node types and 4+
+     relationship types (drug interactions, treatments,
+     contraindications)
+   - Write 4+ Cypher queries for clinical decision support
+   - Implement drug-interaction checking in a prescription safety
+     workflow
+   - Add 2+ unified CLI operations using all three databases
    - Deploy with Docker Compose
-   - Write final technical report (8 to 12 pages)
+   - Write a final technical report
 
-   **Deliverables**: Neo4j graph, clinical decision support CLI, deployed system, final report
+   **Deliverables**: MongoDB schemas and queries, Neo4j graph and
+   queries, clinical decision support CLI, Docker deployment,
+   technical report
 
 
 Key Design Challenges
@@ -297,5 +289,5 @@ Project Details
    scenario2_GP1
    scenario2_GP2
    scenario2_GP3
-   scenario2_GP4
+   scenario2_docker_starter
    data_generation_guide

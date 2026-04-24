@@ -1,11 +1,16 @@
-===========================================================
-Group Project 3: MongoDB Document Database Integration
-===========================================================
+=========================================================================
+Group Project 3: Complete Polyglot System (MongoDB + Neo4j)
+=========================================================================
 
 Overview
 --------
 
-Add MongoDB to handle semi-structured clinical documents and healthcare data with flexible schemas. Integrate with your PostgreSQL system to create a polyglot persistence architecture for unified patient records.
+This is the **final deliverable** of the course. You will combine MongoDB
+(for semi-structured clinical documents) and Neo4j (for a medical
+knowledge graph and clinical decision support) with the PostgreSQL
+system you built in GP2, producing a **complete three-database polyglot
+architecture** deployed via Docker Compose. You will also write a
+final **technical report** documenting the system end-to-end.
 
 .. card::
    :class-card: sd-bg-dark sd-text-white sd-shadow-sm
@@ -16,16 +21,34 @@ Add MongoDB to handle semi-structured clinical documents and healthcare data wit
       :widths: 30 70
       :class: compact-table
 
+      * - **Posted**
+        - Thursday 04/24/2026
+      * - **Due**
+        - Monday 05/12/2026 at 11:59 PM
       * - **Duration**
-        - 2 weeks
+        - ~2.5 weeks
       * - **Weight**
-        - 10 points (20% of final project)
+        - 25 points (50% of final project, includes final report)
       * - **Builds on**
         - Your secure PostgreSQL system from GP2
       * - **Team Size**
         - 4 students
       * - **Submission**
         - Canvas + GitHub repository link
+
+.. admonition:: What Changed from the Original Schedule
+   :class: note
+
+   This assignment **combines the original GP3 (MongoDB) and GP4
+   (Neo4j + complete system + report)** into a single final deliverable
+   because of the compressed end-of-semester schedule. The scope has
+   been trimmed so the project remains achievable in ~2.5 weeks:
+
+   - Cypher queries reduced from 6+ to 4 (and graph minimum sizes
+     reduced proportionally)
+   - Unified cross-database CLI operations reduced from 3 to 2
+   - Technical report: outline kept; no strict page limit
+   - Optional presentation has been dropped
 
 
 Learning Objectives
@@ -36,27 +59,37 @@ By completing this group project, you will be able to:
 - Recognize when document databases are appropriate for clinical data
 - Design flexible document schemas for clinical documentation
 - Choose embedding vs. referencing for healthcare data
-- Write MongoDB aggregation pipelines for clinical analytics
-- Implement text search on clinical narratives
-- Integrate multiple databases for unified patient records
+- Write MongoDB aggregation pipelines and text search on clinical
+  narratives
+- Design medical knowledge graphs with clinically meaningful
+  relationships
+- Write Cypher queries for drug interaction checking
+- Implement clinical decision support using graph traversals
+- Build a complete three-database healthcare architecture
+- Deploy polyglot systems using Docker Compose
+- Document complex clinical systems professionally
 
 
 Part 1: Polyglot Persistence Design
 ------------------------------------
 
-**Objective**: Analyze your clinical data and decide what belongs in PostgreSQL vs. MongoDB.
+**Objective**: Analyze your clinical data and decide what belongs in
+PostgreSQL, MongoDB, or Neo4j.
 
 .. dropdown:: Task 1.1: Data Partitioning Analysis (2 points)
    :icon: gear
    :class-container: sd-border-primary
    :open:
 
-   For each data type, evaluate whether it belongs in PostgreSQL or MongoDB. Consider these factors:
+   For each data type in your healthcare system, evaluate whether it
+   belongs in **PostgreSQL**, **MongoDB**, or **Neo4j**. Consider:
 
    1. **Structure**: Fixed schema or variable by clinical context?
    2. **Consistency**: Strong ACID needed or eventual consistency OK?
-   3. **Relationships**: Many foreign keys or self-contained documents?
-   4. **Query Pattern**: Complex JOINs or hierarchical document access?
+   3. **Relationships**: Many foreign keys, self-contained documents,
+      or networked knowledge?
+   4. **Query Pattern**: Complex JOINs, document retrieval, or
+      multi-hop graph traversal?
    5. **Volume**: Moderate or high write throughput?
    6. **Evolution**: Schema stable or changes with clinical practice?
 
@@ -76,39 +109,57 @@ Part 1: Polyglot Persistence Design
       6. Evolution: High (new note templates added frequently)
 
       Decision: MongoDB
-      Justification: Variable structure per note type, text search needed,
-                     minimal relational needs, schema evolves with practice
+      Justification: Variable structure per note type, text search
+                     needed, minimal relational needs, schema evolves
+                     with practice
 
    **Keep in PostgreSQL** (from GP2):
 
-   - Patient demographics (structured, ACID transactions, access-controlled)
+   - Patient demographics (structured, ACID, access-controlled)
    - Appointments and scheduling (complex relationships)
    - Prescriptions and medications (strong consistency required)
    - Insurance claims and billing (financial accuracy, ACID)
 
-   **Move to MongoDB** (new in GP3):
+   **Move to MongoDB** (new):
 
-   - **Clinical notes**: variable structure by note type (progress, consult, discharge)
-   - **Medical imaging metadata**: DICOM headers vary by modality (CT, MRI, X-ray)
-   - **Care plans**: nested protocols, goals, and interventions
-   - **Patient surveys**: different question sets by survey type (PHQ-9, GAD-7, pain scales)
+   - **Clinical notes**: variable structure by note type (progress,
+     consult, discharge)
+   - **Medical imaging metadata**: DICOM headers vary by modality
+     (CT, MRI, X-ray)
+   - **Care plans**: nested protocols, goals, interventions
+   - **Patient surveys**: different question sets by survey type
+     (PHQ-9, GAD-7, pain scales)
 
-   **Document your decisions and rationale** in ``docs/polyglot_design.md``. This file should also include your collection schemas (see Part 2) and index strategy.
+   **Model in Neo4j** (new):
 
-   **File to create**: ``docs/polyglot_design.md``
+   - **Diseases** with ICD-10 codes, category, chronic/acute
+   - **Medications** with drug class, dosage forms
+   - **Symptoms** and **lab tests**
+   - **Drug interactions** (bidirectional, severity)
+   - **Treatment pathways** (disease → medication) with evidence level
+   - **Contraindications** (medication → disease)
+
+   Document your decisions and rationale in
+   ``docs/polyglot_design.pdf``. This file should also include your
+   MongoDB collection schemas (Part 2), Neo4j node/relationship
+   catalog (Part 4), and index strategy.
+
+   **File to create**: ``docs/polyglot_design.pdf``
 
 
 Part 2: MongoDB Schema Design
 ------------------------------
 
-**Objective**: Design document schemas for at least 4 collections with appropriate indexes.
+**Objective**: Design document schemas for at least 4 collections with
+appropriate indexes.
 
 .. dropdown:: Task 2.1: Required Collections (2 points)
    :icon: gear
    :class-container: sd-border-primary
    :open:
 
-   Design **at least 4 collections**. We show two detailed examples below; design at least two more of your own.
+   Design **at least 4 collections**. Two detailed examples are
+   provided below; design at least two more of your own.
 
    **1. clinical_notes**
 
@@ -182,61 +233,50 @@ Part 2: MongoDB Schema Design
         }
       }
 
-   **3-4. Your additional collections**: Choose from care_plans, patient_surveys, adverse_events, telemedicine_sessions, or others that make sense for your system.
+   **3-4. Your additional collections**: Choose from care_plans,
+   patient_surveys, adverse_events, telemedicine_sessions, or others
+   that make sense for your system.
 
-   **Schema Documentation Format** (include in ``docs/polyglot_design.md``):
+   **Schema Documentation Format** (include in
+   ``docs/polyglot_design.pdf``):
 
    .. code-block:: text
 
       Collection: clinical_notes
 
-      Purpose: Store clinical documentation with variable structure by note type
+      Purpose: Store clinical documentation with variable structure by
+      note type
 
       Document Structure:
       - _id: ObjectId (auto-generated)
       - patient_id: Integer (references PostgreSQL)
       - provider_id: Integer (references PostgreSQL)
       - encounter_date: ISODate
-      - note_type: String (enum: progress_note, consultation, discharge_summary)
+      - note_type: String (enum: progress_note, consultation,
+        discharge_summary)
       - [remaining fields vary by note_type]
 
-      Embedding Rationale: Vital signs embedded within physical_exam because
-        they are always queried with the parent note and are bounded.
-
-.. dropdown:: Embedding vs. Referencing
-   :icon: gear
-   :class-container: sd-border-primary
-
-   **Decision Tree**:
-
-   .. code-block:: text
-
-      Is clinical data queried together?
-      |-- YES: Consider embedding
-      |   |-- Will embedding cause unbounded growth?
-      |       |-- YES: Use referencing
-      |       |-- NO: Embed
-      |-- NO: Use referencing
-
-   **Healthcare Examples**:
-
-   - Embed: Vital signs within clinical note (always queried together, bounded)
-   - Embed: Survey responses within survey document (always read together)
-   - Do not embed: All clinical notes within patient doc (unbounded growth)
-   - Reference: patient_id and provider_id to PostgreSQL (different databases)
+      Embedding Rationale: Vital signs embedded within physical_exam
+        because they are always queried with the parent note and
+        are bounded.
 
 .. dropdown:: Task 2.2: Index Strategy (1 point)
    :icon: gear
    :class-container: sd-border-primary
 
-   For each collection, define appropriate indexes and document them in ``docs/polyglot_design.md``.
+   For each collection, define appropriate indexes and document them
+   in ``docs/polyglot_design.pdf``.
 
-   **Index Types to Consider**:
+   **Index types to consider**:
 
-   - **Compound Indexes**: (patient_id, encounter_date) for patient timeline queries
-   - **Text Indexes**: Full-text search on clinical narratives (chief_complaint, assessment, plan)
-   - **TTL Indexes**: Auto-delete telemedicine session logs after retention period
-   - **Partial Indexes**: Unsigned notes only (for provider review workflow)
+   - **Compound Indexes**: (patient_id, encounter_date) for patient
+     timeline queries
+   - **Text Indexes**: Full-text search on clinical narratives
+     (chief_complaint, assessment, plan)
+   - **TTL Indexes**: Auto-delete telemedicine session logs after
+     retention period
+   - **Partial Indexes**: Unsigned notes only (for provider review
+     workflow)
 
 
 Part 3: MongoDB Implementation
@@ -249,7 +289,8 @@ Part 3: MongoDB Implementation
    :class-container: sd-border-primary
    :open:
 
-   Create ``mongo_setup.js`` to define collections with validation and indexes:
+   Create ``mongo_setup.js`` to define collections with validation
+   and indexes:
 
    .. code-block:: javascript
 
@@ -292,25 +333,30 @@ Part 3: MongoDB Implementation
    - 100+ imaging metadata records
    - Appropriate volumes for your additional collections
 
-   **Files to create**: ``mongodb/mongo_setup.js`` and ``mongodb/mongo_data.js``
+   **Files to create**: ``mongodb/mongo_setup.js`` and
+   ``mongodb/mongo_data.js``
 
 .. dropdown:: Task 3.2: Query Development (2 points)
    :icon: gear
    :class-container: sd-border-primary
 
-   Write **at least 6 MongoDB queries** covering the following categories:
+   Write **at least 6 MongoDB queries** covering the following
+   categories:
 
    **Aggregation Pipelines (3 queries minimum)**
 
    Examples:
 
    - *"Clinical documentation volume by provider and note type."*
-   - *"Patient survey scoring and trend analysis (e.g., PHQ-9 depression screening)."*
-   - *"Average time between admission and discharge summary completion."*
+   - *"Patient survey scoring and trend analysis (e.g., PHQ-9
+     depression screening)."*
+   - *"Average time between admission and discharge summary
+     completion."*
 
    **Text Search (1 query minimum)**
 
-   Example: *"Search clinical notes for a specific diagnosis or symptom across all note types."*
+   Example: *"Search clinical notes for a specific diagnosis or
+   symptom across all note types."*
 
    **Array Operations (2 queries minimum)**
 
@@ -336,12 +382,212 @@ Part 3: MongoDB Implementation
    **File to create**: ``mongodb/mongo_queries.js``
 
 
-Part 4: Python Integration
----------------------------
+Part 4: Neo4j Medical Knowledge Graph
+--------------------------------------
 
-**Objective**: Extend your GP2 Python application with MongoDB support and cross-database clinical services.
+**Objective**: Design a medical knowledge graph with clinically
+meaningful node types and relationships, and write Cypher queries for
+clinical decision support.
 
-.. dropdown:: Task 4.1: Cross-Database Integration (2 points)
+.. dropdown:: Task 4.1: Graph Structure (2 points)
+   :icon: gear
+   :class-container: sd-border-primary
+   :open:
+
+   Design a graph with at least **4 node types** and **4
+   relationship types**.
+
+   **Required Node Types** (minimum 4):
+
+   - **Disease**: name, ICD-10 code, category, chronic/acute
+   - **Medication**: name, drug class, dosage forms, controlled
+     schedule
+   - **Symptom**: name, body system, severity range
+   - **Procedure** or **Lab Test**: pick one
+
+   You may add more node types (Gene, Protein, Clinical Trial,
+   Biomarker) if they serve your clinical use cases.
+
+   **Required Relationship Types** (minimum 4):
+
+   - ``(:Medication)-[:INTERACTS_WITH {severity, description}]->(:Medication)`` **Critical for safety!**
+   - ``(:Disease)-[:TREATED_BY {evidence_level}]->(:Medication)``
+   - ``(:Medication)-[:CONTRAINDICATED_IN]->(:Disease)``
+   - ``(:Disease)-[:PRESENTS_WITH {frequency}]->(:Symptom)``
+
+   **Node Documentation Format** (include in
+   ``docs/polyglot_design.pdf``):
+
+   .. code-block:: text
+
+      Node: Medication
+
+      Properties:
+      - name: String (e.g., "Warfarin")
+      - generic_name: String (e.g., "warfarin sodium")
+      - drug_class: String (e.g., "Anticoagulant")
+      - dosage_forms: List<String> (e.g., ["tablet", "injectable"])
+      - controlled_schedule: String or null
+
+      Sample Nodes: Warfarin, Aspirin, Lisinopril, Metformin, Omeprazole
+      Approximate Count: 15+ medications in graph
+
+   **Relationship Documentation Format**:
+
+   .. code-block:: text
+
+      Relationship: INTERACTS_WITH
+
+      From: Medication
+      To: Medication
+      Direction: Bidirectional (create both directions)
+
+      Properties:
+      - severity: String ("minor", "moderate", "major", "contraindicated")
+      - description: String (clinical description of interaction)
+
+      Example:
+      (Warfarin)-[:INTERACTS_WITH {
+        severity: "major",
+        description: "Increased bleeding risk"
+      }]->(Aspirin)
+
+.. dropdown:: Task 4.2: Graph Setup and Data (1 point)
+   :icon: gear
+   :class-container: sd-border-primary
+
+   Create a Neo4j setup script with sample medical knowledge:
+
+   .. code-block:: text
+
+      // Create medications
+      CREATE (warfarin:Medication {
+        name: 'Warfarin', drug_class: 'Anticoagulant',
+        pregnancy_category: 'X'
+      })
+      CREATE (aspirin:Medication {
+        name: 'Aspirin', drug_class: 'NSAID/Antiplatelet'
+      })
+      CREATE (lisinopril:Medication {
+        name: 'Lisinopril', drug_class: 'ACE Inhibitor'
+      })
+
+      // Create diseases
+      CREATE (hypertension:Disease {
+        name: 'Hypertension', icd10: 'I10',
+        category: 'Cardiovascular', chronic: true
+      })
+
+      // Drug interactions (CRITICAL)
+      CREATE (warfarin)-[:INTERACTS_WITH {
+        severity: 'major',
+        description: 'Increased bleeding risk'
+      }]->(aspirin)
+      CREATE (aspirin)-[:INTERACTS_WITH {
+        severity: 'major',
+        description: 'Increased bleeding risk'
+      }]->(warfarin)
+
+      // Treatment relationships
+      CREATE (hypertension)-[:TREATED_BY {
+        evidence_level: 'A'
+      }]->(lisinopril)
+
+   **Minimum graph size** (reduced from original GP4):
+
+   - **15+** medication nodes
+   - **10+** disease nodes
+   - **10+** symptom nodes (or equivalent fourth type)
+   - **25+** INTERACTS_WITH relationships
+   - **15+** TREATED_BY relationships
+   - **10+** PRESENTS_WITH relationships
+   - **5+**  CONTRAINDICATED_IN relationships
+
+   **Files to create**: ``neo4j/graph_setup.cypher`` and
+   ``neo4j/graph_data.cypher``
+
+.. dropdown:: Task 4.3: Clinical Decision Support Queries (1 point)
+   :icon: gear
+   :class-container: sd-border-primary
+
+   Write **at least 4 Cypher queries** (reduced from original 6+):
+
+   **Required categories** (pick at least one from each):
+
+   **(a) Drug Interaction Checking** (1 minimum):
+
+   .. code-block:: text
+
+      // Find all medications that interact with Warfarin
+      MATCH (m1:Medication {name: 'Warfarin'})
+            -[i:INTERACTS_WITH]->(m2:Medication)
+      RETURN m1.name AS drug, m2.name AS interacts_with,
+             i.severity, i.description
+      ORDER BY CASE i.severity
+        WHEN 'contraindicated' THEN 1
+        WHEN 'major' THEN 2
+        WHEN 'moderate' THEN 3
+        WHEN 'minor' THEN 4
+      END;
+
+   **(b) Patient Medication List Check** (1 minimum):
+
+   .. code-block:: text
+
+      // Check all pairwise interactions for a medication list
+      MATCH (m1:Medication)-[i:INTERACTS_WITH]->(m2:Medication)
+      WHERE m1.name IN ['Warfarin', 'Aspirin', 'Lisinopril',
+                         'Metformin', 'Omeprazole']
+        AND m2.name IN ['Warfarin', 'Aspirin', 'Lisinopril',
+                         'Metformin', 'Omeprazole']
+        AND m1 <> m2
+      RETURN DISTINCT m1.name, m2.name, i.severity, i.description
+      ORDER BY i.severity;
+
+   **(c) Disease Pathway Analysis or Contraindication Check**
+   (1 minimum):
+
+   .. code-block:: text
+
+      // Treatment options for Type 2 Diabetes with contraindications
+      MATCH (d:Disease {name: 'Type 2 Diabetes'})
+            -[:TREATED_BY]->(m:Medication)
+      OPTIONAL MATCH (m)-[:CONTRAINDICATED_IN]->(contra:Disease)
+      RETURN m.name, m.drug_class,
+             COLLECT(contra.name) AS contraindications
+      ORDER BY m.drug_class;
+
+   **(d) Free Choice** (1+ minimum):
+
+   Symptom differential diagnosis, medication alternatives, or any
+   other clinically meaningful traversal.
+
+   **Query Documentation Format**:
+
+   .. code-block:: text
+
+      // Query #X: [Title]
+      // Clinical Context: [Why this matters for patient safety]
+      // Graph Pattern: [Description of traversal]
+      // Nodes Used: [List node types]
+      // Relationships Used: [List relationship types]
+
+      [YOUR CYPHER QUERY]
+
+      // Expected Output: [Description of columns]
+      // Clinical Use Case: [How a clinician would use this]
+
+   **File to create**: ``neo4j/cypher_queries.cypher``
+
+
+Part 5: System Integration and Docker Deployment
+-------------------------------------------------
+
+**Objective**: Integrate all three databases in Python, add
+cross-database CLI operations, and deploy the whole system with
+Docker Compose.
+
+.. dropdown:: Task 5.1: Multi-Database Python Integration (2 points)
    :icon: gear
    :class-container: sd-border-primary
    :open:
@@ -353,24 +599,28 @@ Part 4: Python Integration
       healthcare-management/
       ├── config/
       │   ├── database.py      # Existing: PostgreSQL
-      │   └── mongodb.py       # New: MongoDB connection
+      │   ├── mongodb.py       # New: MongoDB connection
+      │   └── neo4j_config.py  # New: Neo4j connection
       ├── repositories/
       │   ├── postgres/        # Existing from GP2
-      │   └── mongodb/         # New: MongoDB repositories
-      │       ├── clinical_notes_repo.py
-      │       └── imaging_repo.py
+      │   ├── mongodb/         # New
+      │   │   ├── clinical_notes_repo.py
+      │   │   └── imaging_repo.py
+      │   └── neo4j/           # New
+      │       └── knowledge_graph_repo.py
       ├── services/
-      │   └── clinical_service.py # New: cross-database clinical records
+      │   ├── clinical_service.py       # Existing, now cross-database
+      │   └── prescription_safety.py    # New: uses Neo4j
 
-   **Unified Clinical Record Service**:
+   **Unified Clinical Record Service** (combines all three):
 
    .. code-block:: python
 
       class ClinicalRecordService:
-          def get_complete_record(self, patient_id, user_id,
-                                 user_role):
-              """Build complete patient record from both databases."""
-              # PostgreSQL: Demographics, medications, labs
+          def get_complete_record(self, patient_id, user_id, user_role):
+              """Build a complete patient record from all three
+              databases."""
+              # PostgreSQL: demographics, medications, labs
               patient = self.pg_patient_repo.find_by_id(
                   patient_id, user_id, user_role
               )
@@ -378,24 +628,281 @@ Part 4: Python Integration
                   patient_id
               )
 
-              # MongoDB: Clinical notes, care plans
+              # MongoDB: clinical notes, care plans
               notes = self.mongo_notes_repo.find_by_patient(
                   patient_id, limit=10
+              )
+
+              # Neo4j: safety check across active medications
+              med_names = [m.name for m in medications]
+              interaction_alerts = self.neo4j_repo.check_interactions(
+                  med_names
               )
 
               return {
                   "demographics": patient,
                   "active_medications": medications,
-                  "clinical_notes": notes
+                  "clinical_notes": notes,
+                  "safety_alerts": interaction_alerts,
               }
 
-   **New CLI Menu Options** (at least 3):
+.. dropdown:: Task 5.2: Unified CLI Operations (2 points)
+   :icon: gear
+   :class-container: sd-border-primary
 
-   - View recent clinical notes for a patient (MongoDB query)
-   - Search clinical notes by keyword (text search)
-   - Complete patient record combining PostgreSQL and MongoDB data (cross-database)
+   Add CLI menu options that demonstrate all three databases working
+   together. You need **at least 2 unified operations**:
 
-   Update ``cli/main.py`` to include these new options alongside your GP2 options.
+   **Operation 1: Complete Patient Record**
+
+   - PostgreSQL: demographics, appointments, prescriptions, labs
+   - MongoDB: recent clinical notes, care plans
+   - Neo4j: drug-interaction check across active medications
+
+   **Operation 2: Prescription Safety Check**
+
+   - Validate patient and medication in PostgreSQL
+   - Get patient's active medications from PostgreSQL
+   - Check new medication against all active meds in Neo4j
+   - If safe: insert prescription into PostgreSQL
+   - If unsafe: display interaction warnings with severity and
+     **do not** insert
+
+   (A third example you can use: **Treatment Options for a Disease**
+   -- Neo4j pathways + contraindication checking against the
+   patient's conditions from PostgreSQL. Include it if you have time.)
+
+   For each operation, document which databases are involved and why:
+
+   .. code-block:: text
+
+      Operation: Prescription Safety Check
+
+      Description: Prevent unsafe prescriptions at order entry time.
+
+      Databases Used:
+      - PostgreSQL: patient record, active medication list, persistent
+        prescription record
+      - Neo4j: pairwise interaction lookup across active meds + new med
+      - (MongoDB not required for this operation)
+
+.. dropdown:: Docker Compose Primer
+   :icon: info
+   :class-container: sd-border-info
+   :open:
+
+   **What is Docker Compose?**
+
+   Docker Compose is a tool for defining and running multi-container
+   applications. Instead of running ``docker run ...`` for each service
+   (one for PostgreSQL, one for MongoDB, one for Neo4j), you write a
+   single ``docker-compose.yml`` file that declares:
+
+   - Which **image** each service uses (e.g., ``postgres:14``)
+   - What **ports** are exposed to the host (e.g., ``5432``,
+     ``7474``, ``7687``)
+   - What **volumes** persist data across container restarts
+   - What **environment variables** each service needs
+   - **Dependencies** between services (e.g., the app waits for the
+     databases before starting)
+
+   All services defined in the file share a Docker network and can
+   reach each other by **service name** (e.g., your Python app
+   connects to ``postgres:5432``, not ``localhost:5432``).
+
+   **Everyday commands**:
+
+   .. list-table::
+      :widths: 45 55
+      :header-rows: 1
+      :class: compact-table
+
+      * - **Command**
+        - **What it does**
+      * - ``docker-compose up --build``
+        - Build the app image and start all services in the
+          foreground. Stops on Ctrl+C.
+      * - ``docker-compose up -d``
+        - Start everything detached (background).
+      * - ``docker-compose down``
+        - Stop and remove all containers (keeps named volumes).
+      * - ``docker-compose down -v``
+        - Also remove named volumes (destroys persisted data).
+      * - ``docker-compose logs -f <service>``
+        - Tail logs for a specific service
+          (``postgres``, ``mongodb``, ``neo4j``, or ``app``).
+      * - ``docker-compose exec <service> <cmd>``
+        - Run a command inside a running service
+          (e.g., ``docker-compose exec postgres psql -U healthcare_admin``).
+      * - ``docker-compose ps``
+        - List the running services and their status.
+      * - ``docker-compose restart <service>``
+        - Restart one service without touching the others.
+
+   **Why it matters for this project**
+
+   A single command -- ``docker-compose up --build`` -- starts
+   PostgreSQL, MongoDB, Neo4j, and your Python app together. That is
+   how polyglot systems are typically deployed in production, and it
+   is what the grader will use to run your submission. If your
+   Compose file works, your three-database system is demonstrably
+   reproducible on any machine with Docker installed.
+
+   **Minimal file anatomy**
+
+   .. code-block:: yaml
+
+      version: '3.8'         # Compose file format version
+      services:              # One block per service
+        postgres:            # Service name (also the DNS name)
+          image: postgres:14 # Image to pull / build
+          ports:             # Host:container port mapping
+            - "5432:5432"
+          volumes:           # Named volume for persistence
+            - postgres_data:/var/lib/postgresql/data
+          environment:       # Env vars inside the container
+            POSTGRES_PASSWORD: ${PG_PASSWORD}  # From .env file
+      volumes:
+        postgres_data:       # Named-volume declaration
+
+   **Gotchas to plan for**
+
+   - When the app runs inside Compose, it connects to **service names**
+     (``postgres``, ``mongodb``, ``neo4j``), not ``localhost``. Your
+     ``.env`` should reflect this; supply both values for local dev
+     and in-compose use, or just use the service names.
+   - ``depends_on`` only waits for containers to **start**, not for
+     the database inside to be **ready** to accept connections. Your
+     app should retry connecting on startup. Neo4j in particular can
+     take 30-60 seconds to fully start.
+   - Schema-loading files placed in
+     ``./postgresql/:/docker-entrypoint-initdb.d`` run only on the
+     **first** boot of an empty data volume. Run
+     ``docker-compose down -v`` to re-seed.
+
+
+.. dropdown:: Task 5.3: Docker Compose Deployment (1 point)
+   :icon: gear
+   :class-container: sd-border-primary
+
+   .. tip::
+
+      **Do not write the compose file from scratch.** Start from the
+      skeleton provided on the
+      :doc:`Docker Compose Starter <scenario2_docker_starter>` page,
+      which gives you all four services (``postgres``, ``mongodb``,
+      ``neo4j``, ``app``) plus ``mongo-seed`` and ``neo4j-seed``
+      sidecars, with healthchecks and ``service_healthy`` dependencies
+      already wired up (including Neo4j's long first-boot handled by a
+      ``start_period``). Adapt it to your project rather than
+      reinventing it -- the grading target is a working three-database
+      system.
+
+   For reference, a minimal structure looks like the following (the
+   starter is a superset of this):
+
+   .. code-block:: yaml
+
+      version: '3.8'
+      services:
+        postgres:
+          image: postgres:14
+          environment:
+            POSTGRES_DB: healthcare_management
+            POSTGRES_USER: healthcare_admin
+            POSTGRES_PASSWORD: ${PG_PASSWORD}
+          volumes:
+            - postgres_data:/var/lib/postgresql/data
+            - ./postgresql:/docker-entrypoint-initdb.d
+          ports:
+            - "5432:5432"
+
+        mongodb:
+          image: mongo:6
+          volumes:
+            - mongo_data:/data/db
+          ports:
+            - "27017:27017"
+
+        neo4j:
+          image: neo4j:5
+          environment:
+            NEO4J_AUTH: neo4j/${NEO4J_PASSWORD}
+          volumes:
+            - neo4j_data:/data
+          ports:
+            - "7474:7474"
+            - "7687:7687"
+
+        app:
+          build: .
+          depends_on:
+            - postgres
+            - mongodb
+            - neo4j
+
+   After running ``docker-compose up --build``, verify:
+
+   1. PostgreSQL: schema loaded and data present
+   2. MongoDB: collections exist and data loaded
+   3. Neo4j: graph populated (Browser at localhost:7474)
+   4. Application starts and connects to all three databases
+
+   **Files to create**: ``docker-compose.yml`` and ``Dockerfile``
+
+
+Part 6: Final Technical Report
+-------------------------------
+
+**Objective**: Write a technical report documenting the complete
+system. **No strict page limit** -- be thorough but concise. Submit
+as PDF.
+
+.. dropdown:: Task 6.1: Report Outline (8 points)
+   :icon: gear
+   :class-container: sd-border-primary
+   :open:
+
+   Your report must include **all of the following sections**:
+
+   **1. Executive Summary**
+
+   System overview, three-database architecture, and key achievements
+   (polyglot architecture, drug safety).
+
+   **2. Data Partitioning Rationale**
+
+   Why each data type lives in its chosen database. Trade-offs
+   between consistency, flexibility, and query power. Cross-database
+   referencing strategy.
+
+   **3. Architecture Overview**
+
+   System architecture diagram, data flow diagrams for clinical
+   workflows, and component descriptions for each database layer.
+
+   **4. Database Design Decisions**
+
+   For each database (PostgreSQL, MongoDB, Neo4j): what data it
+   holds, why that database was chosen over the alternatives,
+   schema/structure highlights, and key design decisions.
+
+   **5. Clinical Decision Support Design**
+
+   Medical knowledge graph structure, drug-interaction checking
+   workflow, and how the prescription safety check works
+   end-to-end.
+
+   **6. Lessons Learned**
+
+   What worked well, challenges faced, what you would do differently.
+
+   **7. Team Contributions**
+
+   Each member's name, tasks completed, and contribution percentage
+   (sum to 100%).
+
+   **File to create**: ``docs/technical_report.pdf``
 
 
 Folder Structure
@@ -404,27 +911,42 @@ Folder Structure
 .. code-block:: text
 
    GP3_Healthcare_Team{X}/
+   ├── postgresql/                 # From GP2
+   │   ├── schema.sql
+   │   ├── data.sql
+   │   └── queries.sql
    ├── mongodb/
-   │   ├── mongo_setup.js          # Collection creation with validation
-   │   ├── mongo_data.js           # Sample clinical document data
-   │   └── mongo_queries.js        # 6+ documented queries
+   │   ├── mongo_setup.js
+   │   ├── mongo_data.js
+   │   └── mongo_queries.js
+   ├── neo4j/
+   │   ├── graph_setup.cypher
+   │   ├── graph_data.cypher
+   │   └── cypher_queries.cypher
    ├── src/
    │   ├── config/
-   │   │   ├── database.py         # Existing: PostgreSQL
-   │   │   └── mongodb.py          # New: MongoDB connection
+   │   │   ├── database.py
+   │   │   ├── mongodb.py
+   │   │   └── neo4j_config.py
    │   ├── repositories/
-   │   │   ├── postgres/           # Existing from GP2
-   │   │   └── mongodb/            # New: MongoDB repositories
-   │   │       ├── clinical_notes_repo.py
-   │   │       └── imaging_repo.py
+   │   │   ├── postgres/
+   │   │   ├── mongodb/
+   │   │   └── neo4j/
    │   ├── services/
-   │   │   └── clinical_service.py # New: cross-database records
+   │   │   ├── clinical_service.py
+   │   │   └── prescription_safety.py
    │   └── cli/
-   │       └── main.py             # Updated: new MongoDB menu options
+   │       └── main.py             # Updated with 2+ unified operations
    ├── docs/
-   │   └── polyglot_design.md      # Partitioning, schemas, indexes
+   │   ├── polyglot_design.pdf      # Partitioning, MongoDB schemas,
+   │   │                           # Neo4j node/rel catalog, indexes
+   │   └── technical_report.pdf
+   ├── docker-compose.yml
+   ├── Dockerfile
    ├── requirements.txt
-   ├── .env.example
+   ├── .env.example              # template with placeholder values
+   ├── .env                      # actual values (committed for
+   │                             # grading -- see policy below)
    ├── README.md
    └── team_contributions.md
 
@@ -437,25 +959,107 @@ Documentation Files
    :class-container: sd-border-primary
    :open:
 
-   **docs/polyglot_design.md**
+   **docs/polyglot_design.pdf**
 
-   This is the main design document for GP3. It should contain three sections: (1) your data partitioning analysis explaining what stays in PostgreSQL and what moves to MongoDB with clinical justifications for each data type, (2) your MongoDB collection schemas with document structures, embedding rationale, and expected volumes, and (3) your index strategy listing all indexes for each collection with their type and purpose.
+   The main design document. **Submit as PDF** (you may author in
+   Word, Google Docs, Markdown, LaTeX -- whatever you prefer --
+   then export to PDF at submission time; do not submit a raw
+   ``.md`` or ``.docx``). It should contain four sections:
+   (1) data partitioning analysis across PostgreSQL, MongoDB, and
+   Neo4j with clinical justifications for each data type;
+   (2) MongoDB collection schemas with document structures,
+   embedding rationale, and expected volumes;
+   (3) Index strategy for MongoDB;
+   (4) Neo4j node and relationship catalog (node properties, sample
+   nodes, counts, relationship direction, properties, examples).
+
+   **docs/technical_report.pdf**
+
+   The final report (see Part 6 for required sections).
 
    **requirements.txt**
 
-   Updated from GP2 to include ``pymongo``.
+   Updated from GP2 to include ``pymongo`` and ``neo4j`` (Python
+   driver).
 
-   **.env.example**
+   **.env.example** (template, no real values)
 
-   Updated from GP2 to include MongoDB connection variables.
+   Updated to include MongoDB and Neo4j connection variables. Use
+   obvious placeholders so it is clear this file is a template:
+
+   .. code-block:: text
+
+      DB_HOST=localhost
+      DB_PORT=5432
+      DB_NAME=healthcare_management
+      DB_USER=healthcare_admin
+      DB_PASSWORD=<fill-in-your-password>
+
+      MONGO_HOST=localhost
+      MONGO_PORT=27017
+      MONGO_DB=healthcare_management
+
+      NEO4J_URI=bolt://localhost:7687
+      NEO4J_USER=neo4j
+      NEO4J_PASSWORD=<fill-in-your-password>
+
+   **.env** (actual values used by your system -- see the
+   "Credentials for Grading" section below for the policy and
+   recommended defaults)
 
    **README.md**
 
-   Updated from GP2. Add MongoDB prerequisites (MongoDB 6+), setup instructions, and a data partitioning summary table.
+   Updated from GP2. Add:
+
+   - MongoDB and Neo4j prerequisites.
+   - Docker quick-start instructions
+     (``docker-compose up --build``).
+   - An architecture summary table showing which database holds
+     which data.
+   - A description of key safety features (drug-interaction
+     checking) and the unified CLI operations.
 
    **team_contributions.md**
 
-   List each team member's name, tasks completed, hours contributed, and contribution percentage. Percentages must sum to 100%.
+   List each team member's name, tasks completed, hours contributed,
+   and contribution percentage. Percentages must sum to 100%.
+
+
+Credentials for Grading
+-----------------------
+
+You need passwords to run the databases locally and inside Docker
+Compose. Because the instructor has to run your submission, you must
+share the passwords you used. **The policy for this assignment is:**
+
+1. Commit **both** ``.env.example`` (template with placeholders) and
+   ``.env`` (actual values you used) in your submission.
+2. The ``.env`` file must contain the exact values your
+   ``docker-compose.yml`` and application read at runtime, so that
+   ``docker-compose up --build`` works for the grader with zero
+   manual edits.
+
+.. warning::
+
+   In a real project, ``.env`` **must be in ``.gitignore``** --
+   committing secrets to a repository is a security anti-pattern.
+   For this course we explicitly override that practice so the
+   grader can run your system reproducibly. Treat every value in
+   your ``.env`` as disposable and **do not reuse any password that
+   protects a real account, service, or personal project**.
+
+**Recommended class-wide defaults** (use these unless you have a
+specific reason not to -- fewer variations make grading faster).
+Neo4j requires passwords of **at least 8 characters**.
+
+.. code-block:: text
+
+   PG_PASSWORD=enpm818t
+   NEO4J_PASSWORD=enpm818t-neo4j
+
+If you use different values, your ``README.md`` must list them in
+a short "Credentials" section so the grader can verify them at a
+glance.
 
 
 Submission
@@ -465,7 +1069,10 @@ Submission
 
    Submit **one** ZIP file to Canvas: ``GP3_Healthcare_Team{X}.zip``
 
-   Replace ``{X}`` with your team number (e.g., ``GP3_Healthcare_Team03.zip``).
+   Replace ``{X}`` with your team number (e.g.,
+   ``GP3_Healthcare_Team03.zip``).
+
+   **Due**: Monday **05/12/2026** at 11:59 PM.
 
 
 .. admonition:: Submission Checklist
@@ -473,29 +1080,62 @@ Submission
 
    **Design Document**:
 
-   - [ ] ``polyglot_design.md`` covers partitioning, schemas, and indexes
-   - [ ] Each data type has a clear PostgreSQL vs. MongoDB justification
-   - [ ] 4+ collections documented with embedding rationale
+   - [ ] ``polyglot_design.pdf`` covers partitioning, MongoDB schemas,
+     indexes, and Neo4j node/relationship catalog
+   - [ ] Each data type has a clear PostgreSQL / MongoDB / Neo4j
+     justification
+   - [ ] 4+ MongoDB collections documented with embedding rationale
+   - [ ] 4+ Neo4j node types and 4+ relationship types documented
 
    **MongoDB Files**:
 
-   - [ ] ``mongo_setup.js`` creates all collections with validation and indexes
-   - [ ] ``mongo_data.js`` loads realistic clinical document data (runs without errors)
+   - [ ] ``mongo_setup.js`` creates all collections with validation
+     and indexes
+   - [ ] ``mongo_data.js`` loads realistic clinical document data
+     (runs without errors)
    - [ ] ``mongo_queries.js`` contains 6+ queries with documentation
+
+   **Neo4j Files**:
+
+   - [ ] ``graph_setup.cypher`` creates 4+ node types with properties
+   - [ ] ``graph_data.cypher`` populates minimum graph (15+
+     medications, 10+ diseases, 25+ interactions)
+   - [ ] ``cypher_queries.cypher`` contains 4+ clinical decision
+     support queries
+   - [ ] Drug-interaction checking works for a list of medications
 
    **Python Application**:
 
-   - [ ] MongoDB connection configured (pymongo)
-   - [ ] Repository classes for clinical document collections
-   - [ ] Cross-database ClinicalRecordService working
-   - [ ] 3+ new CLI menu options for MongoDB data
+   - [ ] MongoDB and Neo4j connections configured
+   - [ ] Repository classes for each database
+   - [ ] 2+ unified CLI operations using all three databases
+   - [ ] Prescription safety check works end-to-end
+
+   **Deployment**:
+
+   - [ ] ``docker-compose.yml`` starts all services (PostgreSQL,
+     MongoDB, Neo4j, app)
+   - [ ] ``Dockerfile`` builds the application correctly
+   - [ ] ``docker-compose up --build`` results in a working system
+
+   **Final Report**:
+
+   - [ ] PDF with all seven required sections (Exec Summary, Data
+     Partitioning, Architecture, Database Design, Clinical Decision
+     Support, Lessons Learned, Team Contributions)
+   - [ ] Architecture diagram included
+   - [ ] All three databases discussed with rationale
 
    **Supporting Files**:
 
-   - [ ] README.md updated with MongoDB setup instructions
-   - [ ] .env.example updated with MongoDB variables
-   - [ ] requirements.txt updated with pymongo
-   - [ ] team_contributions.md
+   - [ ] ``README.md`` updated with Docker quick-start instructions
+     (and a Credentials section if non-default values are used)
+   - [ ] ``requirements.txt`` updated with ``pymongo`` and ``neo4j``
+   - [ ] ``.env.example`` updated with MongoDB and Neo4j variables
+     (placeholders only)
+   - [ ] ``.env`` committed with the **actual** values used (policy:
+     see "Credentials for Grading")
+   - [ ] ``team_contributions.md`` (percentages sum to 100%)
 
 
 Grading Rubric
@@ -503,7 +1143,7 @@ Grading Rubric
 
 .. list-table::
    :header-rows: 1
-   :widths: 35 10 55
+   :widths: 38 10 52
    :class: compact-table
 
    * - Component
@@ -511,18 +1151,35 @@ Grading Rubric
      - Criteria
    * - **Part 1: Data Partitioning**
      - 2
-     - Clear clinical rationale for each data type (1pt); documented decision framework (1pt)
-   * - **Part 2: Schema and Indexes**
+     - Clear clinical rationale for each data type across PostgreSQL,
+       MongoDB, and Neo4j; documented decision framework
+   * - **Part 2: MongoDB Schema + Indexes**
      - 3
-     - 4+ collections with complete schemas and embedding rationale (2pts); appropriate indexes with justification (1pt)
-   * - **Part 3: Setup and Queries**
+     - 4+ collections with complete schemas and embedding rationale
+       (2 pts); appropriate indexes with justification (1 pt)
+   * - **Part 3: MongoDB Setup + Queries**
      - 3
-     - Collections with validation and realistic data (1pt); 6+ queries covering all categories with correct results (2pts)
-   * - **Part 4: Python Integration**
-     - 2
-     - MongoDB repositories and cross-database clinical service (1pt); 3+ new CLI menu options working (1pt)
+     - Setup with validation and realistic data (1 pt); 6+ queries
+       covering all categories with correct results (2 pts)
+   * - **Part 4: Neo4j Graph + Queries**
+     - 4
+     - 4+ node types and 4+ relationship types with clinical relevance
+       (1 pt); minimum graph populated (1 pt); 4+ clinical decision
+       support queries (2 pts)
+   * - **Part 5: Integration + Docker**
+     - 5
+     - Multi-database Python integration (2 pts); 2+ unified CLI
+       operations using all three databases, including a working
+       prescription safety check (2 pts); working Docker Compose
+       (1 pt)
+   * - **Part 6: Technical Report**
+     - 8
+     - All seven required sections (3 pts); architecture well-diagrammed
+       and justified (2 pts); database design decisions and clinical
+       decision support clearly explained (2 pts); lessons learned
+       and professional quality (1 pt)
    * - **Total**
-     - **10**
+     - **25**
      -
 
 
@@ -533,11 +1190,22 @@ Common Mistakes to Avoid
 
    **Frequent Errors**
 
-   - Treating MongoDB like SQL (use embedding for related clinical data, not separate collections for everything)
-   - No schema validation (MongoDB is flexible, not lawless; validate required clinical fields)
-   - Same note structure for all types (progress notes, consults, and discharge summaries have different fields)
-   - Missing text indexes (clinical narrative search requires text indexes)
-   - No cross-database service (the unified patient record is the key deliverable)
+   - Treating MongoDB like SQL (use embedding for related clinical
+     data, not separate collections for everything)
+   - Same note structure for all types (progress notes, consults,
+     and discharge summaries have different fields)
+   - Missing text indexes (clinical narrative search requires text
+     indexes)
+   - Trivial graph (only a handful of medications and diseases does
+     not demonstrate clinical value)
+   - No bidirectional interactions (drug interactions go both ways;
+     create both directions)
+   - Prescription operation without safety check (the whole point of
+     Neo4j is preventing unsafe prescriptions)
+   - Docker volumes not configured (data lost on container restart)
+   - Hardcoded connection strings (use environment variables)
+   - Missing data-partitioning section in the report (document why
+     each database holds its data)
 
 
 Tips for Success
@@ -545,8 +1213,45 @@ Tips for Success
 
 .. tip::
 
-   - **Think like a clinician**: A doctor viewing a patient record wants notes, labs, medications, and care plans together. Design your cross-database service to support this workflow.
-   - **Embrace document diversity**: The whole point of MongoDB here is that different clinical notes have different structures. Lean into this.
-   - **Test aggregation pipelines incrementally**: Build one stage at a time in mongosh. Verify results before adding the next stage.
-   - **Use realistic clinical vocabulary**: Reference real ICD-10 codes, real medication names, and realistic clinical narratives in your sample data.
-   - **Use office hours**: Bring your schema designs for review. Discuss clinical document modeling with instructors.
+   - **Think like a clinician**. A doctor viewing a patient record
+     wants notes, labs, medications, care plans, and safety alerts
+     together. Design your cross-database service to support this
+     workflow.
+   - **Embrace document diversity**. The whole point of MongoDB here
+     is that different clinical notes have different structures.
+     Lean into this.
+   - **Build a meaningful graph**. Use real medication names, real
+     ICD-10 codes, and real drug interactions. RxNorm and interaction
+     databases are freely available for reference.
+   - **Test the safety flow end-to-end**. Write test cases like
+     "What happens when I prescribe Warfarin to a patient already on
+     Aspirin?" The answer should be a major interaction warning.
+   - **Test with Docker early**. Do not wait until the last day to
+     containerize. Build and test Docker Compose incrementally.
+   - **Write the report throughout**. Capture architecture decisions
+     and screenshots as you build.
+   - **Use office hours**. Bring schema designs, Docker issues, and
+     graph/Cypher questions for review.
+
+
+Final Project Summary
+---------------------
+
+.. admonition:: Cumulative Achievement
+   :class: note
+
+   **Points**:
+
+   - GP1: Relational Design = 10 points
+   - GP2: PostgreSQL + Python = 15 points
+   - GP3: Complete Polyglot System = 25 points
+   - **Total**: 50 points
+
+**Your Achievement**:
+
+You have built a production-grade secure polyglot healthcare system
+demonstrating relational database design, clinical document
+management with flexible schemas, a medical knowledge graph for
+clinical decision support, drug-interaction checking for patient
+safety, cross-database integration for unified patient records,
+Docker deployment, and professional technical documentation.

@@ -30,7 +30,7 @@ Scenario 1: Smart City Traffic Management System
 Overview
 --------
 
-Your team will design and implement a comprehensive database system for a metropolitan city managing traffic flow across 500+ intersections. The system must handle traffic control, historical pattern analysis, incident management, and infrastructure maintenance. You will build this system progressively across four group projects, using three complementary databases.
+Your team will design and implement a comprehensive database system for a metropolitan city managing traffic flow across 500+ intersections. The system must handle traffic control, historical pattern analysis, incident management, and infrastructure maintenance. You will build this system progressively across three group projects, using three complementary databases.
 
 .. important::
 
@@ -118,7 +118,7 @@ Technology Stack
 Progressive Development
 -----------------------
 
-.. admonition:: Four Cumulative Projects
+.. admonition:: Three Cumulative Projects
    :class: tip
 
    Each group project builds on the previous work, creating a complete system by the end.
@@ -141,13 +141,9 @@ Progressive Development
      - 3 weeks
      - Schema DDL, complex SQL queries, Python CLI application
    * - **GP3**
-     - MongoDB Integration
-     - 2 weeks
-     - Document schemas, aggregation pipelines, cross-database services
-   * - **GP4**
-     - Complete System
-     - 2 weeks
-     - Redis caching, Docker deployment, 8-to-12-page technical report
+     - Complete Polyglot System (MongoDB + Redis)
+     - ~2.5 weeks
+     - Document schemas, Redis caching and pub/sub, Docker deployment, technical report
 
 
 .. dropdown:: GP1: Relational Database Design (2 weeks)
@@ -163,7 +159,7 @@ Progressive Development
 
    **Deliverables**: Chen ERD, Crow's Foot ERD, design report (8 to 12 pages)
 
-.. dropdown:: GP2: PostgreSQL + Python Implementation (5 weeks)
+.. dropdown:: GP2: PostgreSQL + Python Implementation (3 weeks)
    :icon: gear
    :class-container: sd-border-primary
 
@@ -177,33 +173,23 @@ Progressive Development
 
    **Deliverables**: SQL scripts, Python application, query catalog, architecture docs
 
-.. dropdown:: GP3: MongoDB Integration (2 weeks)
+.. dropdown:: GP3: Complete Polyglot System (~2.5 weeks)
    :icon: gear
    :class-container: sd-border-primary
 
-   Add document database for high-volume traffic data:
+   Add MongoDB and Redis to complete the three-database polyglot
+   system (this deliverable merges the original GP3 and GP4):
 
    - Design 4+ MongoDB collections for event data
-   - Choose embedding vs. referencing strategies
-   - Write 6+ aggregation pipelines and geospatial queries
-   - Integrate with PostgreSQL application
-   - Implement cross-database operations
-
-   **Deliverables**: MongoDB schemas, queries, Python integration, polyglot design document
-
-.. dropdown:: GP4: Redis + Complete System (2 weeks)
-   :icon: gear
-   :class-container: sd-border-primary
-
-   Add caching layer and complete the system:
-
+   - Write 6+ MongoDB aggregation pipelines and geospatial queries
    - Design 5+ Redis data structures (strings, hashes, sorted sets, lists, pub/sub)
-   - Implement cache-aside pattern
-   - Build pub/sub for real-time alerts
+   - Implement cache-aside pattern and pub/sub broadcasting
+   - Add 2+ unified CLI operations using all three databases
    - Deploy with Docker Compose
-   - Write final technical report (8 to 12 pages)
+   - Write a final technical report
 
-   **Deliverables**: Redis implementation, integrated system, deployment, final report
+   **Deliverables**: MongoDB schemas and queries, Redis implementation,
+   cross-database Python integration, Docker deployment, technical report
 
 
 Key Design Challenges
@@ -376,5 +362,5 @@ Project Details
    scenario1_GP1
    scenario1_GP2
    scenario1_GP3
-   scenario1_GP4
+   scenario1_docker_starter
    data_generation_guide

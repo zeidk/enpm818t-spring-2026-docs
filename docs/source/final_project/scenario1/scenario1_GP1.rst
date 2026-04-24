@@ -420,6 +420,6 @@ Tips for Success
 
 .. note::
 
-   **Your GP1 design is the foundation** for GP2 (PostgreSQL implementation), GP3 (MongoDB integration), and GP4 (complete system).
+   **Your GP1 design is the foundation** for GP2 (PostgreSQL implementation) and GP3 (complete polyglot system with MongoDB + Redis + Docker + final report).
 
    A strong relational design now makes implementation much easier later!

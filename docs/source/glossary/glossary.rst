@@ -7,11 +7,11 @@ organized alphabetically across all lectures. Click any letter to jump to
 that section.
 
 :ref:`A <g-a>` · :ref:`B <g-b>` · :ref:`C <g-c>` · :ref:`D <g-d>` ·
-:ref:`E <g-e>` · :ref:`F <g-f>` · :ref:`G <g-g>` · :ref:`I <g-i>` ·
-:ref:`J <g-j>` · :ref:`K <g-k>` · :ref:`L <g-l>` · :ref:`M <g-m>` ·
-:ref:`N <g-n>` · :ref:`O <g-o>` · :ref:`P <g-p>` · :ref:`R <g-r>` ·
-:ref:`S <g-s>` · :ref:`T <g-t>` · :ref:`U <g-u>` · :ref:`V <g-v>` ·
-:ref:`W <g-w>`
+:ref:`E <g-e>` · :ref:`F <g-f>` · :ref:`G <g-g>` · :ref:`H <g-h>` ·
+:ref:`I <g-i>` · :ref:`J <g-j>` · :ref:`K <g-k>` · :ref:`L <g-l>` ·
+:ref:`M <g-m>` · :ref:`N <g-n>` · :ref:`O <g-o>` · :ref:`P <g-p>` ·
+:ref:`Q <g-q>` · :ref:`R <g-r>` · :ref:`S <g-s>` · :ref:`T <g-t>` ·
+:ref:`U <g-u>` · :ref:`V <g-v>` · :ref:`W <g-w>`
 
 .. only:: html
 
@@ -161,6 +161,16 @@ A
       production environments.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
 
+   ACID
+      The four guarantees SQL databases provide for transactions:
+      **Atomicity** (all statements succeed or none do), **Consistency**
+      (transactions move the database from one valid state to another),
+      **Isolation** (concurrent transactions do not interfere), and
+      **Durability** (committed changes survive a system failure).
+      Used alongside transaction control statements ``BEGIN``,
+      ``COMMIT``, ``ROLLBACK``, ``SAVEPOINT``.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
+
    Aggregation
       A higher-level abstraction in EER modeling that treats a relationship
       between entities as a single higher-level entity. Allows relationships
@@ -217,6 +227,13 @@ A
       FD preserves its validity.
       :doc:`L4-L5 </lectures/lecture4-5/l4_5_lecture>`
 
+   Availability (CAP)
+      One of the three CAP guarantees. A system is *available* when every
+      request received by a non-failing node results in a response
+      (possibly stale, not an error). Distinct from ACID Consistency and
+      from colloquial "uptime".
+      :doc:`L10 </lectures/lecture10/l10_kv_lecture>`
+
 
 .. _g-b:
 
@@ -242,6 +259,23 @@ B
       A relationship involving exactly two entity types. The most common
       relationship arity in ER modeling.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Bloom Filter
+      A probabilistic data structure that reports "definitely not in the
+      set" or "possibly in the set" for a queried element. In LevelDB
+      (and LSM trees generally), each SSTable has an associated bloom
+      filter that lets the engine skip files that cannot contain a key,
+      saving disk reads. Redis Stack also exposes a bloom filter module
+      via ``BF.RESERVE`` / ``BF.ADD`` / ``BF.EXISTS``.
+      :doc:`L10 </lectures/lecture10/l10_kv_lecture>`
+
+   BUFFERS (EXPLAIN option)
+      An option to PostgreSQL's ``EXPLAIN ANALYZE`` that reports
+      buffer-cache activity per step: ``shared hit=N`` (served from the
+      in-memory cache) and ``shared read=N`` (had to come from disk).
+      The standard tool for diagnosing cold-cache queries and deciding
+      whether to grow ``shared_buffers`` or add a narrower index.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
 
    btree_gist
       A PostgreSQL extension that provides GiST index operator classes for
@@ -273,6 +307,15 @@ C
       reduce left sides, remove redundant FDs.
       :doc:`L4-L5 </lectures/lecture4-5/l4_5_lecture>`
 
+   CAP Theorem
+      A result about distributed data stores stating that in the presence
+      of a network partition a system must choose between **Consistency**
+      (every read sees the most recent write) and **Availability** (every
+      request to a non-failing node gets a response). Since real networks
+      always have partitions, CAP in practice reduces to a CP-vs-AP
+      design choice.
+      :doc:`L10 </lectures/lecture10/l10_kv_lecture>`
+
    Cardinality Ratio
       Specifies the maximum number of relationship instances one entity can
       participate in: 1:1, 1:N, or M:N. Expressed in Chen notation as labels
@@ -291,6 +334,14 @@ C
       the parent change to all child rows automatically. Use when child rows
       are owned by the parent and have no meaningful existence without it.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
+
+   Cassandra
+      An early and influential distributed key/value (wide-column) store
+      that inspired much of modern NoSQL. Designed for write-heavy
+      workloads and horizontal scale. PACELC-classified as **PA/EL**:
+      prefers availability during partitions and low latency during
+      normal operation.
+      :doc:`L10 </lectures/lecture10/l10_kv_lecture>`
 
    Catalog View
       A read-only virtual table maintained by the database engine that
@@ -329,6 +380,23 @@ C
       ratio labels (1, N, M) on relationship lines.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
+   Common Table Expression (CTE)
+      A named temporary result set defined with the ``WITH`` keyword
+      and referenced in a subsequent query. Useful for clarity in
+      complex queries, for recursive traversals (``WITH RECURSIVE``),
+      and for structuring multi-step ETL. In modern PostgreSQL,
+      non-recursive / non-mutable CTEs are **inlined** by default;
+      ``WITH ... AS MATERIALIZED`` forces materialization.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
+
+   Compaction (LSM)
+      A background process in LSM-tree storage engines (LevelDB, RocksDB,
+      Cassandra) that merges multiple SSTables into fewer, larger SSTables.
+      Compaction reclaims space from tombstoned / overwritten keys, keeps
+      level sizes balanced, and improves read performance by reducing the
+      number of files a lookup must scan.
+      :doc:`L10 </lectures/lecture10/l10_kv_lecture>`
+
    Completeness Constraint
       An EER constraint that specifies whether every superclass entity must
       belong to at least one subclass. Total specialization (double line in
@@ -347,6 +415,33 @@ C
       uniquely identify each entity instance.
       :doc:`L2 </lectures/lecture2/l2_lecture>` · :doc:`L3 </lectures/lecture3/l3_lecture>`
 
+   Consensus (Distributed Systems)
+      The problem of getting a set of nodes to agree on a shared value or
+      sequence of values despite failures. Hard in general; practical
+      solutions include Paxos and Raft. Distributed K/V stores use
+      consensus protocols for leader election, replication ordering, and
+      configuration changes.
+      :doc:`L10 </lectures/lecture10/l10_kv_lecture>`
+
+   Consistency (CAP)
+      One of the three CAP guarantees. A system is *consistent* under CAP
+      when every read sees the most recent successfully-written value (or
+      an error). Stricter than ACID's Consistency, which refers to
+      transaction-level invariants; the two terms share a name but describe
+      different properties.
+      :doc:`L10 </lectures/lecture10/l10_kv_lecture>`
+
+   Cost (Query Plan)
+      A unitless, relative measure assigned by the PostgreSQL planner
+      to each step of a query plan, used to compare candidate plans.
+      Expressed as ``cost=START..TOTAL`` (startup cost and total cost
+      to complete). Driven by configuration constants
+      (``seq_page_cost``, ``random_page_cost``, ``cpu_tuple_cost``,
+      ``cpu_index_tuple_cost``, ``cpu_operator_cost``, and parallel
+      costs). Useful for comparing steps within a plan; not directly
+      interpretable as milliseconds.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
+
    Creation Order
       The required sequencing when creating tables with FK relationships:
       parent tables must exist before child tables can reference them.
@@ -360,6 +455,14 @@ C
       and circle/bar modifiers (optional/mandatory). Standard in tools such
       as Lucidchart, draw.io, and DataGrip.
       :doc:`L3 </lectures/lecture3/l3_lecture>`
+
+   Cypher
+      The query language used by most property-graph databases today,
+      including Neo4j and Memgraph. Mixes SQL-like keywords (``MATCH``,
+      ``WHERE``, ``RETURN``) with ASCII-art graph patterns, e.g.
+      ``(a:Person)-[:KNOWS]->(b:Person)``. Standardized as the basis of
+      ISO/IEC 39075 (GQL).
+      :doc:`L10 </lectures/lecture10/l10_graph_lecture>`
 
 
 .. _g-d:
@@ -493,6 +596,13 @@ D
       absent. ``DROP TABLE ... CASCADE`` removes dependent objects.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
 
+   DynamoDB
+      Amazon's managed, distributed key/value store. Draws directly on
+      the Dynamo paper. Defaults to eventually-consistent reads; supports
+      strongly-consistent reads on request. Typically classified as
+      **PA/EL** in PACELC.
+      :doc:`L10 </lectures/lecture10/l10_kv_lecture>`
+
 
 .. _g-e:
 
@@ -508,6 +618,13 @@ E
       cross-hierarchy relationships that the basic ER model cannot express
       cleanly.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Embedded Database
+      A database management system tightly integrated with an application
+      -- running in-process rather than as a standalone server. Examples:
+      SQLite, LevelDB, RocksDB. Embedded engines trade multi-client access
+      for zero operational overhead.
+      :doc:`L10 </lectures/lecture10/l10_kv_lecture>`
 
    Entity
       A real-world object or concept with an independent existence that is
@@ -525,6 +642,14 @@ E
       attributes, and relationships in a domain. The primary output of
       conceptual data modeling.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   ESR Rule (Equality-Sort-Range)
+      A guideline for ordering columns in a compound index: **equality**
+      predicates first, **sort** column next, **range** predicates last.
+      Maximizes index selectivity and lets the planner avoid an
+      explicit sort step. Governs the leftmost-prefix use of
+      multi-column B-tree indexes.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
 
    ETL (Extract-Transform-Load)
       A process for populating denormalized OLAP schemas from normalized OLTP
@@ -547,6 +672,23 @@ E
       exactly one FK is non-null at any time. The check casts each
       ``IS NOT NULL`` test to ``INT`` and verifies the sum equals 1.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
+
+   EXPLAIN
+      A PostgreSQL statement that prints the query **optimizer's plan**
+      for a given query **without executing it**. Shows estimated costs,
+      row counts, widths, and the operators the planner would choose.
+      Use when execution would be expensive, destructive, or slow.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
+
+   EXPLAIN ANALYZE
+      A PostgreSQL statement that prints the query plan **and actually
+      executes the query**, reporting measured timings (``actual time``),
+      row counts, and loop counts alongside the planner's estimates.
+      For mutating queries (``INSERT``, ``UPDATE``, ``DELETE``), always
+      wrap in ``BEGIN; ... ROLLBACK;`` so diagnostics don't change
+      state. Supports options including ``BUFFERS``, ``MEMORY``, and
+      ``SERIALIZE``.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
 
    Extraneous Attribute
       An attribute on the left side of an FD that can be removed without
@@ -627,6 +769,31 @@ G
       and geometric types.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
 
+   Graph Database
+      A NoSQL database that stores data as **nodes** (entities) and
+      **edges** (relationships), typically with **properties** attached
+      to both. Optimized for traversal-heavy queries (friend-of-a-friend,
+      shortest path, pattern matching) that would require many joins in
+      a relational store. Neo4j is the canonical property-graph database.
+      :doc:`L10 </lectures/lecture10/l10_graph_lecture>`
+
+
+.. _g-h:
+
+H
+=
+
+.. glossary::
+
+   Hash Join
+      A physical join strategy that builds a **hash table** from the
+      inner relation and then probes it with each row from the outer
+      relation. Requires an **equality** join condition. Fastest when
+      the hash table fits within ``work_mem`` and the tables are too
+      large for a Nested Loop to be efficient. Unlike Merge Join, no
+      sort step is needed.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
+
 
 .. _g-i:
 
@@ -649,6 +816,13 @@ I
       Chen notation by a double diamond. A weak entity instance cannot be
       uniquely identified without its owner.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   In-Memory Database
+      A database that keeps its working set in RAM rather than primarily
+      on disk. Trades durability for speed; persistence (if any) is
+      usually layered on top via snapshots or append-only logs. Redis and
+      Memcached are the dominant in-memory K/V stores.
+      :doc:`L10 </lectures/lecture10/l10_kv_lecture>`
 
    information_schema
       A SQL-standard set of read-only catalog views available in PostgreSQL
@@ -706,6 +880,14 @@ K
       underlined ellipse.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
+   Key-Value Store (K/V Store)
+      A NoSQL database that stores data as opaque key-to-value pairs and
+      exposes only a narrow API: ``put(k, v)``, ``get(k)``, ``delete(k)``.
+      Optimized for speed, scalability, and simplicity at the cost of
+      rich query capabilities. Common examples: Redis, Memcached,
+      DynamoDB, Cassandra, LevelDB, RocksDB.
+      :doc:`L10 </lectures/lecture10/l10_kv_lecture>`
+
 
 .. _g-l:
 
@@ -713,6 +895,30 @@ L
 =
 
 .. glossary::
+
+   Label (Graph)
+      A marker on a node in a property graph that classifies what kind
+      of entity it is (e.g., ``Person``, ``Product``). A node may carry
+      zero or more labels; Cypher's ``(p:Person:Manager)`` declares two.
+      Functions like a lightweight, multi-valued "class" per node.
+      :doc:`L10 </lectures/lecture10/l10_graph_lecture>`
+
+   LevelDB
+      Google's open-source embedded key/value store (2011), built on an
+      LSM tree. Stores ordered mappings of string keys to string values
+      and is optimized for large sequential writes. The code base is a
+      frequent reference implementation for LSM mechanics; forked as
+      RocksDB by Meta for higher-throughput deployments.
+      :doc:`L10 </lectures/lecture10/l10_kv_lecture>`
+
+   Leftmost-Prefix Rule
+      The rule governing how B-tree compound indexes can be used:
+      a query can benefit from an index on ``(col1, col2, ..., colN)``
+      only if the query's predicate references a **left-anchored
+      prefix** of the index columns. An index on ``(a, b, c)`` serves
+      queries filtering on ``a``, ``a+b``, or ``a+b+c`` -- but not on
+      ``b`` alone, ``c`` alone, or ``b+c``. See also ESR Rule.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
 
    Logical Schema
       The relational representation of a conceptual ERD: tables, columns,
@@ -736,6 +942,15 @@ L
       decomposition.
       :doc:`L4-L5 </lectures/lecture4-5/l4_5_lecture>`
 
+   LSM Tree (Log-Structured Merge Tree)
+      A write-optimized storage structure used by LevelDB, RocksDB,
+      Cassandra, and HBase. Writes land first in an in-memory MemTable;
+      full MemTables are flushed to immutable on-disk SSTables; periodic
+      compaction merges SSTables and removes tombstoned keys. Trades
+      slightly higher read latency (multi-level lookups) for very high
+      write throughput on sequential I/O.
+      :doc:`L10 </lectures/lecture10/l10_kv_lecture>`
+
 
 .. _g-m:
 
@@ -756,6 +971,34 @@ M
       aggregations. Must be refreshed periodically or on demand to stay
       current.
       :doc:`L4-L5 </lectures/lecture4-5/l4_5_lecture>`
+
+   Memoize
+      A PostgreSQL plan node that caches per-key results of a repeated
+      inner-loop lookup in a **Nested Loop Join**. For each distinct
+      key in the outer side, the inner lookup runs once and subsequent
+      probes with the same key hit the cache. Reports ``Hits``,
+      ``Misses``, ``Evictions``, and ``Memory Usage``. Commonly
+      responsible for Nested Loop + Index Scan plans outperforming
+      Hash Join on medium-sized inner tables.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
+
+   MemTable
+      The in-memory, sorted write buffer of an LSM tree. Incoming writes
+      are first placed here (typically in a red-black tree or skip list);
+      when the MemTable fills, it is flushed to disk as an immutable
+      SSTable. The MemTable lets an LSM tree absorb random writes and
+      emit sequential disk I/O.
+      :doc:`L10 </lectures/lecture10/l10_kv_lecture>`
+
+   Merge Join
+      A physical join strategy that **sorts both relations** on the
+      join key and then walks the two sorted streams in parallel to
+      find matching rows. Requires an **equality** join condition.
+      Preferred when inputs are already sorted (e.g., by an index
+      scan) or when a hash table would exceed ``work_mem``. Often
+      identified by paired ``Sort`` steps above the ``Merge Join`` in
+      the plan.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
 
    MVCC (Multi-Version Concurrency Control)
       A PostgreSQL concurrency mechanism that maintains multiple versions of
@@ -795,12 +1038,34 @@ N
       surrogate keys are preferred as the physical PK.
       :doc:`L3 </lectures/lecture3/l3_lecture>`
 
+   Neo4j
+      The most widely used property-graph database. Stores nodes,
+      relationships (typed, directed), and properties, and queries them
+      with Cypher. Available as an embedded server, a Docker image, a
+      desktop application, and a managed cloud service (AuraDB).
+      :doc:`L10 </lectures/lecture10/l10_graph_lecture>`
+
+   Nested Loop Join
+      The simplest physical join strategy: for each row in the outer
+      relation, scan the inner relation for matches. Efficient when
+      one side is very small or the inner side is **indexed** (and
+      especially with a ``Memoize`` layer). The only join strategy
+      that handles **non-equality** conditions (``<``, ``>``, ``!=``).
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
+
    NO ACTION
       The default ``ON DELETE`` / ``ON UPDATE`` referential action. Rejects
       the parent change if child rows exist, checked at the end of the
       statement (or at ``COMMIT`` for deferred constraints). Functionally
       similar to ``RESTRICT`` but deferrable.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
+
+   Node (Graph)
+      A fundamental element of a property graph representing an entity
+      (a discrete object) in the domain. Nodes carry zero or more
+      **labels** and any number of **properties**. Distinct from "node"
+      in a tree or B-tree index: here, a node is a domain entity.
+      :doc:`L10 </lectures/lecture10/l10_graph_lecture>`
 
    Non-Prime Attribute
       An attribute that does not belong to any candidate key. Non-prime
@@ -925,6 +1190,16 @@ P
 
 .. glossary::
 
+   PACELC
+      An extension of the CAP theorem that describes distributed-system
+      trade-offs during **normal** operation as well as during partitions.
+      If **P**\ artitioned, choose between **A**\ vailability and
+      **C**\ onsistency; **E**\ lse, choose between **L**\ ow latency and
+      **C**\ onsistency. Yields four classifications: PA/EL (Cassandra,
+      DynamoDB), PA/EC (MongoDB), PC/EL (CosmosDB), PC/EC (Bigtable,
+      HBase).
+      :doc:`L10 </lectures/lecture10/l10_kv_lecture>`
+
    Partial Dependency
       A functional dependency where a non-prime attribute depends on only part
       of a composite candidate key. Violates 2NF. Example: ``course_id``
@@ -944,6 +1219,15 @@ P
       relationship. Total participation (mandatory) is shown as a double line
       in Chen notation; partial participation (optional) as a single line.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Partition Tolerance
+      One of the three CAP guarantees. A system is *partition-tolerant*
+      when it continues to operate despite arbitrary messages being
+      dropped or delayed between nodes (or a node being unreachable).
+      Real networks always experience partitions, so real distributed
+      systems must choose partition tolerance and trade off between
+      availability and consistency.
+      :doc:`L10 </lectures/lecture10/l10_kv_lecture>`
 
    pg_catalog
       A PostgreSQL-specific set of system catalog tables and views that expose
@@ -979,6 +1263,20 @@ P
       ``PRIMARY KEY`` constraint in SQL.
       :doc:`L3 </lectures/lecture3/l3_lecture>`
 
+   Property (Graph)
+      A key/value pair attached to a node or relationship in a property
+      graph. Provides fine-grained attribution without requiring separate
+      nodes. Example: ``(:Person {name: "Ada", age: 30})``.
+      :doc:`L10 </lectures/lecture10/l10_graph_lecture>`
+
+   Property Graph
+      A graph data model in which nodes and relationships can carry
+      key/value **properties** alongside their labels and types. The
+      dominant model for modern graph databases (Neo4j, Memgraph, AWS
+      Neptune with openCypher). Contrasted with RDF triple stores, which
+      represent knowledge as subject-predicate-object triples.
+      :doc:`L10 </lectures/lecture10/l10_graph_lecture>`
+
    psql
       The PostgreSQL interactive command-line client. Provides SQL execution
       and meta-commands prefixed with ``\`` (e.g., ``\d``, ``\dt``, ``\ds``)
@@ -988,12 +1286,47 @@ P
       :doc:`L6 </lectures/lecture6/l6_lecture>`
 
 
+.. _g-q:
+
+Q
+=
+
+.. glossary::
+
+   Query Optimizer
+      The database component that takes a parsed SQL statement and
+      searches over candidate **query plans**, picking the cheapest
+      according to its cost model. In PostgreSQL, the optimizer uses
+      collected statistics (``pg_statistic``, refreshed by
+      ``ANALYZE``) and cost constants (``seq_page_cost``,
+      ``random_page_cost``, ...) to estimate plan costs.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
+
+   Query Plan
+      The tree of physical operators (``Seq Scan``, ``Index Scan``,
+      ``Nested Loop``, ``Merge Join``, ``Hash Join``, ``Sort``,
+      ``GroupAggregate``, ``Limit``, ...) the database will execute to
+      produce a query's results. Inspected via ``EXPLAIN`` or
+      ``EXPLAIN ANALYZE``. Read inside-out / bottom-up: the deepest
+      indented node runs first.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
+
+
 .. _g-r:
 
 R
 =
 
 .. glossary::
+
+   Redis
+      An in-memory, networked key/value store (**RE**\ mote
+      **DI**\ ctionary **S**\ erver) with rich data types: strings,
+      hashes, lists, sets, sorted sets, streams, HyperLogLog, bitmaps,
+      and (via Redis Stack) bloom filters, JSON documents, and search.
+      Common roles: cache, session store, leaderboard, queue, broker,
+      primary database for ephemeral or performance-critical state.
+      :doc:`L10 </lectures/lecture10/l10_kv_lecture>`
 
    Redundancy
       The storage of the same fact in multiple places within a database.
@@ -1045,10 +1378,26 @@ R
       notation by a diamond. Can have attributes of its own.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
+   Relationship (Graph)
+      A directed, typed edge between two nodes in a property graph. Every
+      relationship has exactly one type (e.g., ``:FRIENDS_WITH``) and one
+      direction, and may carry properties of its own. Traversable in
+      either direction by Cypher regardless of how it is stored.
+      :doc:`L10 </lectures/lecture10/l10_graph_lecture>`
+
    Relationship Type
       A set of relationships with the same structure and semantics among the
       same entity types.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Rendezvous Hashing
+      A sharding algorithm (also known as *highest random weight hashing*)
+      for mapping keys to servers. For each key, hash ``(key, server_id)``
+      for every server and pick the top-scoring server(s). Produces
+      minimal data movement when servers join or leave the cluster -- a
+      key only moves if a new server scores higher for it than the
+      current owner.
+      :doc:`L10 </lectures/lecture10/l10_kv_lecture>`
 
    RESTART IDENTITY
       A modifier for ``TRUNCATE`` that resets the identity sequence to its
@@ -1079,11 +1428,30 @@ S
       architecture for enterprise database deployments.
       :doc:`L1 </lectures/lecture1/l1_lecture>`
 
+   SARGABLE
+      Short for **S**\ earch **ARG**\ ument **ABLE**. A query predicate is
+      SARGABLE when it can take advantage of an index. Examples:
+      equality and inequality on a column (``col = 5``, ``col > 10``),
+      ``BETWEEN``, ``IN``, and left-anchored ``LIKE 'prefix%'``.
+      Non-SARGABLE patterns (arithmetic on the indexed column,
+      function calls like ``UPPER(col)``, leading wildcards, implicit
+      casts, negation) defeat the index and force a sequential scan.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
+
    Second Normal Form (2NF)
       A relation is in 2NF if it is in 1NF and no non-prime attribute is
       partially dependent on any candidate key. Violations can only occur
       with composite candidate keys.
       :doc:`L4-L5 </lectures/lecture4-5/l4_5_lecture>`
+
+   Seq Scan (Sequential Scan)
+      A query-plan operator that reads **every row** in a table
+      (following the heap's physical order) and applies a filter to
+      each row. Appears in ``EXPLAIN`` output as ``Seq Scan on
+      <table>``. The appropriate choice when a large fraction of rows
+      match a predicate or when no useful index exists; usually a
+      warning sign otherwise.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
 
    Sequence
       A named database object that produces a strictly increasing series of
@@ -1128,6 +1496,24 @@ S
       created on the subtype.
       :doc:`L3 </lectures/lecture3/l3_lecture>` · :doc:`L6 </lectures/lecture6/l6_lecture>`
 
+   shared_buffers
+      A PostgreSQL configuration parameter controlling the size of the
+      server's **shared buffer cache** for table and index pages.
+      Larger values allow more of the working set to stay in memory,
+      turning disk reads into cache hits. Reflected in
+      ``EXPLAIN (ANALYZE, BUFFERS)`` output as ``shared hit=N`` vs
+      ``shared read=N``.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
+
+   Shortest Path (Cypher)
+      A built-in Cypher function that returns the shortest path between
+      two nodes along a given relationship pattern, e.g.
+      ``shortestPath( (a)-[:KNOWS*..5]-(b) )``. The ``*..N`` cap is
+      required in practice because unbounded searches can be prohibitively
+      expensive. Core building block for friend-of-a-friend and
+      recommendation queries.
+      :doc:`L10 </lectures/lecture10/l10_graph_lecture>`
+
    Snowflake Schema
       A dimensional schema used in OLAP systems where dimension tables are
       further normalized into sub-dimension tables, forming a snowflake-like
@@ -1153,6 +1539,13 @@ S
       DQL (querying), DCL (permissions), and TCL (transactions). The current
       standard is SQL:2023.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
+
+   SSTable (Sorted String Table)
+      An immutable, on-disk file of sorted key/value pairs produced by an
+      LSM tree when a MemTable fills and is flushed. Each SSTable usually
+      carries an associated bloom filter and a sparse index. Compaction
+      merges multiple SSTables into fewer, larger ones.
+      :doc:`L10 </lectures/lecture10/l10_kv_lecture>`
 
    Star Schema
       A dimensional schema used in OLAP systems with a central fact table
@@ -1259,6 +1652,14 @@ T
       displayed in the session's configured time zone.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
 
+   Tombstone (LSM)
+      A marker written by an LSM-tree engine to record that a key has
+      been deleted. The marker supersedes older versions of the key
+      during reads; the actual key/value bytes are physically removed
+      only during compaction. Tombstones are what make deletion
+      compatible with the append-only SSTable model.
+      :doc:`L10 </lectures/lecture10/l10_kv_lecture>`
+
    Total Specialization
       An EER completeness constraint where every superclass entity must
       belong to at least one subclass. No entity can exist solely as a
@@ -1290,6 +1691,13 @@ T
       PostgreSQL. Significantly faster than ``DELETE`` on large tables. Does
       not support a ``WHERE`` clause.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
+
+   TTL (Time-To-Live)
+      A per-key lifetime after which the database automatically removes
+      the key. In Redis, set with ``EXPIRE k seconds`` and inspected with
+      ``TTL k``. The natural way to model ephemeral state such as
+      sessions, rate-limit counters, or short-lived caches.
+      :doc:`L10 </lectures/lecture10/l10_kv_lecture>`
 
    Tuple
       A single row in a relation. Corresponds to an instance of the entity
@@ -1357,6 +1765,15 @@ V
       prefer ``TEXT`` for unbounded strings.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
 
+   Variable-Length Path (Cypher)
+      A Cypher pattern that matches paths of varying hop counts between
+      nodes, written as ``[:TYPE*]`` (zero or more hops), ``[:TYPE*..N]``
+      (up to N hops), or ``[:TYPE*M..N]`` (between M and N hops).
+      Essential for multi-hop queries like friend-of-a-friend and
+      reachability. Always cap the upper bound in production -- unbounded
+      traversals can explode.
+      :doc:`L10 </lectures/lecture10/l10_graph_lecture>`
+
 
 .. _g-w:
 
@@ -1380,3 +1797,12 @@ W
       as a double diamond. Identified by a partial key (discriminator)
       combined with the owner's primary key.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   work_mem
+      A PostgreSQL configuration parameter controlling the memory
+      allowed **per operation** (sort, hash, aggregate, CTE
+      materialization) before the operation spills to disk. Lower
+      values save memory at the cost of extra IO; higher values let
+      more operations complete in memory. Influences the planner's
+      choice between Hash Join and Merge Join.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
