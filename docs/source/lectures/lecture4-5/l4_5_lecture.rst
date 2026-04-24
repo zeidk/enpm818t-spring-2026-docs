@@ -1409,7 +1409,7 @@ Quick Reference
 
 .. seealso::
 
-   :doc:`cheat_sheet` -- a condensed, box-by-box reference covering all 15 topics from
+   :doc:`l4_5_cheat_sheet` -- a condensed, box-by-box reference covering all 15 topics from
    this lecture: anomalies, functional dependencies, Armstrong's axioms, attribute closure,
    candidate keys, canonical cover, normal forms (1NF through BCNF), decomposition
    algorithms, lossless join, dependency preservation, and the full normalization pipeline

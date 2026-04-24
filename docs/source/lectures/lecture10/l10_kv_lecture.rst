@@ -221,7 +221,7 @@ Let's model a simple Twitter-like application with K/V only. We need:
 
 **Messages** store a message body keyed by ``message:<user>:<id>``:
 
-.. code-block:: javascript
+.. code-block:: text
 
    // Value
    {

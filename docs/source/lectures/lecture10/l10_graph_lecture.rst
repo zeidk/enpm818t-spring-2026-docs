@@ -303,7 +303,7 @@ Update: Replace All Properties of a Node
 Update: Add a New Property
 ----------------------------------------------------
 
-.. code-block:: cypher
+.. code-block:: text
 
    MATCH (p:Person)
    WHERE p.name = "Théo Gauchoux"

@@ -6,7 +6,7 @@ L4-L5 Cheat Sheet
 
 .. note::
 
-   This cheat sheet is a compact reference for :doc:`L4-5 Lecture <lecture>`. It mirrors the
+   This cheat sheet is a compact reference for :doc:`L4-5 Lecture <l4_5_lecture>`. It mirrors the
    lecture's section order so you can move between the two documents without
    losing your place. A printable version is also available: :download:`Normalization_Cheat_Sheet.pdf </_static/images/l4/Normalization_Cheat_Sheet.pdf>`.
 
