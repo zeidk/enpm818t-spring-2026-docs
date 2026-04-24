@@ -78,7 +78,7 @@ Course Schedule
      -
    * - 15 (05/12)
      - Database Internals + Vector Databases
-     - GP3 Due (Application + Report + Peer Eval)
+     - GP3 Due (Application + Report)
 
 .. note::
 

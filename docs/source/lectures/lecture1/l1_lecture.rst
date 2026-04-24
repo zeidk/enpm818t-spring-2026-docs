@@ -64,7 +64,7 @@ Grading Structure
         - **Week 3**: Team Formation.
         - **Week 6**: Proposal Document Due.
         - **Week 11**: Progress Report Due.
-        - **Week 15**: Application + Report + Peer Evaluation Due.
+        - **Week 15**: Application + Report Due.
 
         Teams build a **polyglot persistence system** using one of
         three preset project proposals, integrating PostgreSQL,
@@ -148,7 +148,7 @@ Course Schedule
      - Quiz 5
    * - 15
      - Database Internals + Vector Databases + Career Wrap-up
-     - Final Project Due (Application + Report + Peer Eval)
+     - Final Project Due (Application + Report)
 
 .. note::
 

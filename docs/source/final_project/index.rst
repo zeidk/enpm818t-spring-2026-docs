@@ -298,7 +298,7 @@ Your project will be evaluated on:
 
 **Collaboration (5%)**
 
-- Equitable team contributions (peer evaluation)
+- Equitable team contributions
 - Effective coordination
 - Professional team dynamics
 

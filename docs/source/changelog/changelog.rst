@@ -196,8 +196,7 @@ All notable changes to the ENPM818T Spring 2026 course documentation are recorde
      to GP1--GP3.
    - Course Schedule: Week 11 deliverable dropped "GP3 Posted";
      Week 12 now shows "GP3 Posted (04/24)"; Week 13 is Quiz 5
-     only; Week 15 shows "GP3 Due (Application + Report + Peer
-     Eval)".
+     only; Week 15 shows "GP3 Due (Application + Report)".
    - Group Projects table: GP4 row removed; GP3 row rewritten as
      "Complete Polyglot System", Posted Week 12 (04/24), Due Week
      15 (05/12), ~2.5 weeks, 50% of project.
