@@ -62,18 +62,30 @@ final **technical report** documenting the system end-to-end.
      Compose seeds them on first boot.
    - **postgresql/queries.sql**: Include in your submission for
      completeness; no changes required.
+   - **config/**, **models/**, **repositories/**, **services/**,
+     **cli/**: If your GP2 submission placed these under a ``src/``
+     directory, move them to the **project root** so the folder
+     structure matches the GP3 layout below and the provided
+     Dockerfile (which runs ``python -m cli.main``).
    - **config/database.py**: Your existing PostgreSQL connection
      module. You will add ``mongodb.py`` and ``neo4j_config.py``
      alongside it.
-   - **repositories/**, **services/**, **cli/main.py**: Extend these
-     with MongoDB and Neo4j support. Your existing PostgreSQL
-     repositories and menu options should continue to work unchanged.
+   - **repositories/**: Extend with ``mongodb/`` and ``neo4j/``
+     subdirectories. Move your existing PostgreSQL repositories into
+     a ``postgres/`` subdirectory for organization.
+   - **services/**, **cli/main.py**: Extend with MongoDB and Neo4j
+     support. Your existing PostgreSQL menu options should continue
+     to work unchanged.
    - **models/**: Keep your existing dataclasses; add new ones only
      if needed for cross-database service results.
    - **requirements.txt**: Add ``pymongo`` and ``neo4j`` to your
      existing dependencies.
    - **.env.example**: Add ``MONGO_*`` and ``NEO4J_*`` variables
      alongside your existing ``DB_*`` variables.
+   - **.env**: GP2 required ``.env`` to be in ``.gitignore``. For
+     GP3 you must **commit** ``.env`` with actual values so the
+     grader can run your system (see "Credentials for Grading"
+     below).
 
 
 Learning Objectives
@@ -1108,6 +1120,8 @@ Folder Structure
    │   ├── database.py             # Existing from GP2
    │   ├── mongodb.py              # New
    │   └── neo4j_config.py         # New
+   ├── models/                       # Existing from GP2
+   │   └── [entity].py
    ├── repositories/
    │   ├── postgres/               # Existing from GP2
    │   ├── mongodb/
@@ -1292,7 +1306,8 @@ Submission
 
    - [ ] ``graph_setup.cypher`` creates 4+ node types with properties
    - [ ] ``graph_data.cypher`` populates minimum graph (10+
-     medications, 8+ diseases, 15+ interactions)
+     medications, 8+ diseases, 8+ symptoms, 15+ INTERACTS_WITH,
+     10+ TREATED_BY, 8+ PRESENTS_WITH, 5+ CONTRAINDICATED_IN)
    - [ ] ``cypher_queries.cypher`` contains 4+ clinical decision
      support queries
    - [ ] Drug-interaction checking works for a list of medications
@@ -1357,8 +1372,8 @@ Grading Rubric
    * - **Part 4: Neo4j Graph + Queries**
      - 4
      - 4+ node types and 4+ relationship types with clinical relevance
-       (1 pt); minimum graph populated (1 pt); 4+ clinical decision
-       support queries (2 pts)
+       (2 pts); minimum graph populated (1 pt); 4+ clinical decision
+       support queries (1 pt)
    * - **Part 5: Integration + Docker**
      - 5
      - Multi-database Python integration (2 pts); 2+ unified CLI

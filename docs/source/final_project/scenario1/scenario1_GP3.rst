@@ -61,18 +61,30 @@ report** documenting the system end-to-end.
      Compose seeds them on first boot.
    - **postgresql/queries.sql**: Include in your submission for
      completeness; no changes required.
+   - **config/**, **models/**, **repositories/**, **services/**,
+     **cli/**: If your GP2 submission placed these under a ``src/``
+     directory, move them to the **project root** so the folder
+     structure matches the GP3 layout below and the provided
+     Dockerfile (which runs ``python -m cli.main``).
    - **config/database.py**: Your existing PostgreSQL connection
      module. You will add ``mongodb.py`` and ``redis_config.py``
      alongside it.
-   - **repositories/**, **services/**, **cli/main.py**: Extend these
-     with MongoDB and Redis support. Your existing PostgreSQL
-     repositories and menu options should continue to work unchanged.
+   - **repositories/**: Extend with ``mongodb/`` and ``redis/``
+     subdirectories. Move your existing PostgreSQL repositories into
+     a ``postgres/`` subdirectory for organization.
+   - **services/**, **cli/main.py**: Extend with MongoDB and Redis
+     support. Your existing PostgreSQL menu options should continue
+     to work unchanged.
    - **models/**: Keep your existing dataclasses; add new ones only
      if needed for cross-database service results.
    - **requirements.txt**: Add ``pymongo`` and ``redis`` to your
      existing dependencies.
    - **.env.example**: Add ``MONGO_*`` and ``REDIS_*`` variables
      alongside your existing ``DB_*`` variables.
+   - **.env**: GP2 required ``.env`` to be in ``.gitignore``. For
+     GP3 you must **commit** ``.env`` with actual values so the
+     grader can run your system (see "Credentials for Grading"
+     below).
 
 
 Learning Objectives
@@ -1046,6 +1058,8 @@ Folder Structure
    │   ├── database.py             # Existing from GP2
    │   ├── mongodb.py              # New
    │   └── redis_config.py         # New
+   ├── models/                       # Existing from GP2
+   │   └── [entity].py
    ├── repositories/
    │   ├── postgres/               # Existing from GP2
    │   ├── mongodb/
@@ -1227,16 +1241,14 @@ Submission
 
    - [ ] ``redis_setup.py`` initializes all structures with sample
      data
-   - [ ] ``redis_operations.py`` implements 4+ operations across the
-     structure types
-   - [ ] Cache-aside pattern and pub/sub both implemented
+   - [ ] ``redis_operations.py`` implements 4+ operations covering
+     at least 3 of the 5 structure types
 
    **Python Application**:
 
    - [ ] MongoDB and Redis connections configured
    - [ ] Repository classes for each database
    - [ ] 2+ unified CLI operations using all three databases
-   - [ ] Cache invalidation strategy implemented
 
    **Deployment**:
 

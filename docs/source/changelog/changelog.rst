@@ -5,6 +5,128 @@ Changelog
 All notable changes to the ENPM818T Spring 2026 course documentation are recorded here.
 
 
+.. dropdown:: v4.1.0 -- GP3 Clarity and Consistency Pass (2026-04-24)
+   :icon: tag
+   :class-container: sd-border-success
+
+   Quality pass across both GP3 pages to improve clarity, fix
+   inconsistencies, and strengthen continuity with GP2.
+
+   .. rubric:: GP2 → GP3 continuity
+
+   - Added "What Carries Over from GP2" admonition to both
+     scenarios listing every reusable GP2 deliverable (SQL files,
+     config, repositories, services, CLI, models, requirements,
+     .env.example).
+   - Noted that students using a ``src/`` directory in GP2 should
+     move code to the project root to match the GP3 folder
+     structure and the provided Dockerfile
+     (``python -m cli.main``).
+   - Noted the ``.env`` policy change: GP2 required ``.env`` in
+     ``.gitignore``; GP3 requires it committed for grading.
+   - ``models/`` directory added to both GP3 folder structures
+     (was present in GP2 but missing from GP3).
+
+   .. rubric:: Directory structure alignment
+
+   - Removed ``src/`` wrapper from GP3 folder structures,
+     Dockerfiles (``CMD`` changed from ``python -m src.cli.main``
+     to ``python -m cli.main``), and Docker starter adoption
+     trees — matching the GP2 task description layout.
+   - Task 5.1 directory trees already matched (no ``src/``); now
+     consistent with the submission folder structure.
+
+   .. rubric:: Task presentation
+
+   - Converted all ``.. dropdown:: Task`` directives to
+     ``.. admonition:: Task`` with ``:class: task`` in both GP3
+     pages (23 tasks total). Tasks are now always visible;
+     reference/supplementary material remains in collapsible
+     dropdowns.
+   - Added custom ``task`` admonition CSS to ``my.css`` with
+     blue theme (light: ``#3b82f6`` border on ``#f0f7ff``
+     background; dark: ``#60a5fa`` border on ``#1e293b``
+     background) and Font Awesome tasks icon, using
+     ``--pst-icon-admonition-default`` for PyData theme
+     compatibility.
+
+   .. rubric:: Data partitioning
+
+   - Reframed "Data Assignment Guidelines" as "Suggested Data
+     Assignment" in both scenarios: lists are now
+     **recommendations**, not mandates. Students may follow,
+     adjust, or propose different partitioning as long as they
+     justify every decision.
+   - Decision Template clarified: full template required only for
+     **new** MongoDB/Redis/Neo4j data types; PostgreSQL data from
+     GP2 needs only a brief summary.
+
+   .. rubric:: Scope adjustments
+
+   - **Scenario 1**: Removed geospatial query requirement from
+     Task 3.2 and geospatial index from Task 2.2; bumped
+     aggregation pipelines from 3 to 4 minimum to keep total at
+     6 queries.
+   - **Scenario 1**: Added clarifying note to Task 4.2 that 4
+     operations should cover at least 3 of the 5 Redis structure
+     types, not one-to-one.
+   - **Scenario 2**: Reduced Neo4j minimum graph sizes —
+     medications 15→10, diseases 10→8, symptoms 10→8,
+     INTERACTS_WITH 25→15, TREATED_BY 15→10, PRESENTS_WITH 10→8.
+     Added note that simplified medical data is acceptable.
+
+   .. rubric:: Report sections equalized
+
+   - Added "Data Partitioning Rationale" section to Scenario 1's
+     report outline (now 7 sections, matching Scenario 2).
+   - Rubric and submission checklist updated from "six" to
+     "seven" required sections in Scenario 1.
+
+   .. rubric:: Environment variables and Docker
+
+   - Aligned ``.env.example`` variable names (``DB_HOST``,
+     ``DB_USER``, ``DB_PASSWORD``, ``MONGO_HOST``, ``REDIS_HOST``
+     / ``NEO4J_URI``) to match the Docker starter ``app``
+     environment block.
+   - Added inline comments showing Docker service-name values
+     (e.g., ``# use "postgres" inside Docker Compose``) and a
+     ``.. note::`` explaining that the starter already sets
+     correct values for in-container use.
+
+   .. rubric:: Example CLI output
+
+   - Added example terminal output dropdowns for all unified
+     operations in both scenarios, showing the ``python -m
+     cli.main`` command, main menu, menu selection, and
+     multi-database output.
+   - Scenario 1: Intersection Dashboard and Report New Incident.
+   - Scenario 2: Complete Patient Record and Prescription Safety
+     Check (with both safe and unsafe prescription examples).
+
+   .. rubric:: Rubric and checklist fixes
+
+   - **Scenario 2**: Fixed Part 4 rubric allocation to match
+     task headers (Graph Structure 2 pts, Setup/Data 1 pt,
+     Queries 1 pt; was 1+1+2).
+   - **Scenario 1**: Submission checklist Redis item relaxed
+     from "Cache-aside and pub/sub both implemented" to "4+
+     operations covering at least 3 of 5 structure types"
+     (matching Task 4.2). Removed unscored "Cache invalidation
+     strategy implemented" checklist item.
+   - **Scenario 2**: Submission checklist Neo4j graph item
+     expanded to list all relationship type minimums (was only
+     "15+ interactions").
+
+   .. rubric:: Sphinx build fixes
+
+   - Fixed 4 broken ``:doc:`` references to ``lecture4-5``
+     files (``lecture`` → ``l4_5_lecture``, ``cheat_sheet`` →
+     ``l4_5_cheat_sheet``).
+   - Fixed 2 syntax highlighting warnings: ``cypher`` → ``text``
+     in L10 graph lecture, ``javascript`` → ``text`` in L10 K/V
+     lecture.
+
+
 .. dropdown:: v4.0.0 -- Final Project Restructure: GP3 and GP4 Merged (2026-04-24)
    :icon: tag
    :class-container: sd-border-warning
